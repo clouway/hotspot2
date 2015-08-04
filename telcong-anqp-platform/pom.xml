@@ -81,6 +81,11 @@
                 <include>org.eclipse.jetty.orbit:javax.servlet</include>
                 <include>org.slf4j:slf4j-api</include>
 
+                <include>com.google.sitebricks:sitebricks</include>
+                <include>com.google.sitebricks:sitebricks-converter</include>
+                <include>com.google.sitebricks:sitebricks-client</include>
+                <include>com.google.sitebricks:sitebricks-annotations</include>
+
               </includes>
               <rules>
 
@@ -106,6 +111,13 @@
   </build>
 
   <dependencies>
+
+    <!-- REST and HTML Rendering support. -->
+    <dependency>
+      <groupId>com.google.sitebricks</groupId>
+      <artifactId>sitebricks</artifactId>
+      <version>0.8.8</version>
+    </dependency>
 
     <!-- Set of utility classes and functions-->
     <dependency>

@@ -6,6 +6,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.servlet.ServletModule;
+import com.google.sitebricks.SitebricksModule;
 
 /**
  *
@@ -28,6 +29,13 @@ public class HttpModule extends AbstractModule {
       protected void configureServlets() {
         bind(TestServlet.class).in(Singleton.class);
         serve("/test").with(TestServlet.class);
+      }
+    });
+
+    install(new SitebricksModule() {
+      @Override
+      protected void configureSitebricks() {
+        at("/testservice").serve(ExampleService.class);
       }
     });
   }
