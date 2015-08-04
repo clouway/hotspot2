@@ -1,26 +1,43 @@
 package com.clouway.anqp;
 
+import com.clouway.anqp.adapter.http.HttpModule;
+import com.google.common.util.concurrent.ServiceManager;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 /**
  * AnqpPlatformBootstrap is a bootstrap class which is representing the entry point of the ANQP platform.
  */
 public class AnqpPlatformBootstrap {
+  private static final Logger logger = LoggerFactory.getLogger(AnqpPlatformBootstrap.class);
 
   public static void main(String[] args) {
-    System.out.println("ANPQ Platform was started successfully.");
+    Thread.currentThread().setName("ANQP");
 
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
+    logger.debug("Platform was started successfully.");
+
+    Injector injector = Guice.createInjector(new CoreModule(), new HttpModule(8080));
+
+    final ServiceManager serviceManager = injector.getInstance(ServiceManager.class);
+    serviceManager.startAsync().awaitHealthy();
+
+    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
       public void run() {
-        System.out.println("ANQP Platform was terminated successfully.");
-      }
-    });
+        Thread.currentThread().setName("ANQP");
 
-    while (true) {
-      try {
-        Thread.currentThread().sleep(500);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
+        try {
+          serviceManager.stopAsync().awaitStopped(3, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+          logger.debug("Deadline duruing stopping of the services", e);
+        }
+
+        logger.debug("Platform was terminated successfully.");
       }
-    }
+    }));
   }
 }
