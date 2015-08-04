@@ -104,6 +104,8 @@
                 <include>org.eclipse.jetty.orbit:javax.servlet</include>
                 <include>org.slf4j:slf4j-api</include>
 
+                <include>com.google.code.gson:gson</include>
+
                 <include>com.google.sitebricks:sitebricks</include>
                 <include>com.google.sitebricks:sitebricks-converter</include>
                 <include>com.google.sitebricks:sitebricks-client</include>
@@ -147,6 +149,12 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>18.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.3</version>
     </dependency>
 
     <!-- HTTP Server dependencies. -->
