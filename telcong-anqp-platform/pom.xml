@@ -19,6 +19,27 @@
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 
+
+  <repositories>
+
+    <repository>
+      <id>osnmp-dist</id>
+      <name>SNMP4j Repository</name>
+      <url>https://oosnmp.net/dist/release</url>
+    </repository>
+
+    <repository>
+      <id>spy</id>
+      <name>Spy Repository</name>
+      <layout>default</layout>
+      <url>http://files.couchbase.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
+  </repositories>
+
   <build>
     <plugins>
       <plugin>
@@ -67,6 +88,8 @@
                 <include>com.google.inject:guice</include>
                 <include>com.google.inject.extensions:guice-servlet</include>
                 <include>com.google.inject.extensions:guice-multibindings</include>
+
+                <include>org.snmp4j:snmp4j</include>
 
                 <include>org.eclipse.jetty.orbit:javax.servlet</include>
                 <include>org.eclipse.jetty:jetty-server</include>
@@ -185,6 +208,14 @@
       <groupId>org.eclipse.jetty.orbit</groupId>
       <artifactId>javax.servlet</artifactId>
       <version>3.0.0.v201112011016</version>
+    </dependency>
+
+
+    <!-- SNMP4j -->
+    <dependency>
+      <groupId>org.snmp4j</groupId>
+      <artifactId>snmp4j</artifactId>
+      <version>2.0.2</version>
     </dependency>
 
     <!-- DI Framework Dependencies -->
