@@ -144,6 +144,13 @@
       <version>2.4.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.github.rest-driver</groupId>
+      <artifactId>rest-client-driver</artifactId>
+      <version>1.1.35</version>
+      <scope>test</scope>
+    </dependency>
+
 
     <!-- REST and HTML Rendering support. -->
     <dependency>
