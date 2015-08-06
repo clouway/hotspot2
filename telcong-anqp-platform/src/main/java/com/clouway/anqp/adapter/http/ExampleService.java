@@ -6,7 +6,7 @@ import com.google.sitebricks.headless.Service;
 import com.google.sitebricks.http.Get;
 
 /**
- * @author Miroslav Genov (miroslav.genov@clouway.com)
+ *
  */
 @Service
 @At("/testservice")

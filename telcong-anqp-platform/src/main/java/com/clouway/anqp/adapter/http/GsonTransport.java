@@ -20,7 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * @author Miroslav Genov (miroslav.genov@clouway.com)
+ *
  */
 class GsonTransport implements Transport {
   private final static Logger logger = LoggerFactory.getLogger("RequestLogger");
