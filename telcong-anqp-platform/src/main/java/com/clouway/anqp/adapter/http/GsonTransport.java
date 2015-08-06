@@ -25,13 +25,11 @@ import java.util.List;
 class GsonTransport implements Transport {
   private final static Logger logger = LoggerFactory.getLogger("RequestLogger");
 
-  private Gson gson;
-  private Provider<HttpServletRequest> requestProvider;
+  private final Gson gson;
 
   @Inject
-  public GsonTransport(Gson gson, Provider<HttpServletRequest> requestProvider) {
+  public GsonTransport(Gson gson) {
     this.gson = gson;
-    this.requestProvider = requestProvider;
   }
 
   @Override
@@ -63,29 +61,8 @@ class GsonTransport implements Transport {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     ByteStreams.copy(input, out);
 
-    logger.debug("INPUT - {} {}", new String(out.toByteArray()), getHeaders());
+    logger.debug("INPUT - {}", new String(out.toByteArray()));
 
     return new InputStreamReader(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
-  }
-
-  private String getHeaders() {
-    HttpServletRequest request = requestProvider.get();
-    StringBuilder headers = new StringBuilder();
-
-    Enumeration<String> names = request.getHeaderNames();
-
-    headers.append('\n');
-
-    while (names.hasMoreElements()) {
-      String name = names.nextElement();
-      String value = request.getHeader(name);
-
-      headers.append(name);
-      headers.append(": ");
-      headers.append(value);
-      headers.append('\n');
-    }
-
-    return headers.toString();
   }
 }
