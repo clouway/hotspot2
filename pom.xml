@@ -8,6 +8,6 @@
   <name>telcong-anqp</name>
   <modules>
     <module>telcong-anqp-platform</module>
-    <module>telcong-anqp-testclient</module>
+    <module>telcong-anqp-acceptance-tests</module>
   </modules>
 </project>
