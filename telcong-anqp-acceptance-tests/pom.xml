@@ -26,6 +26,14 @@
       <scope>test</scope>
     </dependency>
 
+
+    <!-- HTTP Library  -->
+    <dependency>
+      <groupId>com.squareup.okhttp</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+
     <!-- Testing Libraries -->
     <dependency>
       <groupId>junit</groupId>
