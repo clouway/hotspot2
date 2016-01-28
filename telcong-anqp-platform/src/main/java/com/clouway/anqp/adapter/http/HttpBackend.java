@@ -16,7 +16,7 @@ import java.util.EnumSet;
 /**
  *
  */
-public class HttpBackend extends AbstractIdleService {
+class HttpBackend extends AbstractIdleService {
   private final Logger log = LoggerFactory.getLogger(HttpBackend.class);
   private final Server server;
   private final Integer port;

@@ -137,14 +137,6 @@
             </goals>
             <configuration>
               <includes>
-
-                <include>com.google.inject:guice</include>
-                <include>com.google.inject.extensions:guice-servlet</include>
-                <include>com.google.inject.extensions:guice-multibindings</include>
-
-                <include>org.snmp4j:snmp4j</include>
-
-                <include>org.eclipse.jetty.orbit:javax.servlet</include>
                 <include>org.eclipse.jetty:jetty-server</include>
                 <include>org.eclipse.jetty:jetty-webapp</include>
                 <include>org.eclipse.jetty:jetty-continuation</include>
@@ -155,15 +147,35 @@
                 <include>org.eclipse.jetty:jetty-io</include>
                 <include>org.eclipse.jetty:jetty-security</include>
                 <include>org.eclipse.jetty.orbit:javax.servlet</include>
-                <include>org.slf4j:slf4j-api</include>
 
-                <include>com.google.code.gson:gson</include>
+                <include>javax.inject:javax.inject</include>
+                <include>ch.qos.logback:logback-classic</include>
+                <include>ch.qos.logback:logback-core</include>
+                <include>org.mvel:mvel2</include>
+                <include>com.thoughtworks.xstream:xstream</include>
+                <include>xpp3:xpp3_min</include>
+                <include>net.jcip:jcip-annotations</include>
+                <include>com.intellij:annotations</include>
+                <include>org.jsoup:jsoup</include>
+                <include>org.codehaus.jackson:jackson-core-asl</include>
+                <include>org.codehaus.jackson:jackson-mapper-asl</include>
+                <include>org.snmp4j:snmp4j</include>
 
+                <include>aopalliance:aopalliance</include>
+                <include>com.google.guava:guava</include>
+                <include>com.google.inject:guice</include>
+                <include>com.google.inject.extensions:guice-servlet</include>
+                <include>com.google.inject.extensions:guice-multibindings</include>
                 <include>com.google.sitebricks:sitebricks</include>
                 <include>com.google.sitebricks:sitebricks-converter</include>
                 <include>com.google.sitebricks:sitebricks-client</include>
                 <include>com.google.sitebricks:sitebricks-annotations</include>
-
+                <include>com.ning:async-http-client</include>
+                <include>org.jboss.netty:netty</include>
+                <include>com.google.code.gson:gson</include>
+                <include>com.squareup.okhttp:okhttp</include>
+                <include>com.squareup.okio:okio</include>
+                <include>org.slf4j:slf4j-api</include>
               </includes>
               <rules>
 

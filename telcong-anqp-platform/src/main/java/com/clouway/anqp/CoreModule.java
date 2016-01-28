@@ -24,6 +24,7 @@ public class CoreModule extends AbstractModule {
   @Singleton
   public ServiceManager getServiceManager(Set<ServicePlugin> plugins, Injector injector) {
     Set<Service> services = Sets.newHashSet();
+
     for (ServicePlugin each : plugins) {
       services.addAll(each.initialize(injector));
     }

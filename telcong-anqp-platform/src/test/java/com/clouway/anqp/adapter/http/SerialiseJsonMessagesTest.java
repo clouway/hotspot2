@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -21,10 +22,12 @@ public class SerialiseJsonMessagesTest {
   static class Person {
     public final String name;
     public final Integer age;
+    public final Date birthday;
 
-    public Person(String name, Integer age) {
+    public Person(String name, Integer age, Date birthday) {
       this.name = name;
       this.age = age;
+      this.birthday = birthday;
     }
   }
 
@@ -40,19 +43,20 @@ public class SerialiseJsonMessagesTest {
 
   @Test
   public void happyPath() throws IOException {
-    Person person = new Person("test", 20);
+    Person person = new Person("test", 20, new Date(100000000l));
 
     Person result = serializeAndDeserialize(Person.class, person);
 
     assertThat(result, is(notNullValue()));
     assertThat(result.name, is(equalTo("test")));
     assertThat(result.age, is(equalTo(20)));
+    assertThat(result.birthday, is(equalTo(new Date(100000000l))));
   }
 
   @Test
   @SuppressWarnings("unchecked")
   public void partialObject() {
-    Person person = new Person(null, 20);
+    Person person = new Person(null, 20, null);
 
     Person result = serializeAndDeserialize(Person.class, person);
 

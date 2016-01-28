@@ -1,6 +1,7 @@
 package com.clouway.anqp;
 
 import com.clouway.anqp.adapter.http.HttpModule;
+import com.clouway.anqp.snmp.SnmpModule;
 import com.google.common.util.concurrent.ServiceManager;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -21,7 +22,7 @@ public class AnqpPlatformBootstrap {
 
     logger.debug("Platform was started successfully.");
 
-    Injector injector = Guice.createInjector(new CoreModule(), new HttpModule(8080));
+    Injector injector = Guice.createInjector(new CoreModule(), new SnmpModule(162), new HttpModule(8080));
 
     final ServiceManager serviceManager = injector.getInstance(ServiceManager.class);
     serviceManager.startAsync().awaitHealthy();

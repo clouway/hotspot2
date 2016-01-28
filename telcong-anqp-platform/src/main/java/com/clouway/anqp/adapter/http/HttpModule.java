@@ -12,17 +12,16 @@ import com.google.sitebricks.SitebricksModule;
  *
  */
 public class HttpModule extends AbstractModule {
-  private final int httpPort;
+  private final Integer port;
 
-  public HttpModule(int httpPort) {
-    this.httpPort = httpPort;
+  public HttpModule(Integer port) {
+    this.port = port;
   }
 
   @Override
   protected void configure() {
-
     Multibinder<ServicePlugin> plugins = Multibinder.newSetBinder(binder(), ServicePlugin.class);
-    plugins.addBinding().toInstance(Plugins.of(new HttpBackend(httpPort)));
+    plugins.addBinding().toInstance(Plugins.of(new HttpBackend(port)));
 
     install(new ServletModule() {
       @Override
