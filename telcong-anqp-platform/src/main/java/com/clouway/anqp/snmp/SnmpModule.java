@@ -5,6 +5,8 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 
 import java.util.Set;
@@ -32,5 +34,11 @@ public class SnmpModule extends AbstractModule {
         return Sets.<Service>newHashSet(new SnmpMessagesDaemon(mibRepository, messageListener, port));
       }
     });
+  }
+
+  @Provides
+  @Singleton
+  public SnmpClientFactory getSnmpClientFactory() {
+    return new CachedSnmpClientFactory(161);
   }
 }
