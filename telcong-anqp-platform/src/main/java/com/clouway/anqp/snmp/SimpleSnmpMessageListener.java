@@ -4,7 +4,6 @@ import org.snmp4j.PDU;
 import org.snmp4j.smi.OID;
 
 /**
- * @author Ivan Stefanov <ivan.stefanov@clouway.com>
  */
 class SimpleSnmpMessageListener implements SnmpMessageListener {
   @Override

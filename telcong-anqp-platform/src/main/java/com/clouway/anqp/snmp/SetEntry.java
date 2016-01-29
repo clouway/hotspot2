@@ -4,7 +4,6 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.Variable;
 
 /**
- * @author Miroslav Genov (mgenov@gmail.com)
  */
 public final class SetEntry {
   public final OID oid;

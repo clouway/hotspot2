@@ -6,8 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Creates different kind of SimpleSnmpClient objects.
- *
- * @author Miroslav Genov (mgenov@gmail.com)
  */
 final class CachedSnmpClientFactory implements SnmpClientFactory {
   private final Map<String, SnmpClient> hostToSnmpUtility = new ConcurrentHashMap<>();
