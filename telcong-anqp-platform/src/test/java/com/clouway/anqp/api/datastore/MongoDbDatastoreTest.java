@@ -1,8 +1,6 @@
 package com.clouway.anqp.api.datastore;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Provider;
-import com.google.inject.util.Providers;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.Before;
@@ -118,15 +116,10 @@ public class MongoDbDatastoreTest extends DatastoreContract {
 
   @Override
   protected Datastore createDatastore() {
-    return new MongoDbDatastore(db());
+    return new MongoDbDatastore(datastoreRule.db());
   }
 
   private MongoDatabase database() {
     return datastoreRule.db();
   }
-
-  private Provider<MongoDatabase> db() {
-    return Providers.of(datastoreRule.db());
-  }
-
 }

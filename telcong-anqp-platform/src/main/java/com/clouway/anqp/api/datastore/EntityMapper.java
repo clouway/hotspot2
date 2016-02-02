@@ -94,7 +94,7 @@ final class EntityMapper {
           value = Enum.valueOf((Class<? extends Enum>) field.getType(), (String) value);
         }
 
-        if (field.getType().isAssignableFrom(Set.class) && value != null) {
+        if (Set.class.isAssignableFrom(field.getType()) && value != null) {
           value = new HashSet((Collection) value);
         }
 

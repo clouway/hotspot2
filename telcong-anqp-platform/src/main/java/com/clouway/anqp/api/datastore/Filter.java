@@ -27,6 +27,11 @@ public final class Filter {
     queue.add(property);
   }
 
+  public Filter is(Object propertyValue) {
+    filter.put(queue.poll(), propertyValue);
+    return this;
+  }
+
   public Filter is(String propertyValue) {
     filter.put(queue.poll(), propertyValue);
     return this;

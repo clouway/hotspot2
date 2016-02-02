@@ -21,11 +21,11 @@ import static com.clouway.anqp.api.datastore.EntityMapper.map;
  * layer.
  */
 @Singleton
-final class MongoDbDatastore implements Datastore {
+public final class FakeDatastore implements Datastore {
   private final MongoDatabase database;
 
   @Inject
-  public MongoDbDatastore(MongoDatabase database) {
+  public FakeDatastore(MongoDatabase database) {
     this.database = database;
   }
 

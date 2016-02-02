@@ -35,6 +35,8 @@ public class HttpModule extends AbstractModule {
       @Override
       protected void configureSitebricks() {
         at("/testservice").serve(ExampleService.class);
+
+        at("/r/controllers").serve(ApControllerService.class);
       }
     });
   }

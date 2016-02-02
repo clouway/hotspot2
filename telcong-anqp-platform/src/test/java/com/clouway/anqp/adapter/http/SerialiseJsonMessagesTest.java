@@ -80,7 +80,7 @@ public class SerialiseJsonMessagesTest {
 
   private <T> T serializeAndDeserialize(Class<T> clazz, T value) {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    GsonTransport transport = new GsonTransport(new Gson());
+    Json transport = new Json(new Gson());
 
     try {
       transport.out(bout, clazz, value);

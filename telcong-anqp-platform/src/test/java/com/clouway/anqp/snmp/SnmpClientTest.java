@@ -41,7 +41,7 @@ public class SnmpClientTest {
             )
     );
 
-    SnmpClient client = clientFactory.create("127.0.0.1", new Community("unknown", "unknown"));
+    SnmpClient client = clientFactory.create("127.0.0.1");
 
     Object actual = client.get(new OID("1.3.6.1.2.1.1.1.0"), "default");
     Object expected = new Integer32(999);
@@ -62,7 +62,7 @@ public class SnmpClientTest {
     );
 
     List<OID> oids = Lists.newArrayList(new OID("1.3.6.1.2.1.1.1.0"), new OID("1.3.6.1.2.1.1.1.1"));
-    SnmpClient client = clientFactory.create("127.0.0.1", new Community("unknown", "unknown"));
+    SnmpClient client = clientFactory.create("127.0.0.1");
 
     List<Variable> actual = client.getBulk(oids);
     List<Variable> expected = Lists.<Variable>newArrayList(new Integer32(777), new Integer32(888));

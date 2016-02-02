@@ -16,7 +16,7 @@ final class CachedSnmpClientFactory implements SnmpClientFactory {
   }
 
   @Override
-  public SnmpClient create(String sourceIpAddress, Community community) {
+  public SnmpClient create(String sourceIpAddress) {
     SnmpClient client;
 
     if (hostToSnmpUtility.containsKey(sourceIpAddress)) {
@@ -27,7 +27,7 @@ final class CachedSnmpClientFactory implements SnmpClientFactory {
 
       try {
 
-        client = new SimpleSnmpClient(sourceIpAddress, community, agentPort);
+        client = new SimpleSnmpClient(sourceIpAddress, new Community("private", "public"), agentPort);
         client.start();
 
       } catch (IOException e) {

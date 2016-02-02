@@ -18,13 +18,13 @@ import java.io.OutputStream;
 /**
  *
  */
-class GsonTransport implements Transport {
+class Json implements Transport {
   private final static Logger logger = LoggerFactory.getLogger("RequestLogger");
 
   private final Gson gson;
 
   @Inject
-  public GsonTransport(Gson gson) {
+  public Json(Gson gson) {
     this.gson = gson;
   }
 
