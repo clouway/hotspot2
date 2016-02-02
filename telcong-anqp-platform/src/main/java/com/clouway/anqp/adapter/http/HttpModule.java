@@ -37,6 +37,7 @@ public class HttpModule extends AbstractModule {
         at("/testservice").serve(ExampleService.class);
 
         at("/r/controllers").serve(ApControllerService.class);
+        at("/r/aps").serve(AccessPointService.class);
       }
     });
   }

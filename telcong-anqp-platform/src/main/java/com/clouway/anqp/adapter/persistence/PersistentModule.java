@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.persistence;
 
+import com.clouway.anqp.AccessPointRepository;
 import com.clouway.anqp.ApControllerRepository;
 import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
@@ -18,6 +19,7 @@ public class PersistentModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(ApControllerRepository.class).to(PersistentApControllerRepository.class).in(Singleton.class);
+    bind(AccessPointRepository.class).to(PersistentAccessPointRepository.class).in(Singleton.class);
   }
 
   @Provides
