@@ -39,6 +39,7 @@ public class HttpModule extends AbstractModule {
         at("/r/controllers").serve(ApControllerService.class);
         at("/r/aps").serve(AccessPointService.class);
         at("/r/operators").serve(OperatorService.class);
+        at("/r/roaming-groups").serve(RoamingGroupService.class);
       }
     });
   }
