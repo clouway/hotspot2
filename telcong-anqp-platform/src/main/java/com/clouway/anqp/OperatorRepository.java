@@ -24,6 +24,13 @@ public interface OperatorRepository {
   void update(Operator operator);
 
   /**
+   * Setting of emergency call number information for an operator
+   *
+   * @param newNumber is the new emergency number
+   */
+  void updateEmergencyNumber(NewEmergencyNumber newNumber);
+
+  /**
    * Delete operator
    *
    * @param id of the operator which wi will delete

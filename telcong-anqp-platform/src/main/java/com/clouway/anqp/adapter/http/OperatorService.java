@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.NewEmergencyNumber;
 import com.clouway.anqp.NewOperator;
 import com.clouway.anqp.Operator;
 import com.clouway.anqp.OperatorRepository;
@@ -74,6 +75,17 @@ public class OperatorService {
     return Reply.saying().ok();
   }
 
+  @Put
+  @At("/:id/emergency")
+  public Reply<?> updateEmergencyNumber(@Named("id")Object id, Request request) {
+    NewEmergencyNumberDTO dto = request.read(NewEmergencyNumberDTO.class).as(Json.class);
+    NewEmergencyNumber newNumber = adapt(id, dto);
+
+    repository.updateEmergencyNumber(newNumber);
+
+    return Reply.saying().ok();
+  }
+
   @Delete
   @At("/:id")
   public Reply<?> delete(@Named("id") Object id) {
@@ -82,8 +94,12 @@ public class OperatorService {
     return Reply.saying().ok();
   }
 
+  private NewEmergencyNumber adapt(Object id, NewEmergencyNumberDTO dto) {
+    return new NewEmergencyNumber(id, dto.value);
+  }
+
   private Operator adapt(Object id, OperatorDTO dto) {
-    return new Operator(id, dto.name, dto.description, dto.domainName, dto.friendlyName);
+    return new Operator(id, dto.name, dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
   }
 
   private List<OperatorDTO> adapt(List<Operator> operators) {
@@ -97,10 +113,10 @@ public class OperatorService {
   }
 
   private OperatorDTO adapt(Operator operator) {
-    return new OperatorDTO(operator.id, operator.name, operator.description, operator.domainName, operator.friendlyName);
+    return new OperatorDTO(operator.id, operator.name, operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
   }
 
   private NewOperator adapt(NewOperatorDTO dto) {
-    return new NewOperator(dto.name, dto.description, dto.domainName, dto.friendlyName);
+    return new NewOperator(dto.name, dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
   }
 }
