@@ -177,6 +177,13 @@
                 <include>com.squareup.okhttp:okhttp</include>
                 <include>com.squareup.okio:okio</include>
                 <include>org.slf4j:slf4j-api</include>
+
+                <include>javax.validation:validation-api</include>
+                <include>org.hibernate:hibernate-validator</include>
+                <include>javax.xml.bind:jaxb-api</include>
+                <include>javax.xml.stream:stax-api</include>
+                <include>javax.activation:activation</include>
+                <include>com.sun.xml.bind:jaxb-impl</include>
               </includes>
               <rules>
 
@@ -202,8 +209,7 @@
   </build>
 
   <dependencies>
-
-    <!-- HTTP Library  -->
+    <!--HTTP Helper Dependencies-->
     <dependency>
       <groupId>com.squareup.okhttp</groupId>
       <artifactId>okhttp</artifactId>
@@ -216,7 +222,6 @@
       <version>1.1.35</version>
       <scope>test</scope>
     </dependency>
-
 
     <!-- REST and HTML Rendering support. -->
     <dependency>
@@ -380,6 +385,19 @@
       <artifactId>fongo</artifactId>
       <version>2.0.4</version>
       <scope>test</scope>
+    </dependency>
+
+    <!--Validation Dependencies-->
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>1.0.0.GA</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>4.0.2.GA</version>
     </dependency>
 
   </dependencies>

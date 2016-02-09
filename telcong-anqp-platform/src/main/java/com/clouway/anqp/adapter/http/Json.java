@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  *
@@ -22,22 +23,25 @@ class Json implements Transport {
   private final static Logger logger = LoggerFactory.getLogger("RequestLogger");
 
   private final Gson gson;
+  private final ObjectValidator objectValidator;
 
   @Inject
-  public Json(Gson gson) {
+  public Json(Gson gson,ObjectValidator objectValidator) {
     this.gson = gson;
+    this.objectValidator = objectValidator;
   }
 
   @Override
   public <T> T in(InputStream input, Class<T> tClass) throws IOException {
     T entity = gson.fromJson(createReader(input), tClass);
+    check(entity);
     return entity;
   }
 
   @Override
   public <T> T in(InputStream input, TypeLiteral<T> typeLiteral) throws IOException {
     T entity = gson.fromJson(createReader(input), typeLiteral.getType());
-
+    check(entity);
     return entity;
   }
 
@@ -60,5 +64,13 @@ class Json implements Transport {
     logger.debug("INPUT - {}", new String(out.toByteArray()));
 
     return new InputStreamReader(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
+  }
+
+  private <T> void check(T entity) {
+    List<Error> errors = objectValidator.validate(entity);
+    boolean hasErrors = errors.size() > 0;
+    if (hasErrors) {
+      throw new ValidationException(errors);
+    }
   }
 }

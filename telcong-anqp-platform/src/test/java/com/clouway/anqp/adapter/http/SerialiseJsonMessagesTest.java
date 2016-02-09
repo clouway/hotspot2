@@ -1,6 +1,9 @@
 package com.clouway.anqp.adapter.http;
 
 import com.google.gson.Gson;
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JUnitRuleMockery;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -15,9 +18,12 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 
 /**
- *
  */
 public class SerialiseJsonMessagesTest {
+  @Rule
+  public JUnitRuleMockery context = new JUnitRuleMockery();
+
+  private ObjectValidator validator = context.mock(ObjectValidator.class);
 
   static class Person {
     public final String name;
@@ -43,7 +49,11 @@ public class SerialiseJsonMessagesTest {
 
   @Test
   public void happyPath() throws IOException {
-    Person person = new Person("test", 20, new Date(100000000l));
+    final Person person = new Person("test", 20, new Date(100000000l));
+
+    context.checking(new Expectations() {{
+      oneOf(validator).validate(with(any(Object.class)));
+    }});
 
     Person result = serializeAndDeserialize(Person.class, person);
 
@@ -58,6 +68,10 @@ public class SerialiseJsonMessagesTest {
   public void partialObject() {
     Person person = new Person(null, 20, null);
 
+    context.checking(new Expectations() {{
+      oneOf(validator).validate(with(any(Object.class)));
+    }});
+
     Person result = serializeAndDeserialize(Person.class, person);
 
     assertThat(result, is(notNullValue()));
@@ -68,8 +82,11 @@ public class SerialiseJsonMessagesTest {
   @Test
   @SuppressWarnings("unchecked")
   public void anotherObject() {
-
     Device device = new Device("device1", "HotSpot2 Certified");
+
+    context.checking(new Expectations() {{
+      oneOf(validator).validate(with(any(Object.class)));
+    }});
 
     Device result = serializeAndDeserialize(Device.class, device);
 
@@ -80,7 +97,8 @@ public class SerialiseJsonMessagesTest {
 
   private <T> T serializeAndDeserialize(Class<T> clazz, T value) {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    Json transport = new Json(new Gson());
+
+    Json transport = new Json(new Gson(), validator);
 
     try {
       transport.out(bout, clazz, value);
