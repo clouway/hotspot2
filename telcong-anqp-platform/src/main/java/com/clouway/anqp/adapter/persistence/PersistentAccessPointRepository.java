@@ -71,14 +71,14 @@ class PersistentAccessPointRepository implements AccessPointRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new AccessPoint(entity.getId(), entity.getIp(), new MacAddress(entity.getMac()), entity.getSerialNumber(), entity.getModel()));
+    return Optional.of(new AccessPoint(entity._id, entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model));
   }
 
   private List<AccessPoint> adapt(List<AccessPointEntity> entities) {
     List<AccessPoint> aps = Lists.newArrayList();
 
     for (AccessPointEntity entity : entities) {
-      aps.add(new AccessPoint(entity.getId(), entity.getIp(), new MacAddress(entity.getMac()), entity.getSerialNumber(), entity.getModel()));
+      aps.add(new AccessPoint(entity._id, entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model));
     }
 
     return aps;

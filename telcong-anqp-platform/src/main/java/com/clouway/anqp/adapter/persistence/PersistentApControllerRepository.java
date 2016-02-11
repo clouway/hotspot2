@@ -71,14 +71,14 @@ class PersistentApControllerRepository implements ApControllerRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new ApController(entity.getId(), entity.getIp(), new MacAddress(entity.getMac()), entity.getSerialNumber(), entity.getModel()));
+    return Optional.of(new ApController(entity._id, entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model));
   }
 
   private List<ApController> adapt(List<ApControllerEntity> entities) {
     List<ApController> controllers = Lists.newArrayList();
 
     for (ApControllerEntity entity : entities) {
-      controllers.add(new ApController(entity.getId(), entity.getIp(), new MacAddress(entity.getMac()), entity.getSerialNumber(), entity.getModel()));
+      controllers.add(new ApController(entity._id, entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model));
     }
 
     return controllers;

@@ -25,13 +25,9 @@ public abstract class DatastoreContract {
 
   @Kind("person")
   static class Person {
-
-    @Id
     @SuppressWarnings("unused")
-    private Long id;
-
+    private Long _id;
     private String name;
-
     public int age;
 
     @SuppressWarnings("unused")
@@ -40,12 +36,12 @@ public abstract class DatastoreContract {
     }
 
     public Person(Long id, String name) {
-      this.id = id;
+      this._id = id;
       this.name = name;
     }
 
     public Person(Long id, String name, int age) {
-      this.id = id;
+      this._id = id;
       this.name = name;
       this.age = age;
     }
@@ -58,7 +54,7 @@ public abstract class DatastoreContract {
       Person person = (Person) o;
 
       if (age != person.age) return false;
-      if (id != null ? !id.equals(person.id) : person.id != null) return false;
+      if (_id != null ? !_id.equals(person._id) : person._id != null) return false;
       if (name != null ? !name.equals(person.name) : person.name != null) return false;
 
       return true;
@@ -66,7 +62,7 @@ public abstract class DatastoreContract {
 
     @Override
     public int hashCode() {
-      int result = id != null ? id.hashCode() : 0;
+      int result = _id != null ? _id.hashCode() : 0;
       result = 31 * result + (name != null ? name.hashCode() : 0);
       result = 31 * result + age;
       return result;
@@ -75,7 +71,7 @@ public abstract class DatastoreContract {
     @Override
     public String toString() {
       return "Person{" +
-              "id=" + id +
+              "id=" + _id +
               ", name='" + name + '\'' +
               ", age=" + age +
               '}';
@@ -87,7 +83,7 @@ public abstract class DatastoreContract {
 
     @Id
     @SuppressWarnings("unused")
-    private Long id;
+    private Long _id;
 
     private String name;
 
@@ -97,16 +93,15 @@ public abstract class DatastoreContract {
     }
 
     public Address(Long id, String name) {
-      this.id = id;
+      this._id = id;
       this.name = name;
     }
   }
 
 
   static class UnmappedClass {
-    @Id
     @SuppressWarnings("unused")
-    private String id;
+    private String _id;
 
     @SuppressWarnings("unused")
     private String name;
@@ -115,20 +110,25 @@ public abstract class DatastoreContract {
 
   @Kind("cclass")
   static class CollectionClass {
-    @Id
-    private String id;
-
+    private String _id;
     private List<String> names = new LinkedList<String>();
 
     public CollectionClass() {
     }
 
     public CollectionClass(String id, List<String> names) {
-      this.id = id;
+      this._id = id;
       this.names = names;
     }
-  }
 
+    public String getId() {
+      return _id;
+    }
+
+    public List<String> getNames() {
+      return names;
+    }
+  }
 
   private Datastore datastore;
 
@@ -148,12 +148,12 @@ public abstract class DatastoreContract {
   @Test
   public void findByStringId() {
     CollectionClass c = new CollectionClass();
-    c.id = "id1";
+    c._id = "id1";
     datastore.save(c);
 
     CollectionClass existing = datastore.findById(CollectionClass.class, "id1");
     assertThat(existing, is(not(nullValue())));
-    assertThat(existing.id, is("id1"));
+    assertThat(existing._id, is("id1"));
   }
 
   @Test
@@ -203,12 +203,11 @@ public abstract class DatastoreContract {
   @Test(expected = IllegalStateException.class)
   public void classesThatAreNotUsingKindAndAreNotMappedShouldThrowExceptions() {
     UnmappedClass e1 = new UnmappedClass();
-    e1.id = "123";
+    e1._id = "123";
     e1.name = "test1";
 
     datastore.save(e1);
   }
-
 
   @Test
   public void findSingleEntity() {
@@ -239,13 +238,13 @@ public abstract class DatastoreContract {
   @Test
   public void storeCollectionsOfStrings() {
     CollectionClass c1 = new CollectionClass();
-    c1.id = "123";
+    c1._id = "123";
     c1.names.addAll(Arrays.asList("test1", "test2", "test3"));
 
     datastore.save(c1);
 
-    CollectionClass expected = datastore.findById(CollectionClass.class, c1.id);
-    assertThat(expected.id, is(equalTo(c1.id)));
+    CollectionClass expected = datastore.findById(CollectionClass.class, c1._id);
+    assertThat(expected._id, is(equalTo(c1._id)));
     assertThat(expected.names, is(equalTo(c1.names)));
   }
 
@@ -341,7 +340,7 @@ public abstract class DatastoreContract {
     datastore.save(steven);
 
     steven.age = 15;
-    datastore.upsert(steven, where("_id").is(steven.id));
+    datastore.upsert(steven, where("_id").is(steven._id));
 
     Person existingPerson = datastore.findById(Person.class, 1l);
     assertThat(existingPerson.age, is(john.age));
@@ -468,7 +467,7 @@ public abstract class DatastoreContract {
 
     List<Person> result = datastore.findAllObjectsByFilter(Person.class, where("_id").isGreaterThen(1l));
     assertThat(result.size(), is(1));
-    assertThat(result.get(0).id, is(2l));
+    assertThat(result.get(0)._id, is(2l));
   }
 
   protected void assertFirstPersonIs(List<Person> personList, String expectedName) {

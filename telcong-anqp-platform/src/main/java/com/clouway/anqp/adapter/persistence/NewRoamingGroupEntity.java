@@ -7,9 +7,9 @@ import com.clouway.anqp.api.datastore.Kind;
  */
 @Kind("rgroups")
 class NewRoamingGroupEntity {
-  final String name;
-  final String description;
-  final RoamingGroupType type;
+  String name;
+  String description;
+  RoamingGroupType type;
 
   NewRoamingGroupEntity(String name, String description, RoamingGroupType type) {
     this.name = name;

@@ -68,7 +68,7 @@ class PersistentOperatorRepository implements OperatorRepository {
     List<Operator> operators = Lists.newArrayList();
 
     for(OperatorEntity entity : entities) {
-      operators.add(new Operator(entity.getId(), entity.getName(), entity.getDescription(), entity.getDomainName(), entity.getFriendlyName(), entity.getEmergencyNumber()));
+      operators.add(new Operator(entity._id, entity.name, entity.description, entity.domainName, entity.friendlyName,entity.emergencyNumber));
     }
 
     return operators;
@@ -79,7 +79,7 @@ class PersistentOperatorRepository implements OperatorRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new Operator(entity.getId(), entity.getName(), entity.getDescription(), entity.getDomainName(), entity.getFriendlyName(), entity.getEmergencyNumber()));
+    return Optional.of(new Operator(entity._id, entity.name, entity.description, entity.domainName, entity.friendlyName,entity.emergencyNumber));
   }
 
   private OperatorEntity adapt(Operator operator) {

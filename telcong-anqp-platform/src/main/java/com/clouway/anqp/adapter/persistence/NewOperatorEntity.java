@@ -6,11 +6,11 @@ import com.clouway.anqp.api.datastore.Kind;
  */
 @Kind("operators")
 class NewOperatorEntity {
-  final String name;
-  final String description;
-  final String domainName;
-  final String friendlyName;
-  final String emergencyNumber;
+   String name;
+   String description;
+   String domainName;
+   String friendlyName;
+   String emergencyNumber;
 
   NewOperatorEntity(String name, String description, String domainName, String friendlyName, String emergencyNumber) {
     this.name = name;

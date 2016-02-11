@@ -63,14 +63,14 @@ class PersistentRoamingGroupRepository implements RoamingGroupRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new RoamingGroup(entity.getId(), entity.getName(), entity.getDescription(), entity.getType()));
+    return Optional.of(new RoamingGroup(entity._id, entity.name, entity.description, entity.type));
   }
 
   private List<RoamingGroup> adapt(List<RoamingGroupEntity> entities) {
     List<RoamingGroup> groups = Lists.newArrayList();
 
     for (RoamingGroupEntity entity : entities) {
-      groups.add(new RoamingGroup(entity.getId(), entity.getName(), entity.getDescription(), entity.getType()));
+      groups.add(new RoamingGroup(entity._id, entity.name, entity.description, entity.type));
     }
 
     return groups;

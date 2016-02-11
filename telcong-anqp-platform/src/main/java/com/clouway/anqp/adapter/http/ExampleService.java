@@ -16,5 +16,4 @@ class ExampleService {
   public Reply<?> serveExample() {
     return Reply.with("test message").ok();
   }
-
 }

@@ -184,6 +184,11 @@
                 <include>javax.xml.stream:stax-api</include>
                 <include>javax.activation:activation</include>
                 <include>com.sun.xml.bind:jaxb-impl</include>
+
+                <include>de.undercouch:bson4jackson</include>
+                <include>com.fasterxml.jackson.core:jackson-annotations</include>
+                <include>com.fasterxml.jackson.core:jackson-core</include>
+                <include>com.fasterxml.jackson.core:jackson-databind</include>
               </includes>
               <rules>
 
@@ -398,6 +403,12 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
       <version>4.0.2.GA</version>
+    </dependency>
+    <!--Jackson BSON-->
+    <dependency>
+      <groupId>de.undercouch</groupId>
+      <artifactId>bson4jackson</artifactId>
+      <version>2.7.0</version>
     </dependency>
 
   </dependencies>
