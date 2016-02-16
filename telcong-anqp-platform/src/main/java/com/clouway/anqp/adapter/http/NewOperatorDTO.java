@@ -12,13 +12,16 @@ class NewOperatorDTO {
   final String domainName;
   final String friendlyName;
   final String emergencyNumber;
+  @IpType
+  final String ipType;
 
-  NewOperatorDTO(String name, String state, String description, String domainName, String friendlyName, String emergencyNumber) {
+  NewOperatorDTO(String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipType) {
     this.name = name;
     this.state = state;
     this.description = description;
     this.domainName = domainName;
     this.friendlyName = friendlyName;
     this.emergencyNumber = emergencyNumber;
+    this.ipType = ipType;
   }
 }

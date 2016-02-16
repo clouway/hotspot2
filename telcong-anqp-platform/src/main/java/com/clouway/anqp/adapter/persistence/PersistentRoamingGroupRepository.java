@@ -121,7 +121,9 @@ class PersistentRoamingGroupRepository implements RoamingGroupRepository {
     List<Operator> operators = Lists.newArrayList();
 
     for (OperatorEntity entity : entities) {
-      operators.add(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber));
+      IpType ipType = IpType.valueOf(entity.ipType);
+
+      operators.add(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber, ipType));
     }
 
     return operators;

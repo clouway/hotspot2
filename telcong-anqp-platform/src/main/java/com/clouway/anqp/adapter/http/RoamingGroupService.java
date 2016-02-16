@@ -1,6 +1,12 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.*;
+import com.clouway.anqp.ID;
+import com.clouway.anqp.NewRoamingGroup;
+import com.clouway.anqp.Operator;
+import com.clouway.anqp.RoamingGroup;
+import com.clouway.anqp.RoamingGroupRepository;
+import com.clouway.anqp.RoamingGroupRequest;
+import com.clouway.anqp.RoamingGroupType;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -74,8 +80,9 @@ public class RoamingGroupService {
 
   @Put
   @At("/:id/operators/assign")
-  public Reply<?> assignOperators(@Named("id")Object id, Request request) {
-    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {}).as(Json.class);
+  public Reply<?> assignOperators(@Named("id") Object id, Request request) {
+    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {
+    }).as(Json.class);
     List<ID> ids = adaptToID(dtos);
 
     repository.assignOperators(new ID(id), ids);
@@ -85,9 +92,10 @@ public class RoamingGroupService {
 
   @Put
   @At("/:id/operators/remove")
-  public Reply<?> removeOperators(@Named("id")Object id, Request request) {
-    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {}).as(Json.class);
-    List<ID> ids =  adaptToID(dtos);
+  public Reply<?> removeOperators(@Named("id") Object id, Request request) {
+    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {
+    }).as(Json.class);
+    List<ID> ids = adaptToID(dtos);
 
     repository.removeOperators(new ID(id), ids);
 
@@ -134,7 +142,7 @@ public class RoamingGroupService {
     List<OperatorDTO> dtos = Lists.newArrayList();
 
     for (Operator operator : operators) {
-      dtos.add(new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber));
+      dtos.add(new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name()));
     }
 
     return dtos;

@@ -17,5 +17,7 @@ public interface AccessPointRepository {
 
   Optional<AccessPoint> findByIp(String ip);
 
+  QueryList findQueryList(Object id);
+
   List<AccessPoint> findAll();
 }

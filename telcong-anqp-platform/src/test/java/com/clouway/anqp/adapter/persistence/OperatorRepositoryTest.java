@@ -35,19 +35,19 @@ public class OperatorRepositoryTest {
 
   @Test(expected = OperatorException.class)
   public void createOperatorWithExistingName() throws Exception {
-    NewOperator someOperator = new NewOperator("sameName", OperatorState.ACTIVE, "descr", "dName", "fName", "emergency");
+    NewOperator someOperator = new NewOperator("sameName", OperatorState.ACTIVE, "descr", "dName", "fName", "emergency", IpType.PUBLIC);
     operRepository.create(someOperator);
 
-    NewOperator anotherOperator = new NewOperator("sameName", OperatorState.ACTIVE, "anotherDescr", "anotherDName", "anotherFName", "anotherEmergencyNumber");
+    NewOperator anotherOperator = new NewOperator("sameName", OperatorState.ACTIVE, "anotherDescr", "anotherDName", "anotherFName", "anotherEmergencyNumber", IpType.PUBLIC);
     operRepository.create(anotherOperator);
   }
 
   @Test
   public void findById() throws Exception {
-    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber"));
+    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", IpType.PUBLIC));
 
     Operator got = operRepository.findById(new ID(id)).get();
-    Operator want = new Operator(new ID(id), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
+    Operator want = new Operator(new ID(id), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", IpType.PUBLIC);
 
     assertThat(got, deepEquals(want));
   }
@@ -61,13 +61,13 @@ public class OperatorRepositoryTest {
 
   @Test
   public void findAll() throws Exception {
-    Object id1 = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1"));
-    Object id2 = operRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber2"));
+    Object id1 = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", IpType.PUBLIC));
+    Object id2 = operRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber2", IpType.PUBLIC));
 
     List<Operator> got = operRepository.findAll();
     List<Operator> want = Lists.newArrayList(
-            new Operator(new ID(id1), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1"),
-            new Operator(new ID(id2), "name2", OperatorState.INACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber2")
+            new Operator(new ID(id1), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", IpType.PUBLIC),
+            new Operator(new ID(id2), "name2", OperatorState.INACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber2", IpType.PUBLIC)
     );
 
     assertThat(got, deepEquals(want));
@@ -75,9 +75,22 @@ public class OperatorRepositoryTest {
 
   @Test
   public void update() throws Exception {
-    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123"));
+    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", IpType.PUBLIC));
 
-    Operator operator = new Operator(new ID(id), "newName", OperatorState.INACTIVE, "newDescription", "newDomainName", "newFriendlyName", "*88");
+    Operator operator = new Operator(new ID(id), "newName", OperatorState.INACTIVE, "newDescription", "newDomainName", "newFriendlyName", "*88", IpType.PUBLIC);
+
+    operRepository.update(operator);
+
+    Operator found = operRepository.findById(new ID(id)).get();
+
+    assertThat(found, deepEquals(operator));
+  }
+
+  @Test
+  public void updateOperatorName() throws Exception {
+    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", IpType.PUBLIC));
+
+    Operator operator = new Operator(new ID(id), "newName", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", IpType.PUBLIC);
 
     operRepository.update(operator);
 
@@ -88,59 +101,59 @@ public class OperatorRepositoryTest {
 
   @Test(expected = OperatorException.class)
   public void updateOperatorWithReservedName() throws Exception {
-    Object someID = operRepository.create(new NewOperator("someName", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123"));
-    operRepository.create(new NewOperator("existName", OperatorState.ACTIVE, "anotherDescription", "anotherDomainName", "anotherFriendlyName", "1234"));
+    Object someID = operRepository.create(new NewOperator("someName", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", IpType.PUBLIC));
+    operRepository.create(new NewOperator("existName", OperatorState.ACTIVE, "anotherDescription", "anotherDomainName", "anotherFriendlyName", "1234", IpType.PUBLIC));
 
-    Operator operator = new Operator(new ID(someID), "existName", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123");
+    Operator operator = new Operator(new ID(someID), "existName", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", IpType.PUBLIC);
 
     operRepository.update(operator);
   }
 
   @Test
   public void activate() throws Exception {
-    Object someID = operRepository.create(new NewOperator("name1", OperatorState.INACTIVE, "description1", "dName1", "fName1", "112"));
-    Object anotherID = operRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "911"));
+    Object someID = operRepository.create(new NewOperator("name1", OperatorState.INACTIVE, "description1", "dName1", "fName1", "112", IpType.PUBLIC));
+    Object anotherID = operRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "911", IpType.PUBLIC));
 
     operRepository.activate(new ID(someID));
 
     List<Operator> got = operRepository.findAll();
     List<Operator> want = Lists.newArrayList(
-            new Operator(new ID(anotherID), "name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "911"),
-            new Operator(new ID(someID), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "112")
+            new Operator(new ID(anotherID), "name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "911", IpType.PUBLIC),
+            new Operator(new ID(someID), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "112", IpType.PUBLIC)
     );
 
     assertThat(got, deepEquals(want));
   }
 
-  @Test (expected = NotFoundException.class)
+  @Test(expected = NotFoundException.class)
   public void activateUnknownOperator() throws Exception {
     operRepository.activate(new ID("id"));
   }
 
   @Test
   public void deactivate() throws Exception {
-    Object someID = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "112"));
-    Object anotherID = operRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "911"));
+    Object someID = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "112", IpType.PUBLIC));
+    Object anotherID = operRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "911", IpType.PUBLIC));
 
     operRepository.deactivate(new ID(someID));
 
     List<Operator> got = operRepository.findAll();
     List<Operator> want = Lists.newArrayList(
-            new Operator(new ID(anotherID), "name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "911"),
-            new Operator(new ID(someID), "name1", OperatorState.INACTIVE, "description1", "dName1", "fName1", "112")
+            new Operator(new ID(anotherID), "name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "911", IpType.PUBLIC),
+            new Operator(new ID(someID), "name1", OperatorState.INACTIVE, "description1", "dName1", "fName1", "112", IpType.PUBLIC)
     );
 
     assertThat(got, deepEquals(want));
   }
 
-  @Test (expected = NotFoundException.class)
+  @Test(expected = NotFoundException.class)
   public void deactivateUnknownOperator() throws Exception {
     operRepository.deactivate(new ID("id"));
   }
 
   @Test(expected = OperatorException.class)
   public void deactivateOperatorAssignedToRoamingGroup() throws Exception {
-    Object operID = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "112"));
+    Object operID = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "112", IpType.PUBLIC));
     Object groupID = groupRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.NATIONAL));
 
     groupRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID)));
@@ -150,8 +163,8 @@ public class OperatorRepositoryTest {
 
   @Test
   public void setEmergencyNumber() throws Exception {
-    Object id1 = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "911"));
-    Object id2 = operRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "1234"));
+    Object id1 = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "911", IpType.PUBLIC));
+    Object id2 = operRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "1234", IpType.PUBLIC));
 
 
     NewEmergencyNumber number = new NewEmergencyNumber(new ID(id1), "112");
@@ -160,8 +173,8 @@ public class OperatorRepositoryTest {
 
     List<Operator> got = operRepository.findAll();
     List<Operator> want = Lists.newArrayList(
-            new Operator(new ID(id2), "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "1234"),
-            new Operator(new ID(id1), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "112")
+            new Operator(new ID(id2), "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "1234", IpType.PUBLIC),
+            new Operator(new ID(id1), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "112", IpType.PUBLIC)
     );
 
     assertThat(got, deepEquals(want));
@@ -169,8 +182,8 @@ public class OperatorRepositoryTest {
 
   @Test(expected = EmergencyNumberException.class)
   public void setAlreadyExistingEmergencyNumber() throws Exception {
-    Object id1 = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "911"));
-    operRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "112"));
+    Object id1 = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "911", IpType.PUBLIC));
+    operRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "112", IpType.PUBLIC));
 
     NewEmergencyNumber number = new NewEmergencyNumber(new ID(id1), "112");
     operRepository.updateEmergencyNumber(number);
@@ -178,7 +191,7 @@ public class OperatorRepositoryTest {
 
   @Test
   public void deleteById() throws Exception {
-    Object id = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1"));
+    Object id = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", IpType.PUBLIC));
 
     operRepository.delete(new ID(id));
 
@@ -189,7 +202,7 @@ public class OperatorRepositoryTest {
 
   @Test
   public void deleteByUnknownId() throws Exception {
-    operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber"));
+    operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", IpType.PUBLIC));
     operRepository.delete(new ID("id"));
 
     List<Operator> found = operRepository.findAll();

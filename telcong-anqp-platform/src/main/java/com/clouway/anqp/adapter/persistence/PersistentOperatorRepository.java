@@ -1,13 +1,6 @@
 package com.clouway.anqp.adapter.persistence;
 
-import com.clouway.anqp.ID;
-import com.clouway.anqp.EmergencyNumberException;
-import com.clouway.anqp.NewEmergencyNumber;
-import com.clouway.anqp.NewOperator;
-import com.clouway.anqp.Operator;
-import com.clouway.anqp.OperatorException;
-import com.clouway.anqp.OperatorRepository;
-import com.clouway.anqp.OperatorState;
+import com.clouway.anqp.*;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
 import com.clouway.anqp.api.datastore.UpdateStatement;
@@ -112,7 +105,9 @@ class PersistentOperatorRepository implements OperatorRepository {
     List<Operator> operators = Lists.newArrayList();
 
     for(OperatorEntity entity : entities) {
-      operators.add(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber));
+      IpType ipType = IpType.valueOf(entity.ipType);
+
+      operators.add(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber, ipType));
     }
 
     return operators;
@@ -123,14 +118,16 @@ class PersistentOperatorRepository implements OperatorRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber));
+    IpType ipType = IpType.valueOf(entity.ipType);
+
+    return Optional.of(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber, ipType));
   }
 
   private OperatorEntity adapt(Operator operator) {
-    return new OperatorEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
+    return new OperatorEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
   }
 
   private NewOperatorEntity adapt(NewOperator operator) {
-    return  new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
+    return  new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
   }
 }

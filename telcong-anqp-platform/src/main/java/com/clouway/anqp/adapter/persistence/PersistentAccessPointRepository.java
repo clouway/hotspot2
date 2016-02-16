@@ -3,6 +3,7 @@ package com.clouway.anqp.adapter.persistence;
 import com.clouway.anqp.*;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
+import com.clouway.anqp.core.NotFoundException;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -15,14 +16,22 @@ import static com.clouway.anqp.VenueName.defaultName;
  */
 class PersistentAccessPointRepository implements AccessPointRepository {
   private final Datastore datastore;
+  private final IpTypeCatalog catalog;
 
   @Inject
-  public PersistentAccessPointRepository(Datastore datastore) {
+  public PersistentAccessPointRepository(Datastore datastore, IpTypeCatalog catalog) {
     this.datastore = datastore;
+    this.catalog = catalog;
   }
 
   @Override
   public Object create(NewAccessPoint ap) {
+    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(ap.operatorId));
+
+    if (count == 0) {
+      throw new NotFoundException("AP creation failed due to non-existing operator");
+    }
+
     return datastore.save(adapt(ap));
   }
 
@@ -57,12 +66,27 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     return adapt(entities);
   }
 
-  private NewAccessPointEntity adapt(NewAccessPoint ap) {
-    return new NewAccessPointEntity(ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
+  @Override
+  public QueryList findQueryList(Object id) {
+    AccessPointEntity apEntity = datastore.findById(AccessPointEntity.class, id);
+
+    if (apEntity == null) {
+      throw new NotFoundException("Unsuccessful retrieving of query list due to missing AP");
+    }
+
+    OperatorEntity operatorEntity = datastore.findById(OperatorEntity.class, apEntity.operatorId);
+
+    if (operatorEntity == null) {
+      throw new NotFoundException("Unsuccessful retrieving of query list due to missing operator");
+    }
+
+    Optional<Integer> response = catalog.findId(operatorEntity.ipType);
+
+    return new QueryList(response.get());
   }
 
-  private AccessPointEntity adapt(AccessPoint ap) {
-    return new AccessPointEntity(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
+  private NewAccessPointEntity adapt(NewAccessPoint ap) {
+    return new NewAccessPointEntity(ap.operatorId, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
   }
 
   private Optional<AccessPoint> adapt(AccessPointEntity entity) {
@@ -94,7 +118,7 @@ class PersistentAccessPointRepository implements AccessPointRepository {
   }
 
   private Venue adapt(VenueEntity entity) {
-    if(entity.venueNames.isEmpty()){
+    if (entity.venueNames.isEmpty()) {
       return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), Lists.newArrayList(defaultName()));
     }
     List<VenueName> names = Lists.newArrayList();
@@ -104,5 +128,9 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     }
 
     return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), names);
+  }
+
+  private AccessPointRequestEntity adapt(AccessPoint ap) {
+    return new AccessPointRequestEntity(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
   }
 }

@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.IpType.PUBLIC;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isOk;
@@ -36,8 +37,8 @@ public class OperatorServiceTest {
 
   @Test
   public void create() throws Exception {
-    final NewOperator operator = new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
-    final NewOperatorDTO dto = new NewOperatorDTO("name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber");
+    final NewOperator operator = new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC);
+    final NewOperatorDTO dto = new NewOperatorDTO("name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", "PUBLIC");
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(operator)));
@@ -51,8 +52,8 @@ public class OperatorServiceTest {
 
   @Test
   public void findAll() throws Exception {
-    final Operator operator = new Operator(new ID("id1"), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber");
-    final Operator anotherOperator = new Operator(new ID("id2"), "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber");
+    final Operator operator = new Operator(new ID("id1"), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber", PUBLIC);
+    final Operator anotherOperator = new Operator(new ID("id2"), "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber", PUBLIC);
     final List<Operator> operators = Lists.newArrayList(operator, anotherOperator);
 
     context.checking(new Expectations() {{
@@ -62,8 +63,8 @@ public class OperatorServiceTest {
 
     Reply<?> reply = service.findAll();
     List<OperatorDTO> expected = Lists.newArrayList(
-            new OperatorDTO("id1", "name1", "ACTIVE", "description1", "domainName1", "friendlyName1", "emergencyNumber"),
-            new OperatorDTO("id2", "name2", "ACTIVE", "description2", "domainName2", "friendlyName2", "emergencyNumber")
+            new OperatorDTO("id1", "name1", "ACTIVE", "description1", "domainName1", "friendlyName1", "emergencyNumber", "PUBLIC"),
+            new OperatorDTO("id2", "name2", "ACTIVE", "description2", "domainName2", "friendlyName2", "emergencyNumber", "PUBLIC")
     );
 
     assertThat(reply, containsValue(expected));
@@ -72,7 +73,7 @@ public class OperatorServiceTest {
 
   @Test
   public void findById() throws Exception {
-    final Operator operator = new Operator(new ID("id"), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
+    final Operator operator = new Operator(new ID("id"), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC);
 
     context.checking(new Expectations() {{
       oneOf(repository).findById(with(matching(new ID("id"))));
@@ -80,7 +81,7 @@ public class OperatorServiceTest {
     }});
 
     Reply<?> replay = service.findById("id");
-    OperatorDTO expected = new OperatorDTO("id", "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber");
+    OperatorDTO expected = new OperatorDTO("id", "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", "PUBLIC");
 
     assertThat(replay, containsValue(expected));
     assertThat(replay, isOk());
@@ -100,8 +101,8 @@ public class OperatorServiceTest {
 
   @Test
   public void update() throws Exception {
-    final Operator operator = new Operator(new ID(1), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
-    final OperatorDTO dto = new OperatorDTO(1, "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber");
+    final Operator operator = new Operator(new ID(1), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC);
+    final OperatorDTO dto = new OperatorDTO(1, "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC.name());
 
     context.checking(new Expectations() {{
       oneOf(repository).update(with(matching(operator)));

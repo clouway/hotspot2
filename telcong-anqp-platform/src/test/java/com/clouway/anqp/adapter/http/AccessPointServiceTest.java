@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.core.NotFoundException;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -25,7 +26,7 @@ public class AccessPointServiceTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
-  private AccessPointRepository repository = context.mock(AccessPointRepository.class);
+  private final AccessPointRepository repository = context.mock(AccessPointRepository.class);
 
   private AccessPointService service = new AccessPointService(repository);
 
@@ -34,8 +35,8 @@ public class AccessPointServiceTest {
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
     Venue venue = new Venue(new VenueGroup(venueDTO.group), new VenueType(venueDTO.type), Lists.newArrayList(new VenueName("info", new Language("en"))));
 
-    final NewAccessPoint ap = new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model", venue);
-    final NewAccessPointDTO dto = new NewAccessPointDTO("ip", "aa:bb", "sn", "model", venueDTO);
+    final NewAccessPoint ap = new NewAccessPoint("operatorId","ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId","ip", "aa:bb", "sn", "model", venueDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(ap)));
@@ -45,6 +46,23 @@ public class AccessPointServiceTest {
     Reply<?> reply = service.create(request);
 
     assertThat(reply, isOk());
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void failedCreation() throws Exception {
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
+    Venue venue = new Venue(new VenueGroup(venueDTO.group), new VenueType(venueDTO.type), Lists.newArrayList(new VenueName("info", new Language("en"))));
+
+    final NewAccessPoint ap = new NewAccessPoint("operatorId", "ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId", "ip", "aa:bb", "sn", "model", venueDTO);
+
+    context.checking(new Expectations() {{
+      oneOf(repository).create(with(matching(ap)));
+      will(throwException(new NotFoundException("missing operator")));
+    }});
+
+    Request request = makeRequestThatContains(dto);
+    service.create(request);
   }
 
   @Test
@@ -102,6 +120,25 @@ public class AccessPointServiceTest {
     Reply<?> reply = service.findById("id");
 
     assertThat(reply, isNotFound());
+  }
+
+  @Test
+  public void findQueryList() throws Exception {
+    final QueryList queryList = new QueryList(1);
+
+    final String apId = "apId";
+
+    context.checking(new Expectations() {{
+      oneOf(repository).findQueryList(apId);
+      will(returnValue(queryList));
+    }});
+
+    QueryListDTO dto = new QueryListDTO(Lists.newArrayList(1));
+
+    Reply<?> reply = service.findQueryList(apId);
+
+    assertThat(reply, containsValue(dto));
+    assertThat(reply, isOk());
   }
 
   @Test

@@ -1,7 +1,8 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.NewEmergencyNumber;
 import com.clouway.anqp.ID;
+import com.clouway.anqp.IpType;
+import com.clouway.anqp.NewEmergencyNumber;
 import com.clouway.anqp.NewOperator;
 import com.clouway.anqp.Operator;
 import com.clouway.anqp.OperatorRepository;
@@ -40,7 +41,7 @@ public class OperatorService {
 
     repository.create(operator);
 
-    return Reply.saying().ok();
+    return Reply.with("Successfully created operator").ok();
   }
 
   @Get
@@ -54,11 +55,11 @@ public class OperatorService {
 
   @Get
   @At("/:id")
-  public Reply<?> findById(@Named("id")String id) {
+  public Reply<?> findById(@Named("id") String id) {
     Optional<Operator> operator = repository.findById(new ID(id));
 
     if (!operator.isPresent()) {
-      return Reply.saying().notFound();
+      return Reply.with("Not found operator with id " + id).notFound();
     }
 
     OperatorDTO dto = adapt(operator.get());
@@ -74,7 +75,7 @@ public class OperatorService {
 
     repository.update(operator);
 
-    return Reply.saying().ok();
+    return Reply.with("Successfully updated operator").ok();
   }
 
   @Post
@@ -95,7 +96,7 @@ public class OperatorService {
 
   @Put
   @At("/:id/emergency")
-  public Reply<?> updateEmergencyNumber(@Named("id")Object id, Request request) {
+  public Reply<?> updateEmergencyNumber(@Named("id") Object id, Request request) {
     NewEmergencyNumberDTO dto = request.read(NewEmergencyNumberDTO.class).as(Json.class);
     NewEmergencyNumber newNumber = adapt(id, dto);
 
@@ -117,7 +118,9 @@ public class OperatorService {
   }
 
   private Operator adapt(Object id, OperatorDTO dto) {
-    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
+    IpType ipType = IpType.valueOf(dto.ipType);
+
+    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, ipType);
   }
 
   private List<OperatorDTO> adapt(List<Operator> operators) {
@@ -131,10 +134,12 @@ public class OperatorService {
   }
 
   private OperatorDTO adapt(Operator operator) {
-    return new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
+    return new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
   }
 
   private NewOperator adapt(NewOperatorDTO dto) {
-    return new NewOperator(dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
+    IpType ipType = IpType.valueOf(dto.ipType);
+
+    return new NewOperator(dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, ipType);
   }
 }

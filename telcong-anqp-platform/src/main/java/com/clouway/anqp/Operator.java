@@ -10,8 +10,9 @@ public class Operator {
   public final String domainName;
   public final String friendlyName;
   public final String emergencyNumber;
+  public final IpType ipType;
 
-  public Operator(ID id, String name, OperatorState state, String description, String domainName, String friendlyName, String emergencyNumber) {
+  public Operator(ID id, String name, OperatorState state, String description, String domainName, String friendlyName, String emergencyNumber, IpType ipType) {
     this.id = id;
     this.name = name;
     this.state = state;
@@ -19,5 +20,6 @@ public class Operator {
     this.domainName = domainName;
     this.friendlyName = friendlyName;
     this.emergencyNumber = emergencyNumber;
+    this.ipType = ipType;
   }
 }

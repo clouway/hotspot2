@@ -13,8 +13,10 @@ class OperatorDTO {
   final String domainName;
   final String friendlyName;
   final String emergencyNumber;
+  @IpType
+  final String ipType;
 
-  OperatorDTO(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber) {
+  OperatorDTO(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipType) {
     this.id = id;
     this.name = name;
     this.state = state;
@@ -22,5 +24,6 @@ class OperatorDTO {
     this.domainName = domainName;
     this.friendlyName = friendlyName;
     this.emergencyNumber = emergencyNumber;
+    this.ipType = ipType;
   }
 }

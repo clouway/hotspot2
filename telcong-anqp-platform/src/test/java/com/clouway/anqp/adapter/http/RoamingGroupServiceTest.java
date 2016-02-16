@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.IpType;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -12,7 +13,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.clouway.anqp.RoamingGroupBuilder.newRoamingGroup;
 import static com.clouway.anqp.RoamingGroupType.INTERNATIONAL;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
@@ -71,8 +71,8 @@ public class RoamingGroupServiceTest {
 
   @Test
   public void findById() throws Exception {
-    Operator operator = new Operator(new ID(1), "name", OperatorState.ACTIVE, "descr", "dName", "fName", "emergency");
-    OperatorDTO operatorDTO = new OperatorDTO(1, "name", "ACTIVE", "descr", "dName", "fName", "emergency");
+    Operator operator = new Operator(new ID(1), "name", OperatorState.ACTIVE, "descr", "dName", "fName", "emergency", IpType.PUBLIC);
+    OperatorDTO operatorDTO = new OperatorDTO(1, "name", "ACTIVE", "descr", "dName", "fName", "emergency", "PUBLIC");
     final RoamingGroup rg = new RoamingGroup(new ID(1), "name", "description", RoamingGroupType.TROMBONE, Lists.newArrayList(operator));
     final RoamingGroupDTO dto = new RoamingGroupDTO(1, "name", "description", "TROMBONE", Lists.newArrayList(operatorDTO));
 

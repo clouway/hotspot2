@@ -15,12 +15,13 @@ class OperatorEntity {
   String domainName;
   String friendlyName;
   String emergencyNumber;
+  String ipType;
 
   @SuppressWarnings("unused")
   OperatorEntity() {
   }
 
-  OperatorEntity(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber) {
+  OperatorEntity(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipType) {
     this._id = id;
     this.name = name;
     this.state = state;
@@ -28,6 +29,7 @@ class OperatorEntity {
     this.domainName = domainName;
     this.friendlyName = friendlyName;
     this.emergencyNumber = setDefaultValueIfEmpty(emergencyNumber);
+    this.ipType = ipType;
   }
 
   private String setDefaultValueIfEmpty(String emergencyNumber) {

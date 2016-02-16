@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.memory;
 
+import com.clouway.anqp.IpTypeCatalog;
 import com.clouway.anqp.VenueFinder;
 import com.clouway.anqp.VenueGroup;
 import com.clouway.anqp.VenueItem;
@@ -8,6 +9,14 @@ import com.clouway.anqp.VenueTypeList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+
+import java.util.LinkedHashMap;
+
+import static com.clouway.anqp.IpType.NOT_AVAILABLE;
+import static com.clouway.anqp.IpType.PORT_RESTRICTED;
+import static com.clouway.anqp.IpType.PUBLIC;
+import static com.clouway.anqp.IpType.SINGLE_NAT_PRIVATE;
+import static com.clouway.anqp.IpType.UNKNOWN;
 
 /**
  * MemoryModule is a guice module which is used for the In-Memory configuration of the temporary or caching implementations.
@@ -102,4 +111,17 @@ public class MemoryModule extends AbstractModule {
                     new VenueType("motor-bike")
             )));
   }
+
+        @Provides
+        @Singleton
+        public IpTypeCatalog getCatalog() {
+                // The catalog contains only currently supported types
+                return new InMemoryIpTypeCatalog(new LinkedHashMap<String, Integer>() {{
+                        put(NOT_AVAILABLE.name(), 0);
+                        put(PUBLIC.name(), 1);
+                        put(PORT_RESTRICTED.name(), 2);
+                        put(SINGLE_NAT_PRIVATE.name(), 3);
+                        put(UNKNOWN.name(), 7);
+                }});
+        }
 }

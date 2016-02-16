@@ -2,24 +2,20 @@ package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.api.datastore.Kind;
 
-/**
- */
 @Kind("aps")
-class AccessPointEntity {
+class AccessPointRequestEntity {
   Object _id;
-  Object operatorId;
   String ip;
   String mac;
   String serialNumber;
   String model;
   VenueEntity venue;
 
-  AccessPointEntity() {
+  AccessPointRequestEntity() {
   }
 
-  AccessPointEntity(Object id, Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue) {
+  AccessPointRequestEntity(Object id, String ip, String mac, String serialNumber, String model, VenueEntity venue) {
     this._id = id;
-    this.operatorId = operatorId;
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;

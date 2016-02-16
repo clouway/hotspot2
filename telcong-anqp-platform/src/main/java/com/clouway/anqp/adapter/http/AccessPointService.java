@@ -35,7 +35,7 @@ public class AccessPointService {
 
     repository.create(ap);
 
-    return Reply.saying().ok();
+    return Reply.with("Successfully created AP").ok();
   }
 
   @Get
@@ -58,6 +58,16 @@ public class AccessPointService {
     AccessPointDTO dto = adapt(ap.get());
 
     return Reply.with(dto).as(Json.class);
+  }
+
+  @Get
+  @At("/:id/query-list")
+  public Reply<?> findQueryList(@Named("id") String id) {
+    QueryList queryList = repository.findQueryList(id);
+
+    QueryListDTO dto = new QueryListDTO(queryList.values);
+
+    return Reply.with(dto).as(Json.class).ok();
   }
 
   @Put
@@ -84,7 +94,7 @@ public class AccessPointService {
   }
 
   private NewAccessPoint adapt(NewAccessPointDTO dto) {
-    return new NewAccessPoint(dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue));
+    return new NewAccessPoint(dto.operatorId, dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue));
   }
 
   private AccessPoint adapt(Object id, AccessPointDTO dto) {
