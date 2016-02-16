@@ -10,11 +10,13 @@ class NewAccessPointEntity {
   public final String mac;
   public final String serialNumber;
   public final String model;
+  public final VenueEntity venue;
 
-  public NewAccessPointEntity(String ip, String mac, String serialNumber, String model) {
+  NewAccessPointEntity(String ip, String mac, String serialNumber, String model, VenueEntity venue) {
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;
     this.model = model;
+    this.venue = venue;
   }
 }

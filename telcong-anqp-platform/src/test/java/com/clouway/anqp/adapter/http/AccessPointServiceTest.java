@@ -1,9 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.AccessPoint;
-import com.clouway.anqp.AccessPointRepository;
-import com.clouway.anqp.MacAddress;
-import com.clouway.anqp.NewAccessPoint;
+import com.clouway.anqp.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -34,8 +31,11 @@ public class AccessPointServiceTest {
 
   @Test
   public void create() throws Exception {
-    final NewAccessPoint ap = new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model");
-    final NewAccessPointDTO dto = new NewAccessPointDTO("ip", "aa:bb", "sn", "model");
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
+    Venue venue = new Venue(new VenueGroup(venueDTO.group), new VenueType(venueDTO.type), Lists.newArrayList(new VenueName("info", new Language("en"))));
+
+    final NewAccessPoint ap = new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final NewAccessPointDTO dto = new NewAccessPointDTO("ip", "aa:bb", "sn", "model", venueDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(ap)));
@@ -49,14 +49,17 @@ public class AccessPointServiceTest {
 
   @Test
   public void findAll() throws Exception {
+    Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+
     final List<AccessPoint> aps = Lists.newArrayList(
-            new AccessPoint(1, "ip1", new MacAddress("aa:bb"), "sn1", "model1"),
-            new AccessPoint(2, "ip2", new MacAddress("bb:aa"), "sn2", "model2")
+            new AccessPoint(1, "ip1", new MacAddress("aa:bb"), "sn1", "model1", venue),
+            new AccessPoint(2, "ip2", new MacAddress("bb:aa"), "sn2", "model2", venue)
     );
 
     final List<AccessPointDTO> dtos = Lists.newArrayList(
-            new AccessPointDTO(1, "ip1", "aa:bb", "sn1", "model1"),
-            new AccessPointDTO(2, "ip2", "bb:aa", "sn2", "model2")
+            new AccessPointDTO(1, "ip1", "aa:bb", "sn1", "model1", venueDTO),
+            new AccessPointDTO(2, "ip2", "bb:aa", "sn2", "model2", venueDTO)
     );
 
     context.checking(new Expectations() {{
@@ -72,8 +75,11 @@ public class AccessPointServiceTest {
 
   @Test
   public void findById() throws Exception {
-    final AccessPoint ap = new AccessPoint(1, "ip", new MacAddress("aa:bb"), "sn", "model");
-    final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model");
+    Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+
+    final AccessPoint ap = new AccessPoint(1, "ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model", venueDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).findById("id");
@@ -100,8 +106,11 @@ public class AccessPointServiceTest {
 
   @Test
   public void update() throws Exception {
-    final AccessPoint ap = new AccessPoint(1, "ip", new MacAddress("aa:bb"), "sn", "model");
-    final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model");
+    Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+
+    final AccessPoint ap = new AccessPoint(1, "ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model", venueDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).update(with(matching(ap)));

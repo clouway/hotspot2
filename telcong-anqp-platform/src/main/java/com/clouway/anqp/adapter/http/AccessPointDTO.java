@@ -1,5 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
+import javax.validation.Valid;
+
 /**
  */
 class AccessPointDTO {
@@ -9,11 +11,15 @@ class AccessPointDTO {
   public final String serialNumber;
   public final String model;
 
-  public AccessPointDTO(Object id, String ip, String mac, String serialNumber, String model) {
+  @Valid
+  public final VenueDTO venue;
+
+  public AccessPointDTO(Object id, String ip, String mac, String serialNumber, String model, VenueDTO venue) {
     this.id = id;
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;
     this.model = model;
+    this.venue = venue;
   }
 }

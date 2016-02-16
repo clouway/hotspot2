@@ -1,9 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.AccessPoint;
-import com.clouway.anqp.AccessPointRepository;
-import com.clouway.anqp.MacAddress;
-import com.clouway.anqp.NewAccessPoint;
+import com.clouway.anqp.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -83,24 +80,44 @@ public class AccessPointService {
   }
 
   private AccessPointDTO adapt(AccessPoint ap) {
-    return new AccessPointDTO(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model);
+    return new AccessPointDTO(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
   }
 
   private NewAccessPoint adapt(NewAccessPointDTO dto) {
-    return new NewAccessPoint(dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model);
+    return new NewAccessPoint(dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue));
   }
 
   private AccessPoint adapt(Object id, AccessPointDTO dto) {
-    return new AccessPoint(id, dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model);
+    return new AccessPoint(id, dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue));
   }
 
   private List<AccessPointDTO> adapt(List<AccessPoint> aps) {
     List<AccessPointDTO> dtos = Lists.newArrayList();
 
     for (AccessPoint ap : aps) {
-      dtos.add(new AccessPointDTO(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model));
+      dtos.add(new AccessPointDTO(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue)));
     }
 
     return dtos;
+  }
+
+  private Venue adapt(VenueDTO dto) {
+    List<VenueName> names = Lists.newArrayList();
+
+    for (VenueNameDTO duple : dto.venueNames) {
+      names.add(new VenueName(duple.name, new Language(duple.language)));
+    }
+
+    return new Venue(new VenueGroup(dto.group), new VenueType(dto.type), names);
+  }
+
+  private VenueDTO adapt(Venue venue) {
+    List<VenueNameDTO> names = Lists.newArrayList();
+
+    for (VenueName info : venue.names) {
+      names.add(new VenueNameDTO(info.name, info.language.code));
+    }
+
+    return new VenueDTO(venue.group.name, venue.type.name, names);
   }
 }

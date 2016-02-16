@@ -1,8 +1,11 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.AccessPoint;
+import com.clouway.anqp.Language;
 import com.clouway.anqp.MacAddress;
 import com.clouway.anqp.NewAccessPoint;
+import com.clouway.anqp.Venue;
+import com.clouway.anqp.VenueName;
 import com.clouway.anqp.api.datastore.DatastoreCleaner;
 import com.clouway.anqp.api.datastore.DatastoreRule;
 import com.clouway.anqp.api.datastore.FakeDatastore;
@@ -14,11 +17,12 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.VenueBuilder.newVenueBuilder;
+import static com.clouway.anqp.VenueName.defaultName;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  */
@@ -30,16 +34,35 @@ public class AccessPointRepositoryTest {
   public DatastoreCleaner datastoreCleaner = new DatastoreCleaner(datastoreRule.db());
 
   private FakeDatastore datastore = new FakeDatastore(datastoreRule.db());
+
   private PersistentAccessPointRepository repository = new PersistentAccessPointRepository(datastore);
 
   @Test
-  public void findById() throws Exception {
-    NewAccessPoint ap = new NewAccessPoint("ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model");
+  public void createApWithoutVenueNames() throws Exception {
+    Venue venue = newVenueBuilder().group("group").type("type").build();
+
+    NewAccessPoint ap = new NewAccessPoint("ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     Object id = repository.create(ap);
 
     AccessPoint got = repository.findById(id).get();
-    AccessPoint want = new AccessPoint(id, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model");
+
+    Venue wantedVenue = newVenueBuilder().group("group").type("type").names(defaultName()).build();
+    AccessPoint want = new AccessPoint(id, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", wantedVenue);
+
+    assertThat(got, deepEquals(want));
+  }
+
+  @Test
+  public void findById() throws Exception {
+    Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
+
+    NewAccessPoint ap = new NewAccessPoint("ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
+
+    Object id = repository.create(ap);
+
+    AccessPoint got = repository.findById(id).get();
+    AccessPoint want = new AccessPoint(id, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     assertThat(got, deepEquals(want));
   }
@@ -53,12 +76,14 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void findByIp() throws Exception {
-    NewAccessPoint ap = new NewAccessPoint("ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model");
+    Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
+
+    NewAccessPoint ap = new NewAccessPoint("ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     Object id = repository.create(ap);
 
     AccessPoint got = repository.findByIp("ip").get();
-    AccessPoint want = new AccessPoint(id, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model");
+    AccessPoint want = new AccessPoint(id, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     assertThat(got, deepEquals(want));
   }
@@ -72,8 +97,10 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void findAll() throws Exception {
-    NewAccessPoint ap1 = new NewAccessPoint("ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1");
-    NewAccessPoint ap2 = new NewAccessPoint("ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2");
+    Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
+
+    NewAccessPoint ap1 = new NewAccessPoint("ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue);
+    NewAccessPoint ap2 = new NewAccessPoint("ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue);
 
     Object id1 = repository.create(ap1);
     Object id2 = repository.create(ap2);
@@ -81,8 +108,8 @@ public class AccessPointRepositoryTest {
     List<AccessPoint> got = repository.findAll();
 
     List<AccessPoint> want = Lists.newArrayList(
-            new AccessPoint(id1, "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1"),
-            new AccessPoint(id2, "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2")
+            new AccessPoint(id1, "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue),
+            new AccessPoint(id2, "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue)
     );
 
     assertThat(got, deepEquals(want));
@@ -90,9 +117,14 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void update() throws Exception {
-    Object id = repository.create(new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model"));
+    Venue venue = newVenueBuilder().group("group").type("type").names(new VenueName("Info", new Language("en"))).build();
+    Venue newVenue = newVenueBuilder().group("group").type("type").names(
+            new VenueName("Info", new Language("en")),
+            new VenueName("Info2", new Language("Bg"))).build();
 
-    AccessPoint ap = new AccessPoint(id, "ip2", new MacAddress("bb:aa"), "sn2", "model2");
+    Object id = repository.create(new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model", venue));
+
+    AccessPoint ap = new AccessPoint(id, "ip2", new MacAddress("bb:aa"), "sn2", "model2", newVenue);
 
     repository.update(ap);
 
@@ -103,7 +135,9 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void deleteById() throws Exception {
-    Object id = repository.create(new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model"));
+    Venue venue = newVenueBuilder().build();
+
+    Object id = repository.create(new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model", venue));
 
     repository.delete(id);
 
@@ -114,7 +148,9 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void deleteByUnknownId() throws Exception {
-    repository.create(new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model"));
+    Venue venue = newVenueBuilder().build();
+
+    repository.create(new NewAccessPoint("ip", new MacAddress("aa:bb"), "sn", "model", venue));
     repository.delete("id");
 
     List<AccessPoint> found = repository.findAll();

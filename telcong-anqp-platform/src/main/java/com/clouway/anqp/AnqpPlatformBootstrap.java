@@ -1,6 +1,7 @@
 package com.clouway.anqp;
 
 import com.clouway.anqp.adapter.http.HttpModule;
+import com.clouway.anqp.adapter.memory.MemoryModule;
 import com.clouway.anqp.adapter.persistence.PersistentModule;
 import com.clouway.anqp.snmp.SnmpModule;
 import com.google.common.util.concurrent.ServiceManager;
@@ -29,6 +30,7 @@ public class AnqpPlatformBootstrap {
             new SnmpModule(162),
             new HttpModule(8080),
             new PersistentModule(),
+            new MemoryModule(),
             new ValidationModule()
     );
 

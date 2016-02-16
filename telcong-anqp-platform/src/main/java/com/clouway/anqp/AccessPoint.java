@@ -8,12 +8,14 @@ public class AccessPoint {
   public final MacAddress mac;
   public final String serialNumber;
   public final String model;
+  public final Venue venue;
 
-  public AccessPoint(Object id, String ip, MacAddress mac, String serialNumber, String model) {
+  public AccessPoint(Object id, String ip, MacAddress mac, String serialNumber, String model, Venue venue) {
     this.id = id;
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;
     this.model = model;
+    this.venue = venue;
   }
 }
