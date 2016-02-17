@@ -4,6 +4,7 @@ import com.clouway.anqp.EmergencyNumberException;
 import com.clouway.anqp.NewEmergencyNumber;
 import com.clouway.anqp.NewOperator;
 import com.clouway.anqp.Operator;
+import com.clouway.anqp.OperatorException;
 import com.clouway.anqp.OperatorRepository;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
@@ -26,7 +27,13 @@ class PersistentOperatorRepository implements OperatorRepository {
 
   @Override
   public Object create(NewOperator operator) {
-   return datastore.save(adapt(operator));
+    Long count = datastore.entityCount(NewOperatorEntity.class, Filter.where("name").is(operator.name));
+
+    if (count != 0) {
+      throw new OperatorException("Operator with name: " + operator.name + " already exists.");
+    }
+
+    return datastore.save(adapt(operator));
   }
 
   @Override
@@ -45,6 +52,12 @@ class PersistentOperatorRepository implements OperatorRepository {
 
   @Override
   public void update(Operator operator) {
+    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("name").is(operator.name).and("_id").isNot(operator.id));
+
+    if (count != 0) {
+      throw new OperatorException("Operator with name: " + operator.name + " already exists.");
+    }
+
     datastore.save(adapt(operator));
   }
 

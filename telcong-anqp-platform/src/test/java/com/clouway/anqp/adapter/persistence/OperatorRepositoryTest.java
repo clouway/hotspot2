@@ -4,6 +4,7 @@ import com.clouway.anqp.EmergencyNumberException;
 import com.clouway.anqp.NewEmergencyNumber;
 import com.clouway.anqp.NewOperator;
 import com.clouway.anqp.Operator;
+import com.clouway.anqp.OperatorException;
 import com.clouway.anqp.OperatorRepository;
 import com.clouway.anqp.api.datastore.DatastoreCleaner;
 import com.clouway.anqp.api.datastore.DatastoreRule;
@@ -33,6 +34,15 @@ public class OperatorRepositoryTest {
 
   private FakeDatastore datastore = new FakeDatastore(datastoreRule.db());
   private OperatorRepository repository = new PersistentOperatorRepository(datastore);
+
+  @Test(expected = OperatorException.class)
+  public void createOperatorWithExistingName() throws Exception {
+    NewOperator someOperator = new NewOperator("sameName", "descr", "dName", "fName", "emergency");
+    repository.create(someOperator);
+
+    NewOperator anotherOperator = new NewOperator("sameName", "anotherDescr", "anotherDName", "anotherFName", "anotherEmergencyNumber");
+    repository.create(anotherOperator);
+  }
 
   @Test
   public void findById() throws Exception {
@@ -72,15 +82,38 @@ public class OperatorRepositoryTest {
 
   @Test
   public void update() throws Exception {
-    Object id = repository.create(new NewOperator("name", "description", "domainName", "friendlyName", "123"));
+    Object id = repository.create(new NewOperator("oldName", "description", "domainName", "friendlyName", "123"));
 
-    Operator operator = new Operator(id, "newName", "newDescription", "newDomainName", "newFriendlyName", "*88");
+    Operator operator = new Operator(id, "oldName", "newDescription", "newDomainName", "newFriendlyName", "*88");
 
     repository.update(operator);
 
     Operator found = repository.findById(id).get();
 
     assertThat(found, deepEquals(operator));
+  }
+
+  @Test
+  public void updateOperatorName() throws Exception {
+    Object id = repository.create(new NewOperator("name", "description", "domainName", "friendlyName", "123"));
+
+    Operator operator = new Operator(id, "newName", "description", "domainName", "friendlyName", "123");
+
+    repository.update(operator);
+
+    Operator found = repository.findById(id).get();
+
+    assertThat(found, deepEquals(operator));
+  }
+
+  @Test(expected = OperatorException.class)
+  public void updateOperatorWithReservedName() throws Exception {
+    Object someID = repository.create(new NewOperator("someName", "description", "domainName", "friendlyName", "123"));
+    repository.create(new NewOperator("existName", "anotherDescription", "anotherDomainName", "anotherFriendlyName", "1234"));
+
+    Operator operator = new Operator(someID, "existName", "newDescription", "newDomainName", "newFriendlyName", "*88");
+
+    repository.update(operator);
   }
 
   @Test

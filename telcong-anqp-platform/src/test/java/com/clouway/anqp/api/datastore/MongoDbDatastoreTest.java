@@ -1,5 +1,6 @@
 package com.clouway.anqp.api.datastore;
 
+import com.clouway.anqp.util.matchers.EqualityMatchers;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static com.clouway.anqp.api.datastore.Filter.where;
 import static com.clouway.anqp.api.datastore.UpdateStatement.update;
+import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -112,6 +114,17 @@ public class MongoDbDatastoreTest extends DatastoreContract {
     Person notExistingPerson = datastore.findAndModify(Person.class, where("_id").is(500), update("name").toBe("John"));
     assertThat(notExistingPerson, is(nullValue()));
 
+  }
+
+  @Test
+  public void findObjectDifferentFromAnother() throws Exception {
+    datastore.save(new Person(200L, "Emil", 24));
+    datastore.save(new Person(300L, "Ivan", 24));
+
+    List<Person> got = datastore.findAllObjectsByFilter(Person.class, where("_id").isNot(300L));
+    List<Person> want = Lists.newArrayList(new Person(200L, "Emil", 24));
+
+    assertThat(got, deepEquals(want));
   }
 
   @Override

@@ -1,9 +1,12 @@
 package com.clouway.anqp.adapter.http;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 /**
  */
 class OperatorDTO {
   final Object id;
+  @NotEmpty(message = "Name can not be empty")
   final String name;
   final String description;
   final String domainName;

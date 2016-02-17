@@ -72,6 +72,12 @@ public final class Filter {
     return this;
   }
 
+  public Filter isNot(Object value) {
+    String property = queue.poll();
+    filter.put(property, condition("$ne", value));
+    return this;
+  }
+
   public Filter isGreaterThen(Integer value) {
     String property = queue.poll();
     filter.put(property, condition("$gt", value));
