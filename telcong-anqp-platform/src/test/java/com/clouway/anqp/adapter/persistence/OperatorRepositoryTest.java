@@ -173,6 +173,7 @@ public class OperatorRepositoryTest {
     NewAccessPoint ap = newAP().operatorId(operatorID).build();
 
     Object apID = accessPointRepository.create(ap);
+
     List<ID> apIDs = Lists.newArrayList(new ID(apID));
 
     operRepository.assignAccessPoints(operatorID, apIDs);
@@ -180,7 +181,7 @@ public class OperatorRepositoryTest {
     operRepository.deactivate(operatorID);
   }
 
-  @Test (expected = NotFoundException.class)
+  @Test(expected = NotFoundException.class)
   public void deactivateUnknownOperator() throws Exception {
     operRepository.deactivate(new ID("operID"));
   }
@@ -194,8 +195,8 @@ public class OperatorRepositoryTest {
     NewOperator operator = newOperator().build();
     Object operID = operRepository.create(operator);
 
-    NewAccessPoint ap1 = new NewAccessPoint(new ID(operID), "ip1", new MacAddress("aa:bb:cc"), "sn1", "model1", venue, geo, civic);
-    NewAccessPoint ap2 = new NewAccessPoint(new ID(operID), "ip2", new MacAddress("cc:bb:aa"), "sn2", "model2", venue, geo, civic);
+    NewAccessPoint ap1 = new NewAccessPoint(new ID(operID), "ip1", new MacAddress("aa:bb:cc"), "sn1", "model1", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
+    NewAccessPoint ap2 = new NewAccessPoint(new ID(operID), "ip2", new MacAddress("cc:bb:aa"), "sn2", "model2", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
     Object apID1 = accessPointRepository.create(ap1);
     Object apID2 = accessPointRepository.create(ap2);
@@ -206,8 +207,8 @@ public class OperatorRepositoryTest {
     List<AccessPoint> got = operRepository.findAccessPoints(new ID(operID));
 
     List<AccessPoint> want = Lists.newArrayList(
-            new AccessPoint(new ID(apID1), "ip1", new MacAddress("aa:bb:cc"), "sn1", "model1", venue, geo, civic),
-            new AccessPoint(new ID(apID2), "ip2", new MacAddress("cc:bb:aa"), "sn2", "model2", venue, geo, civic)
+            new AccessPoint(new ID(apID1), "ip1", new MacAddress("aa:bb:cc"), "sn1", "model1", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List")))),
+            new AccessPoint(new ID(apID2), "ip2", new MacAddress("cc:bb:aa"), "sn2", "model2", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))))
     );
 
     assertThat(got, deepEquals(want));

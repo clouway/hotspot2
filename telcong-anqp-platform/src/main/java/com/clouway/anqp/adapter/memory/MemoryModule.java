@@ -109,7 +109,7 @@ public class MemoryModule extends AbstractModule {
 
   @Provides
   @Singleton
-  public IpTypeCatalog getCatalog() {
+  public IpTypeCatalog getIpTypeCatalog() {
     // The catalog contains only currently supported types
     return new InMemoryIpTypeCatalog(new LinkedHashMap<String, Integer>() {{
       put(NOT_AVAILABLE.name(), 0);
@@ -128,5 +128,25 @@ public class MemoryModule extends AbstractModule {
             new AuthenticationType(1, "On-line enrollment supported"),
             new AuthenticationType(2, "http/https redirection"),
             new AuthenticationType(3, "DNS redirection"));
+  }
+
+  @Singleton
+  @Provides
+  public CapabilityCatalog getCapabilityCatalog() {
+    return new InMemoryCapabilityCatalog(new LinkedHashMap<Integer, Capability>() {{
+      put(256, new Capability(256, "ANQP Query List"));
+      put(257, new Capability(257, "ANQP Capability list"));
+      put(258, new Capability(258, "Venue Name information"));
+      put(259, new Capability(259, "Emergency Call Number information"));
+      put(260, new Capability(260, "Network Authentication Type information"));
+      put(261, new Capability(261, "Roaming Consortium list"));
+      put(262, new Capability(262, "IP Address Type Availability information"));
+      put(263, new Capability(263, "NAI Realm list"));
+      put(264, new Capability(264, "3GPP Cellular Network information"));
+      put(265, new Capability(265, "AP Geospatial Location"));
+      put(266, new Capability(266, "AP Civic Location"));
+      put(267, new Capability(267, "AP Location Public Identifier URI"));
+      put(268, new Capability(268, "Domain Name list"));
+    }});
   }
 }

@@ -11,8 +11,9 @@ public class AccessPoint {
   public final Venue venue;
   public final GeoLocation geoLocation;
   public final CivicLocation civicLocation;
+  public final CapabilityList capabilities;
 
-  public AccessPoint(ID id, String ip, MacAddress mac, String serialNumber, String model, Venue venue, GeoLocation geoLocation, CivicLocation civicLocation) {
+  public AccessPoint(ID id, String ip, MacAddress mac, String serialNumber, String model, Venue venue, GeoLocation geoLocation, CivicLocation civicLocation, CapabilityList capabilities) {
     this.id = id;
     this.ip = ip;
     this.mac = mac;
@@ -21,5 +22,21 @@ public class AccessPoint {
     this.venue = venue;
     this.geoLocation = geoLocation;
     this.civicLocation = civicLocation;
+    this.capabilities = capabilities;
+  }
+
+  @Override
+  public String toString() {
+    return "AccessPoint{" +
+            "id=" + id +
+            ", ip='" + ip + '\'' +
+            ", mac=" + mac +
+            ", serialNumber='" + serialNumber + '\'' +
+            ", model='" + model + '\'' +
+            ", venue=" + venue +
+            ", geoLocation=" + geoLocation +
+            ", civicLocation=" + civicLocation +
+            ", capabilities=" + capabilities +
+            '}';
   }
 }

@@ -3,6 +3,9 @@ package com.clouway.anqp.adapter.persistence;
 import com.clouway.anqp.CivicLocation;
 import com.clouway.anqp.GeoLocation;
 import com.clouway.anqp.api.datastore.Kind;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 /**
  */
@@ -16,8 +19,9 @@ class NewAccessPointEntity {
   final VenueEntity venue;
   final GeoLocationEntity geoLocation;
   final CivicLocationEntity civicLocation;
+  final List<CapabilityEntity> capabilities;
 
-  NewAccessPointEntity(Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity geoLocation, CivicLocationEntity civicLocation) {
+  NewAccessPointEntity(Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity geoLocation, CivicLocationEntity civicLocation, List<CapabilityEntity> capabilities) {
     this.operatorId = operatorId;
     this.ip = ip;
     this.mac = mac;
@@ -26,5 +30,6 @@ class NewAccessPointEntity {
     this.venue = venue;
     this.geoLocation = geoLocation;
     this.civicLocation = civicLocation;
+    this.capabilities = ImmutableList.copyOf(capabilities);
   }
 }

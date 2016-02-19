@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.Capability;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -116,7 +117,7 @@ public class OperatorEndpointTest {
     final ID operID = new ID("operID");
 
     context.checking(new Expectations() {{
-      oneOf(repository).assignAccessPoints(with(matching(operID)) , with(matching(apIDs)));
+      oneOf(repository).assignAccessPoints(with(matching(operID)), with(matching(apIDs)));
     }});
 
     Request request = makeRequestThatContains(dto);
@@ -129,7 +130,7 @@ public class OperatorEndpointTest {
   @Test
   public void findAccessPoints() throws Exception {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
-    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
 
     CivicLocation civic = new CivicLocation("country", "city", "street", "number", "postCode");
     CivicLocationDTO civicDTO = new CivicLocationDTO("country", "city", "street", "number", "postCode");
@@ -137,8 +138,8 @@ public class OperatorEndpointTest {
     GeoLocation geo = new GeoLocation(65.65656565, 75.75757575);
     GeoLocationDTO geoDTO = new GeoLocationDTO(65.65656565, 75.75757575);
 
-    final AccessPoint ap = new AccessPoint(new ID("id"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, geo, civic);
-    final AccessPointDTO apDTO = new AccessPointDTO("id", "ip", "aa:bb", "sn", "model", venueDTO, geoDTO, civicDTO);
+    final AccessPoint ap = new AccessPoint(new ID("id"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "a"))));
+    final AccessPointDTO apDTO = new AccessPointDTO("id", "ip", "aa:bb", "sn", "model", venueDTO, geoDTO, civicDTO, Lists.newArrayList(new CapabilityDTO(256, "a")));
     final List<AccessPoint> aps = Lists.newArrayList(ap);
     final List<AccessPointDTO> dtos = Lists.newArrayList(apDTO);
     final ID operID = new ID("id");

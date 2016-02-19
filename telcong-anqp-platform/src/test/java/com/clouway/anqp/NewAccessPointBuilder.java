@@ -11,7 +11,7 @@ public class NewAccessPointBuilder {
   private Venue venue =  new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
   private GeoLocation geoLocation = new GeoLocation(22.222222, 33.333333);
   private CivicLocation civicLocation = new CivicLocation("country", "city", "street", "streetNumber", "postCode");
-
+  private CapabilityList capabilities = new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"), new Capability(257, "ANQP Capability list")));
 
   public static NewAccessPointBuilder newAP() {
     return new NewAccessPointBuilder();
@@ -57,7 +57,12 @@ public class NewAccessPointBuilder {
     return this;
   }
 
+  public NewAccessPointBuilder capabilities(CapabilityList capabilities) {
+    this.capabilities = capabilities;
+    return this;
+  }
+
   public NewAccessPoint build() {
-    return new NewAccessPoint(operatorId, ip, mac, serialNumber, model, venue, geoLocation, civicLocation);
+    return new NewAccessPoint(operatorId, ip, mac, serialNumber, model, venue, geoLocation, civicLocation, capabilities);
   }
 }

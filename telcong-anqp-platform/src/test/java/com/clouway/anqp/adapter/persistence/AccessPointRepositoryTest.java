@@ -51,13 +51,13 @@ public class AccessPointRepositoryTest {
     NewOperator operator = newOperator().build();
     Object operID = operatorRepository.create(operator);
 
-    NewAccessPoint ap = new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic);
+    NewAccessPoint ap = new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
     Object id = repository.create(ap);
 
     AccessPoint got = repository.findById(id).get();
 
     Venue wantedVenue = newVenueBuilder().group("group").type("type").names(defaultName()).build();
-    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", wantedVenue, geo, civic);
+    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", wantedVenue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
     assertThat(got, deepEquals(want));
   }
@@ -72,12 +72,12 @@ public class AccessPointRepositoryTest {
 
     Object operID = operatorRepository.create(operator);
 
-    NewAccessPoint ap = new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic);
+    NewAccessPoint ap = new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
     Object id = repository.create(ap);
 
     AccessPoint got = repository.findById(id).get();
-    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic);
+    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
     assertThat(got, deepEquals(want));
   }
@@ -98,12 +98,12 @@ public class AccessPointRepositoryTest {
     NewOperator operator = newOperator().build();
     Object operID = operatorRepository.create(operator);
 
-    NewAccessPoint ap = new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic);
+    NewAccessPoint ap = new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
     Object id = repository.create(ap);
 
     AccessPoint got = repository.findByIp("ip").get();
-    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic);
+    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
     assertThat(got, deepEquals(want));
   }
@@ -139,6 +139,15 @@ public class AccessPointRepositoryTest {
     repository.findQueryList("id");
   }
 
+  @Test(expected = NotFoundException.class)
+  public void findQueryListForMissingOperator() throws Exception {
+    NewAccessPoint ap = NewAccessPointBuilder.newAP().operatorId(new ID("someId")).build();
+
+    Object apID = repository.create(ap);
+
+    repository.findQueryList(apID);
+  }
+
   @Test
   public void findAll() throws Exception {
     Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
@@ -148,8 +157,8 @@ public class AccessPointRepositoryTest {
     NewOperator operator = newOperator().build();
     Object operID = operatorRepository.create(operator);
 
-    NewAccessPoint ap1 = new NewAccessPoint(new ID(operID), "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue, geo, civic);
-    NewAccessPoint ap2 = new NewAccessPoint(new ID(operID), "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue, geo, civic);
+    NewAccessPoint ap1 = new NewAccessPoint(new ID(operID), "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
+    NewAccessPoint ap2 = new NewAccessPoint(new ID(operID), "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
     Object apID1 = repository.create(ap1);
     Object apID2 = repository.create(ap2);
@@ -157,11 +166,39 @@ public class AccessPointRepositoryTest {
     List<AccessPoint> got = repository.findAll();
 
     List<AccessPoint> want = Lists.newArrayList(
-            new AccessPoint(new ID(apID1), "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue, geo, civic),
-            new AccessPoint(new ID(apID2), "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue, geo, civic)
+            new AccessPoint(new ID(apID1), "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List")))),
+            new AccessPoint(new ID(apID2), "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))))
     );
 
     assertThat(got, deepEquals(want));
+  }
+
+  @Test
+  public void findCapabilities() throws Exception {
+    // Capabilities are ordered in non-decreasing id value e.g. 256, 257, 258 ...
+    CapabilityList capabilities = new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"), new Capability(257, "ANQP Capability list")));
+
+    CivicLocation civic = new CivicLocation("country", "city", "street", "number", "postCode");
+    GeoLocation geo = new GeoLocation(22.22222, 33.333333);
+
+    Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
+
+    NewOperator operator = newOperator().build();
+
+    Object operatorId = operatorRepository.create(operator);
+
+    NewAccessPoint ap = new NewAccessPoint(new ID(operatorId), "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue, geo, civic, capabilities);
+
+    Object id = repository.create(ap);
+
+    CapabilityList actual = repository.findCapabilityList(new ID(id));
+
+    assertThat(actual, deepEquals(capabilities));
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void findCapabilitiesForMissingAP() throws Exception {
+    repository.findCapabilityList(new ID("id1"));
   }
 
   @Test
@@ -177,12 +214,14 @@ public class AccessPointRepositoryTest {
     NewOperator operator = newOperator().build();
     Object operID = operatorRepository.create(operator);
 
-    NewAccessPoint newAP = new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic);
+    NewAccessPoint newAP = new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
     Object apID = repository.create(newAP);
 
-    AccessPoint ap = new AccessPoint(new ID(apID), "ip2", new MacAddress("bb:aa"), "sn2", "model2", newVenue, newGeo, newCivic);
+    AccessPoint ap = new AccessPoint(new ID(apID), "ip2", new MacAddress("bb:aa"), "sn2", "model2", newVenue, newGeo, newCivic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
-    repository.update(ap);
+    AccessPointRequest request = new AccessPointRequest(new ID(apID), "ip2", new MacAddress("bb:aa"), "sn2", "model2", newVenue, newGeo, newCivic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
+
+    repository.update(request);
 
     AccessPoint got = repository.findById(apID).get();
 

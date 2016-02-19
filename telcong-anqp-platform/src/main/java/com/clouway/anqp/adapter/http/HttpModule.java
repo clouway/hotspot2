@@ -41,7 +41,7 @@ public class HttpModule extends AbstractModule {
       @Override
       protected void configureSitebricks() {
         at("/testservice").serve(ExampleService.class);
-        
+
         at("/r/controllers").serve(ApControllerEndpoint.class);
         at("/r/aps").serve(AccessPointEndpoint.class);
         at("/r/operators").serve(OperatorEndpoint.class);
@@ -50,6 +50,7 @@ public class HttpModule extends AbstractModule {
         at("/r/ip-types").serve(IpTypeService.class);
         at("/r/auth-types").serve(AuthTypeEndpoint.class);
         at("/r/service-providers").serve(ServiceProviderEndpoint.class);
+        at("/r/capabilities").serve(CapabilityEndpoint.class);
       }
     });
 

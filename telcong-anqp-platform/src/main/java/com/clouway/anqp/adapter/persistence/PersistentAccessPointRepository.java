@@ -36,8 +36,8 @@ class PersistentAccessPointRepository implements AccessPointRepository {
   }
 
   @Override
-  public void update(AccessPoint ap) {
-    datastore.save(adapt(ap));
+  public void update(AccessPointRequest request) {
+    datastore.save(adapt(request));
   }
 
   @Override
@@ -85,11 +85,26 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     return new QueryList(response.get());
   }
 
+  @Override
+  public CapabilityList findCapabilityList(ID id) {
+    AccessPointEntity entity = datastore.findById(AccessPointEntity.class, id.value);
+
+    if (entity == null) {
+      throw new NotFoundException("Not found AP with id " + id.value);
+    }
+
+    return adaptCapabilityEntities(entity.capabilities);
+  }
+
+  private AccessPointRequestEntity adapt(AccessPointRequest ap) {
+    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation), adaptCapabilities(ap.capabilities));
+  }
+
   private List<AccessPoint> adapt(List<AccessPointEntity> entities) {
     List<AccessPoint> aps = Lists.newArrayList();
 
     for (AccessPointEntity entity : entities) {
-      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation)));
+      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation), adaptCapabilityEntities(entity.capabilities)));
     }
 
     return aps;
@@ -100,7 +115,7 @@ class PersistentAccessPointRepository implements AccessPointRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation)));
+    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation), adaptCapabilityEntities(entity.capabilities)));
   }
 
   private Venue adapt(VenueEntity entity) {
@@ -116,20 +131,8 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), names);
   }
 
-  private GeoLocation adapt(GeoLocationEntity location) {
-    return new GeoLocation(location.latitude, location.longitude);
-  }
-
-  private CivicLocation adapt(CivicLocationEntity address) {
-    return new CivicLocation(address.country, address.city, address.street, address.streetNumber, address.postCode);
-  }
-
-  private AccessPointRequestEntity adapt(AccessPoint ap) {
-    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation));
-  }
-
   private NewAccessPointEntity adapt(NewAccessPoint ap) {
-    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation));
+    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation), adaptCapabilities(ap.capabilities));
   }
 
   private VenueEntity adapt(Venue venue) {
@@ -146,7 +149,35 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     return new GeoLocationEntity(location.latitude, location.longitude);
   }
 
+  private GeoLocation adapt(GeoLocationEntity location) {
+    return new GeoLocation(location.latitude, location.longitude);
+  }
+
   private CivicLocationEntity adapt(CivicLocation civicLocation) {
     return new CivicLocationEntity(civicLocation.country, civicLocation.city, civicLocation.street, civicLocation.streetNumber, civicLocation.postCode);
+  }
+
+  private CivicLocation adapt(CivicLocationEntity address) {
+    return new CivicLocation(address.country, address.city, address.street, address.streetNumber, address.postCode);
+  }
+
+  private List<CapabilityEntity> adaptCapabilities(CapabilityList capabilities) {
+    List<CapabilityEntity> entities = Lists.newArrayList();
+
+    for (Capability capability : capabilities.values) {
+      entities.add(new CapabilityEntity(capability.id, capability.name));
+    }
+
+    return entities;
+  }
+
+  private CapabilityList adaptCapabilityEntities(List<CapabilityEntity> entities) {
+    List<Capability> capabilities = Lists.newArrayList();
+
+    for (CapabilityEntity entity : entities) {
+      capabilities.add(new Capability(entity.id, entity.name));
+    }
+
+    return new CapabilityList(capabilities);
   }
 }

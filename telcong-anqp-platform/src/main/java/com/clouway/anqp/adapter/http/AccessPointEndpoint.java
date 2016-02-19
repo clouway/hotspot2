@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.Capability;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -22,10 +23,12 @@ import java.util.List;
 @At("/r/aps")
 public class AccessPointEndpoint {
   private final AccessPointRepository repository;
+  private final CapabilityCatalog catalog;
 
   @Inject
-  public AccessPointEndpoint(AccessPointRepository repository) {
+  public AccessPointEndpoint(AccessPointRepository repository, CapabilityCatalog catalog) {
     this.repository = repository;
+    this.catalog = catalog;
   }
 
   @Post
@@ -70,15 +73,26 @@ public class AccessPointEndpoint {
     return Reply.with(dto).as(Json.class).ok();
   }
 
+  @Get
+  @At("/:id/capability-list")
+  public Reply<?> findCapabilityList(@Named("id") String id) {
+    CapabilityList capabilities = repository.findCapabilityList(new ID(id));
+
+    List<CapabilityDTO> dtos = adapt(capabilities);
+
+    return Reply.with(dtos).as(Json.class).ok();
+  }
+
   @Put
   @At("/:id")
   public Reply<?> update(@Named("id") Object id, Request request) {
-    AccessPointDTO dto = request.read(AccessPointDTO.class).as(Json.class);
-    AccessPoint ap = adapt(id, dto);
+    AccessPointRequestDTO dto = request.read(AccessPointRequestDTO.class).as(Json.class);
 
-    repository.update(ap);
+    AccessPointRequest apRequest = adapt(dto);
 
-    return Reply.saying().ok();
+    repository.update(apRequest);
+
+    return Reply.with("Successfully updated AP").ok();
   }
 
   @Delete
@@ -100,7 +114,7 @@ public class AccessPointEndpoint {
   }
 
   private AccessPointDTO adapt(AccessPoint ap) {
-    return new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation));
+    return new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation), adapt(ap.capabilities));
   }
 
   private VenueDTO adapt(Venue venue) {
@@ -122,11 +136,9 @@ public class AccessPointEndpoint {
   }
 
   private NewAccessPoint adapt(NewAccessPointDTO dto) {
-    return new NewAccessPoint(new ID(dto.operatorId), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.geoLocation), adapt(dto.civicLocation));
-  }
+    CapabilityList capabilities = catalog.findByIds(dto.capabilityIds);
 
-  private AccessPoint adapt(Object id, AccessPointDTO dto) {
-    return new AccessPoint(new ID(id), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.geoLocation), adapt(dto.civicLocation));
+    return new NewAccessPoint(new ID(dto.operatorId), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.geoLocation), adapt(dto.civicLocation), capabilities);
   }
 
   private Venue adapt(VenueDTO dto) {
@@ -145,5 +157,23 @@ public class AccessPointEndpoint {
 
   private GeoLocation adapt(GeoLocationDTO location) {
     return new GeoLocation(location.latitude, location.longitude);
+  }
+
+  private List<CapabilityDTO> adapt(CapabilityList capabilities) {
+    List<CapabilityDTO> dtos = Lists.newArrayList();
+
+    for (Capability capability : capabilities.values) {
+      dtos.add(new CapabilityDTO(capability.id, capability.name));
+    }
+
+    return dtos;
+  }
+
+  private AccessPointRequest adapt(AccessPointRequestDTO dto) {
+    VenueDTO venueDTO = dto.venue;
+
+    CapabilityList capabilities = catalog.findByIds(dto.capabilityIds);
+
+    return new AccessPointRequest(new ID(dto.id), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(venueDTO), adapt(dto.geoLocation), adapt(dto.civicLocation), capabilities);
   }
 }

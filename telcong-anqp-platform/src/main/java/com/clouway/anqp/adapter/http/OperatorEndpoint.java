@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.Capability;
 import com.clouway.anqp.IpType;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -37,7 +38,7 @@ public class OperatorEndpoint {
 
     repository.create(operator);
 
-    return Reply.saying().ok();
+    return Reply.with("Successfully created operator").ok();
   }
 
   @Get
@@ -51,7 +52,7 @@ public class OperatorEndpoint {
 
   @Get
   @At("/:id")
-  public Reply<?> findById(@Named("id")String id) {
+  public Reply<?> findById(@Named("id") String id) {
     Optional<Operator> operator = repository.findById(new ID(id));
 
     if (!operator.isPresent()) {
@@ -76,8 +77,9 @@ public class OperatorEndpoint {
 
   @Post
   @At("/:id/aps")
-  public Reply<?> assignAccessPoints(@Named("id")String id, Request request) {
-    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {}).as(Json.class);
+  public Reply<?> assignAccessPoints(@Named("id") String id, Request request) {
+    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {
+    }).as(Json.class);
     List<ID> apIDs = adaptToIDs(dtos);
 
     repository.assignAccessPoints(new ID(id), apIDs);
@@ -112,7 +114,7 @@ public class OperatorEndpoint {
 
   @Put
   @At("/:id/emergency")
-  public Reply<?> updateEmergencyNumber(@Named("id")Object id, Request request) {
+  public Reply<?> updateEmergencyNumber(@Named("id") Object id, Request request) {
     NewEmergencyNumberDTO dto = request.read(NewEmergencyNumberDTO.class).as(Json.class);
     NewEmergencyNumber newNumber = adapt(id, dto);
 
@@ -147,7 +149,7 @@ public class OperatorEndpoint {
     List<AccessPointDTO> dtos = Lists.newArrayList();
 
     for (AccessPoint ap : aps) {
-      dtos.add(new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation)));
+      dtos.add(new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation), adapt(ap.capabilities)));
     }
 
     return dtos;
@@ -186,7 +188,7 @@ public class OperatorEndpoint {
   }
 
   private NewOperator adapt(NewOperatorDTO dto) {
-   IpType ipType = IpType.valueOf(dto.ipType);
+    IpType ipType = IpType.valueOf(dto.ipType);
 
     return new NewOperator(dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, ipType);
   }
@@ -199,5 +201,14 @@ public class OperatorEndpoint {
     }
 
     return ids;
+  }
+
+  private List<CapabilityDTO> adapt(CapabilityList list) {
+    List<CapabilityDTO> dtos = Lists.newArrayList();
+
+    for (Capability capability : list.values) {
+      dtos.add(new CapabilityDTO(capability.id, capability.name));
+    }
+    return dtos;
   }
 }

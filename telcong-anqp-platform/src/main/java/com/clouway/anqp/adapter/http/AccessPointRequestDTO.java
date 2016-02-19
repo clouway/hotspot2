@@ -1,16 +1,11 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.CivicLocation;
-import com.clouway.anqp.GeoLocation;
-
 import com.google.common.collect.ImmutableList;
 
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- */
-class AccessPointDTO {
+class AccessPointRequestDTO {
   final Object id;
   final String ip;
   final String mac;
@@ -20,9 +15,10 @@ class AccessPointDTO {
   final VenueDTO venue;
   final GeoLocationDTO geoLocation;
   final CivicLocationDTO civicLocation;
-  final List<CapabilityDTO> capabilities;
+  @Capability(message = "Unsuccessful AP edition. Found capability id that is not supported")
+  final List<Integer> capabilityIds;
 
-  AccessPointDTO(Object id, String ip, String mac, String serialNumber, String model, VenueDTO venue, GeoLocationDTO geoLocation, CivicLocationDTO civicLocation, List<CapabilityDTO> capabilities) {
+  AccessPointRequestDTO(Object id, String ip, String mac, String serialNumber, String model, VenueDTO venue, GeoLocationDTO geoLocation, CivicLocationDTO civicLocation, List<Integer> capabilityIds) {
     this.id = id;
     this.ip = ip;
     this.mac = mac;
@@ -31,6 +27,6 @@ class AccessPointDTO {
     this.venue = venue;
     this.geoLocation = geoLocation;
     this.civicLocation = civicLocation;
-    this.capabilities = ImmutableList.copyOf(capabilities);
+    this.capabilityIds = ImmutableList.copyOf(capabilityIds);
   }
 }

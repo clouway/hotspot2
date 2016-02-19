@@ -156,14 +156,14 @@ class PersistentOperatorRepository implements OperatorRepository {
   private Operator adapt(OperatorEntity entity) {
     IpType ipType = IpType.valueOf(entity.ipType);
 
-    return new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName,entity.emergencyNumber, ipType);
+    return new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber, ipType);
   }
 
   private List<AccessPoint> adaptToAPs(List<AccessPointEntity> entities) {
     List<AccessPoint> aps = Lists.newArrayList();
 
     for (AccessPointEntity entity : entities) {
-      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation)));
+      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation), adaptCapabilityEntities(entity.capabilities)));
     }
 
     return aps;
@@ -195,6 +195,16 @@ class PersistentOperatorRepository implements OperatorRepository {
   }
 
   private NewOperatorEntity adapt(NewOperator operator) {
-    return  new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
+    return new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
+  }
+
+  private CapabilityList adaptCapabilityEntities(List<CapabilityEntity> entities) {
+    List<Capability> list = Lists.newArrayList();
+
+    for (CapabilityEntity entity : entities) {
+      list.add(new Capability(entity.id, entity.name));
+    }
+
+    return new CapabilityList(list);
   }
 }

@@ -4,6 +4,8 @@ import com.clouway.anqp.CivicLocation;
 import com.clouway.anqp.GeoLocation;
 import com.clouway.anqp.api.datastore.Kind;
 
+import java.util.List;
+
 /**
  */
 @Kind("aps")
@@ -17,12 +19,13 @@ class AccessPointEntity {
   VenueEntity venue;
   GeoLocationEntity geoLocation;
   CivicLocationEntity civicLocation;
+  List<CapabilityEntity> capabilities;
 
   @SuppressWarnings("unused")
   AccessPointEntity() {
   }
 
-  AccessPointEntity(Object id, Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity geoLocation, CivicLocationEntity civicLocation) {
+  AccessPointEntity(Object id, Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity geoLocation, CivicLocationEntity civicLocation, List<CapabilityEntity> capabilities) {
     this._id = id;
     this.operatorId = operatorId;
     this.ip = ip;
@@ -32,5 +35,6 @@ class AccessPointEntity {
     this.venue = venue;
     this.geoLocation = geoLocation;
     this.civicLocation = civicLocation;
+    this.capabilities = capabilities;
   }
 }
