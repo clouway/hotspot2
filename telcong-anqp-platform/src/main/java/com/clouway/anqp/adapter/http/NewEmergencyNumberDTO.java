@@ -1,6 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import org.apache.bval.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 

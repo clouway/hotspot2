@@ -11,11 +11,11 @@ import java.util.Set;
 /**
  * Validates DTO objects coming from the client side.
  */
- class HibernateObjectValidator implements ObjectValidator {
+ class ApacheObjectValidator implements ObjectValidator {
   private final Validator validator;
 
   @Inject
-  public HibernateObjectValidator(Validator validator){
+  public ApacheObjectValidator(Validator validator){
     this.validator = validator;
   }
 

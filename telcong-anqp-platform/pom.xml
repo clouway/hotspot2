@@ -179,11 +179,10 @@
                 <include>org.slf4j:slf4j-api</include>
 
                 <include>javax.validation:validation-api</include>
-                <include>org.hibernate:hibernate-validator</include>
-                <include>javax.xml.bind:jaxb-api</include>
-                <include>javax.xml.stream:stax-api</include>
-                <include>javax.activation:activation</include>
-                <include>com.sun.xml.bind:jaxb-impl</include>
+                <include>org.apache.bval:bval-guice</include>
+                <include>org.apache.bval:org.apache.bval.bundle</include>
+                <include>org.apache.bval:bval-core</include>
+                <include>org.apache.bval:bval-jsr303</include>
 
                 <include>de.undercouch:bson4jackson</include>
                 <include>com.fasterxml.jackson.core:jackson-annotations</include>
@@ -400,10 +399,11 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>4.0.2.GA</version>
+      <groupId>org.apache.bval</groupId>
+      <artifactId>bval-guice</artifactId>
+      <version>0.3-incubating</version>
     </dependency>
+
     <!--Jackson BSON-->
     <dependency>
       <groupId>de.undercouch</groupId>

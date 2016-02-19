@@ -6,6 +6,7 @@ import com.clouway.anqp.snmp.SnmpModule;
 import com.google.common.util.concurrent.ServiceManager;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.apache.bval.guice.ValidationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,8 @@ public class AnqpPlatformBootstrap {
             new CoreModule(),
             new SnmpModule(162),
             new HttpModule(8080),
-            new PersistentModule()
+            new PersistentModule(),
+            new ValidationModule()
     );
 
     final ServiceManager serviceManager = injector.getInstance(ServiceManager.class);

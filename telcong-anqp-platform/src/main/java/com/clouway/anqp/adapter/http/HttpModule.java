@@ -3,17 +3,12 @@ package com.clouway.anqp.adapter.http;
 import com.clouway.anqp.service.api.Plugins;
 import com.clouway.anqp.service.api.ServicePlugin;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.servlet.ServletModule;
 import com.google.sitebricks.SitebricksModule;
 import com.google.sitebricks.headless.Reply;
 import com.google.sitebricks.headless.Service;
-import org.hibernate.validator.HibernateValidator;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
 
 import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.only;
@@ -32,7 +27,7 @@ public class HttpModule extends AbstractModule {
   protected void configure() {
     Multibinder<ServicePlugin> plugins = Multibinder.newSetBinder(binder(), ServicePlugin.class);
     plugins.addBinding().toInstance(Plugins.of(new HttpBackend(port)));
-    bind(ObjectValidator.class).to(HibernateObjectValidator.class).in(Singleton.class);
+    bind(ObjectValidator.class).to(ApacheObjectValidator.class).in(Singleton.class);
 
     install(new ServletModule() {
       @Override
@@ -55,11 +50,5 @@ public class HttpModule extends AbstractModule {
     });
 
     bindInterceptor(annotatedWith(Service.class), returns(only(Reply.class)), new HttpRequestErrorReporter("Internal Server Error"));
-  }
-
-  @Provides
-  @Singleton
-  public Validator getValidator() {
-    return Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory().getValidator();
   }
 }
