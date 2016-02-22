@@ -68,17 +68,18 @@ class MongoQuery {
   }
 
   public void update(MongoCollection<Document> collection, UpdateStatement statement) {
+    Document document = statement.build();
+
     if (statement.isForBulkUpdate()) {
-      collection.updateMany(example, statement.build());
-    } else {
-      collection.updateOne(example, statement.build());
+      collection.updateMany(example, document);
+      return;
     }
 
+    collection.updateOne(example,  document);
   }
 
   @Override
   public String toString() {
     return "Query: " + example + ", order: " + order + ", " + limit;
   }
-
 }

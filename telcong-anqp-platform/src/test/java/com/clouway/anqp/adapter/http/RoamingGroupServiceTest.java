@@ -1,9 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.NewRoamingGroup;
-import com.clouway.anqp.RoamingGroup;
-import com.clouway.anqp.RoamingGroupRepository;
-import com.clouway.anqp.RoamingGroupType;
+import com.clouway.anqp.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -15,6 +12,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.RoamingGroupBuilder.newRoamingGroup;
+import static com.clouway.anqp.RoamingGroupType.INTERNATIONAL;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isOk;
@@ -34,8 +33,8 @@ public class RoamingGroupServiceTest {
 
   @Test
   public void create() throws Exception {
-    final NewRoamingGroup rg = new NewRoamingGroup("name", "description", RoamingGroupType.INTERNATIONAL);
-    final NewRoamingGroupDTO dto = new NewRoamingGroupDTO("name", "description", RoamingGroupType.INTERNATIONAL);
+    final NewRoamingGroup rg = new NewRoamingGroup("name", "description", INTERNATIONAL);
+    final NewRoamingGroupDTO dto = new NewRoamingGroupDTO("name", "description", "INTERNATIONAL");
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(rg)));
@@ -50,13 +49,13 @@ public class RoamingGroupServiceTest {
   @Test
   public void findAll() throws Exception {
     final List<RoamingGroup> rgs = Lists.newArrayList(
-            new RoamingGroup(1, "name1", "description1", RoamingGroupType.NATIONAL),
-            new RoamingGroup(2, "name2", "description2", RoamingGroupType.PERMANENT)
+            new RoamingGroup(new ID(1), "name1", "description1", RoamingGroupType.NATIONAL, Lists.<Operator>newArrayList()),
+            new RoamingGroup(new ID(2), "name2", "description2", RoamingGroupType.PERMANENT, Lists.<Operator>newArrayList())
     );
 
     final List<RoamingGroupDTO> dtos = Lists.newArrayList(
-            new RoamingGroupDTO(1, "name1", "description1", RoamingGroupType.NATIONAL),
-            new RoamingGroupDTO(2, "name2", "description2", RoamingGroupType.PERMANENT)
+            new RoamingGroupDTO(1, "name1", "description1", "NATIONAL", Lists.<OperatorDTO>newArrayList()),
+            new RoamingGroupDTO(2, "name2", "description2", "PERMANENT", Lists.<OperatorDTO>newArrayList())
     );
 
     context.checking(new Expectations() {{
@@ -72,11 +71,13 @@ public class RoamingGroupServiceTest {
 
   @Test
   public void findById() throws Exception {
-    final RoamingGroup rg = new RoamingGroup(1, "name", "description", RoamingGroupType.TROMBONE);
-    final RoamingGroupDTO dto = new RoamingGroupDTO(1, "name", "description", RoamingGroupType.TROMBONE);
+    Operator operator = new Operator(new ID(1), "name", OperatorState.ACTIVE, "descr", "dName", "fName", "emergency");
+    OperatorDTO operatorDTO = new OperatorDTO(1, "name", "ACTIVE", "descr", "dName", "fName", "emergency");
+    final RoamingGroup rg = new RoamingGroup(new ID(1), "name", "description", RoamingGroupType.TROMBONE, Lists.newArrayList(operator));
+    final RoamingGroupDTO dto = new RoamingGroupDTO(1, "name", "description", "TROMBONE", Lists.newArrayList(operatorDTO));
 
     context.checking(new Expectations() {{
-      oneOf(repository).findById("id");
+      oneOf(repository).findById(with(matching(new ID("id"))));
       will(returnValue(Optional.of(rg)));
     }});
 
@@ -89,7 +90,7 @@ public class RoamingGroupServiceTest {
   @Test
   public void findByUnknownId() throws Exception {
     context.checking(new Expectations() {{
-      oneOf(repository).findById("id");
+      oneOf(repository).findById(with(matching(new ID("id"))));
       will(returnValue(Optional.absent()));
     }});
 
@@ -100,8 +101,8 @@ public class RoamingGroupServiceTest {
 
   @Test
   public void update() throws Exception {
-    final RoamingGroup rg = new RoamingGroup(1, "name", "description", RoamingGroupType.REGIONAL);
-    final RoamingGroupDTO dto = new RoamingGroupDTO(1, "name", "description", RoamingGroupType.REGIONAL);
+    final RoamingGroupRequest rg = new RoamingGroupRequest(new ID(1), "name", "description", RoamingGroupType.NATIONAL);
+    final RoamingGroupRequestDTO dto = new RoamingGroupRequestDTO(1, "name", "description", "NATIONAL");
 
     context.checking(new Expectations() {{
       oneOf(repository).update(with(matching(rg)));
@@ -114,9 +115,41 @@ public class RoamingGroupServiceTest {
   }
 
   @Test
+  public void assignOperators() throws Exception {
+    final List<Object> dto = Lists.<Object>newArrayList(1, 2);
+    final List<ID> ids = Lists.newArrayList(new ID(1), new ID(2));
+    final ID groupID = new ID("groupID");
+
+    context.checking(new Expectations() {{
+      oneOf(repository).assignOperators(with(matching(groupID)), with(matching(ids)));
+    }});
+
+    Request request = makeRequestThatContains(dto);
+    Reply<?> reply = service.assignOperators("groupID", request);
+
+    assertThat(reply, isOk());
+  }
+
+  @Test
+  public void removeOperatorsFromRoamingGroup() throws Exception {
+    final List<ID> ids = Lists.newArrayList(new ID(1), new ID(2));
+    final List<Object> dto = Lists.<Object>newArrayList(1, 2);
+    final ID groupID = new ID("groupID");
+
+    context.checking(new Expectations() {{
+      oneOf(repository).removeOperators(with(matching(groupID)), with(matching(ids)));
+    }});
+
+    Request request = makeRequestThatContains(dto);
+    Reply<?> reply = service.removeOperators("groupID", request);
+
+    assertThat(reply, isOk());
+  }
+
+  @Test
   public void delete() throws Exception {
     context.checking(new Expectations() {{
-      oneOf(repository).delete(1);
+      oneOf(repository).delete(with(matching(new ID(1))));
     }});
 
     Reply<?> reply = service.delete(1);

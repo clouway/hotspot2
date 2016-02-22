@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.ID;
 import com.clouway.anqp.NewEmergencyNumber;
 import com.clouway.anqp.NewOperator;
 import com.clouway.anqp.Operator;
@@ -50,8 +51,8 @@ public class OperatorServiceTest {
 
   @Test
   public void findAll() throws Exception {
-    final Operator operator = new Operator("id1", "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber");
-    final Operator anotherOperator = new Operator("id2", "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber");
+    final Operator operator = new Operator(new ID("id1"), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber");
+    final Operator anotherOperator = new Operator(new ID("id2"), "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber");
     final List<Operator> operators = Lists.newArrayList(operator, anotherOperator);
 
     context.checking(new Expectations() {{
@@ -71,10 +72,10 @@ public class OperatorServiceTest {
 
   @Test
   public void findById() throws Exception {
-    final Operator operator = new Operator("id", "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
+    final Operator operator = new Operator(new ID("id"), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
 
     context.checking(new Expectations() {{
-      oneOf(repository).findById("id");
+      oneOf(repository).findById(with(matching(new ID("id"))));
       will(returnValue(Optional.of(operator)));
     }});
 
@@ -88,7 +89,7 @@ public class OperatorServiceTest {
   @Test
   public void findByUnknownId() throws Exception {
     context.checking(new Expectations() {{
-      oneOf(repository).findById("id");
+      oneOf(repository).findById(with(matching(new ID("id"))));
       will(returnValue(Optional.absent()));
     }});
 
@@ -99,7 +100,7 @@ public class OperatorServiceTest {
 
   @Test
   public void update() throws Exception {
-    final Operator operator = new Operator(1, "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
+    final Operator operator = new Operator(new ID(1), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
     final OperatorDTO dto = new OperatorDTO(1, "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber");
 
     context.checking(new Expectations() {{
@@ -115,10 +116,10 @@ public class OperatorServiceTest {
   @Test
   public void activate() throws Exception {
     context.checking(new Expectations() {{
-      oneOf(repository).activate("operatorID");
+      oneOf(repository).activate(with(matching(new ID("id"))));
     }});
 
-    Reply<?> reply = service.activate("operatorID");
+    Reply<?> reply = service.activate("id");
 
     assertThat(reply, isOk());
   }
@@ -126,17 +127,17 @@ public class OperatorServiceTest {
   @Test
   public void deactivate() throws Exception {
     context.checking(new Expectations() {{
-      oneOf(repository).deactivate("operatorID");
+      oneOf(repository).deactivate(with(matching(new ID("id"))));
     }});
 
-    Reply<?> reply = service.deactivate("operatorID");
+    Reply<?> reply = service.deactivate("id");
 
     assertThat(reply, isOk());
   }
 
   @Test
   public void updateEmergencyNumber() throws Exception {
-    final NewEmergencyNumber newNumber = new NewEmergencyNumber("operatorID", "112");
+    final NewEmergencyNumber newNumber = new NewEmergencyNumber(new ID("id"), "112");
     final NewEmergencyNumberDTO dto = new NewEmergencyNumberDTO("112");
 
     context.checking(new Expectations() {{
@@ -144,7 +145,7 @@ public class OperatorServiceTest {
     }});
 
     Request request = makeRequestThatContains(dto);
-    Reply<?> reply = service.updateEmergencyNumber("operatorID", request);
+    Reply<?> reply = service.updateEmergencyNumber("id", request);
 
     assertThat(reply, isOk());
   }
@@ -152,7 +153,7 @@ public class OperatorServiceTest {
   @Test
   public void delete() throws Exception {
     context.checking(new Expectations() {{
-      oneOf(repository).delete("id");
+      oneOf(repository).delete(with(matching(new ID("id"))));
     }});
 
     Reply<?> reply = service.delete("id");

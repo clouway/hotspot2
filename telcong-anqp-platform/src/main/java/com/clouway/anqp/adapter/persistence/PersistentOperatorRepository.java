@@ -1,6 +1,13 @@
 package com.clouway.anqp.adapter.persistence;
 
-import com.clouway.anqp.*;
+import com.clouway.anqp.ID;
+import com.clouway.anqp.EmergencyNumberException;
+import com.clouway.anqp.NewEmergencyNumber;
+import com.clouway.anqp.NewOperator;
+import com.clouway.anqp.Operator;
+import com.clouway.anqp.OperatorException;
+import com.clouway.anqp.OperatorRepository;
+import com.clouway.anqp.OperatorState;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
 import com.clouway.anqp.api.datastore.UpdateStatement;
@@ -40,37 +47,37 @@ class PersistentOperatorRepository implements OperatorRepository {
   }
 
   @Override
-  public Optional<Operator> findById(Object id) {
-    OperatorEntity entity = datastore.findOne(OperatorEntity.class, Filter.where("_id").is(id));
+  public Optional<Operator> findById(ID id) {
+    OperatorEntity entity = datastore.findOne(OperatorEntity.class, Filter.where("_id").is(id.value));
 
     return adapt(entity);
   }
 
   @Override
-  public void activate(Object operatorID) {
-    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(operatorID));
+  public void activate(ID id) {
+    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(id.value));
 
     if (count == 0) {
       throw new NotFoundException("Operator is undefined!");
     }
 
-    datastore.update(OperatorEntity.class, Filter.where("_id").is(operatorID), UpdateStatement.update("state").toBe(OperatorState.ACTIVE.name()));
+    datastore.update(OperatorEntity.class, Filter.where("_id").is(id.value), UpdateStatement.update("state").toBe(OperatorState.ACTIVE.name()));
   }
 
   @Override
-  public void deactivate(Object operatorID) {
-    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(operatorID));
+  public void deactivate(ID id) {
+    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(id.value));
 
     if (count == 0) {
       throw new NotFoundException("Operator is undefined!");
     }
 
-    datastore.update(OperatorEntity.class, Filter.where("_id").is(operatorID), UpdateStatement.update("state").toBe(OperatorState.INACTIVE.name()));
+    datastore.update(OperatorEntity.class, Filter.where("_id").is(id.value), UpdateStatement.update("state").toBe(OperatorState.INACTIVE.name()));
   }
 
   @Override
   public void update(Operator operator) {
-    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("name").is(operator.name).and("_id").isNot(operator.id));
+    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("name").is(operator.name).and("_id").isNot(operator.id.value));
 
     if (count != 0) {
       throw new OperatorException("Operator with name: " + operator.name + " already exists.");
@@ -87,19 +94,19 @@ class PersistentOperatorRepository implements OperatorRepository {
       throw new EmergencyNumberException("Emergency call number: " + newNumber.value + " is already used from another operator.");
     }
 
-    datastore.update(OperatorEntity.class, Filter.where("_id").is(newNumber.operatorID), UpdateStatement.update("emergencyNumber").toBe(newNumber.value));
+    datastore.update(OperatorEntity.class, Filter.where("_id").is(newNumber.operatorID.value), UpdateStatement.update("emergencyNumber").toBe(newNumber.value));
   }
 
   @Override
-  public void delete(Object id) {
-    datastore.deleteById(OperatorEntity.class, id);
+  public void delete(ID id) {
+    datastore.deleteById(OperatorEntity.class, id.value);
   }
 
   private List<Operator> adapt(List<OperatorEntity> entities) {
     List<Operator> operators = Lists.newArrayList();
 
     for(OperatorEntity entity : entities) {
-      operators.add(new Operator(entity._id, entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName,entity.emergencyNumber));
+      operators.add(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber));
     }
 
     return operators;
@@ -110,11 +117,11 @@ class PersistentOperatorRepository implements OperatorRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new Operator(entity._id, entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName,entity.emergencyNumber));
+    return Optional.of(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber));
   }
 
   private OperatorEntity adapt(Operator operator) {
-    return new OperatorEntity(operator.id, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
+    return new OperatorEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
   }
 
   private NewOperatorEntity adapt(NewOperator operator) {

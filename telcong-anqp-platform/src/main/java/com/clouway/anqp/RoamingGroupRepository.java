@@ -21,14 +21,30 @@ public interface RoamingGroupRepository {
    *
    * @param group contains data with we will update group.
    */
-  void update(RoamingGroup group);
+  void update(RoamingGroupRequest group);
+
+  /**
+   * Implementation of this method add operators to roaming group.
+   *
+   * @param roamingGroupID is roaming group to which we will add operators.
+   * @param operatorIDs is ids of operators which we will add to roaming group.
+   */
+  void assignOperators(ID roamingGroupID, List<ID> operatorIDs);
+
+  /**
+   * Implementation of this method remove operators from roaming group.
+   *
+   * @param roamingGroupID id of the roaming group from which we will remove operators
+   * @param operatorIDs contains ids of operators which will be removed from roaming group
+   */
+  void removeOperators(ID roamingGroupID, List<ID> operatorIDs);
 
   /**
    * Delete roaming group
    *
    * @param id if the deleted roaming group
    */
-  void delete(Object id);
+  void delete(ID id);
 
   /**
    * Find roaming group by id.
@@ -37,7 +53,7 @@ public interface RoamingGroupRepository {
    *
    * @return {@link com.clouway.anqp.RoamingGroup}
    */
-  Optional<RoamingGroup> findById(Object id);
+  Optional<RoamingGroup> findById(ID id);
 
   /**
    * Find all roaming groups

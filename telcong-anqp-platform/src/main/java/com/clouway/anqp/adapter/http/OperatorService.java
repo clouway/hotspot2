@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.NewEmergencyNumber;
+import com.clouway.anqp.ID;
 import com.clouway.anqp.NewOperator;
 import com.clouway.anqp.Operator;
 import com.clouway.anqp.OperatorRepository;
@@ -54,7 +55,7 @@ public class OperatorService {
   @Get
   @At("/:id")
   public Reply<?> findById(@Named("id")String id) {
-    Optional<Operator> operator = repository.findById(id);
+    Optional<Operator> operator = repository.findById(new ID(id));
 
     if (!operator.isPresent()) {
       return Reply.saying().notFound();
@@ -79,7 +80,7 @@ public class OperatorService {
   @Post
   @At("/:id/activate")
   public Reply<?> activate(@Named("id") Object id) {
-    repository.activate(id);
+    repository.activate(new ID(id));
 
     return Reply.saying().ok();
   }
@@ -87,7 +88,7 @@ public class OperatorService {
   @Post
   @At("/:id/deactivate")
   public Reply<?> deactivate(@Named("id") Object id) {
-    repository.deactivate(id);
+    repository.deactivate(new ID(id));
 
     return Reply.saying().ok();
   }
@@ -106,17 +107,17 @@ public class OperatorService {
   @Delete
   @At("/:id")
   public Reply<?> delete(@Named("id") Object id) {
-    repository.delete(id);
+    repository.delete(new ID(id));
 
     return Reply.saying().ok();
   }
 
   private NewEmergencyNumber adapt(Object id, NewEmergencyNumberDTO dto) {
-    return new NewEmergencyNumber(id, dto.value);
+    return new NewEmergencyNumber(new ID(id), dto.value);
   }
 
   private Operator adapt(Object id, OperatorDTO dto) {
-    return new Operator(id, dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
+    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
   }
 
   private List<OperatorDTO> adapt(List<Operator> operators) {
@@ -130,7 +131,7 @@ public class OperatorService {
   }
 
   private OperatorDTO adapt(Operator operator) {
-    return new OperatorDTO(operator.id, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
+    return new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
   }
 
   private NewOperator adapt(NewOperatorDTO dto) {

@@ -52,7 +52,7 @@ public final class Filter {
     return this;
   }
 
-  public Filter in(List<String> values) {
+  public Filter in(List<Object> values) {
     filter.put(queue.poll(), condition("$in", values));
     return this;
   }

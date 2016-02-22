@@ -1,5 +1,6 @@
 package com.clouway.anqp.api.datastore;
 
+import com.clouway.anqp.util.matchers.EqualityMatchers;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.Before;
@@ -97,7 +98,6 @@ public abstract class DatastoreContract {
       this.name = name;
     }
   }
-
 
   static class UnmappedClass {
     @SuppressWarnings("unused")
@@ -387,13 +387,12 @@ public abstract class DatastoreContract {
     assertThat(count, is(2l));
   }
 
-
   @Test
   public void updateWithFilter() {
     datastore.save(new Person(1l, "name1"));
     datastore.save(new Person(2l, "name2"));
 
-    datastore.update(Person.class, where("name").is("name1"), new UpdateStatement("name").toBe("updated-name"));
+    datastore.update(Person.class, where("name").is("name1"), UpdateStatement.update("name").toBe("updated-name"));
 
     Person updated = datastore.findById(Person.class, 1l);
     Person notUpdated = datastore.findById(Person.class, 2l);

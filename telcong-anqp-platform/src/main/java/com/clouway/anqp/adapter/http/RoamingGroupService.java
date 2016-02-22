@@ -1,11 +1,10 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.NewRoamingGroup;
-import com.clouway.anqp.RoamingGroup;
-import com.clouway.anqp.RoamingGroupRepository;
+import com.clouway.anqp.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.sitebricks.At;
 import com.google.sitebricks.headless.Reply;
@@ -51,7 +50,7 @@ public class RoamingGroupService {
   @Get
   @At("/:id")
   public Reply<?> findById(@Named("id") String id) {
-    Optional<RoamingGroup> group = repository.findById(id);
+    Optional<RoamingGroup> group = repository.findById(new ID(id));
 
     if (!group.isPresent()) {
       return Reply.saying().notFound();
@@ -65,10 +64,32 @@ public class RoamingGroupService {
   @Put
   @At("/:id")
   public Reply<?> update(@Named("id") Object id, Request request) {
-    RoamingGroupDTO dto = request.read(RoamingGroupDTO.class).as(Json.class);
-    RoamingGroup group = adapt(id, dto);
+    RoamingGroupRequestDTO dto = request.read(RoamingGroupRequestDTO.class).as(Json.class);
+    RoamingGroupRequest group = adapt(id, dto);
 
     repository.update(group);
+
+    return Reply.saying().ok();
+  }
+
+  @Put
+  @At("/:id/operators/assign")
+  public Reply<?> assignOperators(@Named("id")Object id, Request request) {
+    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {}).as(Json.class);
+    List<ID> ids = adaptToID(dtos);
+
+    repository.assignOperators(new ID(id), ids);
+
+    return Reply.saying().ok();
+  }
+
+  @Put
+  @At("/:id/operators/remove")
+  public Reply<?> removeOperators(@Named("id")Object id, Request request) {
+    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {}).as(Json.class);
+    List<ID> ids =  adaptToID(dtos);
+
+    repository.removeOperators(new ID(id), ids);
 
     return Reply.saying().ok();
   }
@@ -76,30 +97,50 @@ public class RoamingGroupService {
   @Delete
   @At("/:id")
   public Reply<?> delete(@Named("id") Object id) {
-    repository.delete(id);
+    repository.delete(new ID(id));
 
     return Reply.saying().ok();
   }
 
-  private RoamingGroupDTO adapt(RoamingGroup group) {
-    return new RoamingGroupDTO(group.id, group.name, group.description, group.type);
-  }
-
   private NewRoamingGroup adapt(NewRoamingGroupDTO dto) {
-    return new NewRoamingGroup(dto.name, dto.description, dto.type);
+    return new NewRoamingGroup(dto.name, dto.description, RoamingGroupType.valueOf(dto.type));
   }
 
-  private RoamingGroup adapt(Object id, RoamingGroupDTO dto) {
-    return new RoamingGroup(id, dto.name, dto.description, dto.type);
+  private List<ID> adaptToID(List<Object> dtos) {
+    List<ID> ids = Lists.newArrayList();
+
+    for (Object dto : dtos) {
+      ids.add(new ID(dto));
+    }
+
+    return ids;
   }
 
   private List<RoamingGroupDTO> adapt(List<RoamingGroup> groups) {
     List<RoamingGroupDTO> dtos = Lists.newArrayList();
 
     for (RoamingGroup rg : groups) {
-      dtos.add(new RoamingGroupDTO(rg.id, rg.name, rg.description, rg.type));
+      dtos.add(adapt(rg));
     }
 
     return dtos;
+  }
+
+  private RoamingGroupDTO adapt(RoamingGroup group) {
+    return new RoamingGroupDTO(group.id.value, group.name, group.description, group.type.name(), adaptToOperatorDTOs(group.operators));
+  }
+
+  private List<OperatorDTO> adaptToOperatorDTOs(List<Operator> operators) {
+    List<OperatorDTO> dtos = Lists.newArrayList();
+
+    for (Operator operator : operators) {
+      dtos.add(new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber));
+    }
+
+    return dtos;
+  }
+
+  private RoamingGroupRequest adapt(Object roamingGroupID, RoamingGroupRequestDTO dto) {
+    return new RoamingGroupRequest(new ID(roamingGroupID), dto.name, dto.description, RoamingGroupType.valueOf(dto.type));
   }
 }

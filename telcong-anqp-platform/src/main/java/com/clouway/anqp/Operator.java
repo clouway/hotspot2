@@ -3,7 +3,7 @@ package com.clouway.anqp;
 /**
  */
 public class Operator {
-  public final Object id;
+  public final ID id;
   public final String name;
   public final OperatorState state;
   public final String description;
@@ -11,7 +11,7 @@ public class Operator {
   public final String friendlyName;
   public final String emergencyNumber;
 
-  public Operator(Object id, String name, OperatorState state, String description, String domainName, String friendlyName, String emergencyNumber) {
+  public Operator(ID id, String name, OperatorState state, String description, String domainName, String friendlyName, String emergencyNumber) {
     this.id = id;
     this.name = name;
     this.state = state;

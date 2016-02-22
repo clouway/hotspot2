@@ -1,12 +1,10 @@
 package com.clouway.anqp.adapter.persistence;
 
-import com.clouway.anqp.NewRoamingGroup;
-import com.clouway.anqp.RoamingGroup;
-import com.clouway.anqp.RoamingGroupRepository;
-import com.clouway.anqp.RoamingGroupType;
+import com.clouway.anqp.*;
 import com.clouway.anqp.api.datastore.DatastoreCleaner;
 import com.clouway.anqp.api.datastore.DatastoreRule;
 import com.clouway.anqp.api.datastore.FakeDatastore;
+import com.clouway.anqp.core.NotFoundException;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import org.junit.ClassRule;
@@ -22,7 +20,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Emil Georgiev <emil.georgiev@clouway.com>
  */
 public class RoamingGroupRepositoryTest {
   @ClassRule
@@ -32,40 +29,37 @@ public class RoamingGroupRepositoryTest {
   public DatastoreCleaner datastoreCleaner = new DatastoreCleaner(datastoreRule.db());
 
   private FakeDatastore datastore = new FakeDatastore(datastoreRule.db());
-  private RoamingGroupRepository repository = new PersistentRoamingGroupRepository(datastore);
 
-  @Test
-  public void findById() throws Exception {
-    NewRoamingGroup group = new NewRoamingGroup("name", "description", RoamingGroupType.PERMANENT);
-
-    Object id = repository.create(group);
-
-    RoamingGroup got = repository.findById(id).get();
-    RoamingGroup want = new RoamingGroup(id, "name", "description", RoamingGroupType.PERMANENT);
-
-    assertThat(got, deepEquals(want));
-  }
+  private OperatorRepository operatorRepository = new PersistentOperatorRepository(datastore);
+  private RoamingGroupRepository roamingRepository = new PersistentRoamingGroupRepository(datastore);
 
   @Test
   public void findByUnknownId() throws Exception {
-    Optional<RoamingGroup> found = repository.findById("id");
+    Optional<RoamingGroup> found = roamingRepository.findById(new ID("id"));
 
     assertFalse(found.isPresent());
   }
 
   @Test
-  public void findAll() throws Exception {
-    NewRoamingGroup someGroup = new NewRoamingGroup("name1", "description1", RoamingGroupType.REGIONAL);
-    NewRoamingGroup anotherGroup = new NewRoamingGroup("name2", "description2", RoamingGroupType.INTERNATIONAL);
+  public void findRoamingGroupWithoutOperators() throws Exception {
+    Object id = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.PERMANENT));
 
-    Object id1 = repository.create(someGroup);
-    Object id2 = repository.create(anotherGroup);
+    RoamingGroup got = roamingRepository.findById(new ID(id)).get();
+    RoamingGroup want = new RoamingGroup(new ID(id), "name", "description", RoamingGroupType.PERMANENT, Lists.<Operator>newArrayList());
 
-    List<RoamingGroup> got = repository.findAll();
+    assertThat(got, deepEquals(want));
+  }
+
+  @Test
+  public void findRoamingGroupsWithoutOperators() throws Exception {
+    Object id1 = roamingRepository.create(new NewRoamingGroup("name1", "description1", RoamingGroupType.REGIONAL));
+    Object id2 = roamingRepository.create(new NewRoamingGroup("name2", "description2", RoamingGroupType.INTERNATIONAL));
+
+    List<RoamingGroup> got = roamingRepository.findAll();
 
     List<RoamingGroup> want = Lists.newArrayList(
-            new RoamingGroup(id1, "name1", "description1", RoamingGroupType.REGIONAL),
-            new RoamingGroup(id2, "name2", "description2", RoamingGroupType.INTERNATIONAL)
+            new RoamingGroup(new ID(id1), "name1", "description1", RoamingGroupType.REGIONAL, Lists.<Operator>newArrayList()),
+            new RoamingGroup(new ID(id2), "name2", "description2", RoamingGroupType.INTERNATIONAL, Lists.<Operator>newArrayList())
     );
 
     assertThat(got, deepEquals(want));
@@ -73,34 +67,112 @@ public class RoamingGroupRepositoryTest {
 
   @Test
   public void update() throws Exception {
-    Object id = repository.create(new NewRoamingGroup("name", "description", RoamingGroupType.REGIONAL));
+    Object operID = operatorRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "emergency"));
+    Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.REGIONAL));
 
-    RoamingGroup group = new RoamingGroup(id, "newName", "newDescription", RoamingGroupType.INTERNATIONAL);
+    roamingRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID)));
 
-    repository.update(group);
+    RoamingGroupRequest newRoamingGroup = new RoamingGroupRequest(new ID(groupID), "newName", "newDescription", RoamingGroupType.INTERNATIONAL);
 
-    RoamingGroup found = repository.findById(id).get();
+    roamingRepository.update(newRoamingGroup);
 
-    assertThat(found, deepEquals(group));
+    RoamingGroup got = roamingRepository.findById(new ID(groupID)).get();
+    RoamingGroup want = new RoamingGroup(
+            new ID(groupID), "newName", "newDescription", RoamingGroupType.INTERNATIONAL,
+            Lists.newArrayList(new Operator(new ID(operID), "name", OperatorState.ACTIVE, "description", "dName", "fName", "emergency"))
+    );
+
+    assertThat(got, deepEquals(want));
+  }
+
+  @Test
+  public void assignOperators() throws Exception {
+    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency"));
+    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency"));
+
+    Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.INTERNATIONAL));
+
+    roamingRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID1)));
+    roamingRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID2)));
+
+    RoamingGroup got = roamingRepository.findById(new ID(groupID)).get();
+
+    List<Operator> operators = Lists.newArrayList(
+            new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency"),
+            new Operator(new ID(operID2), "name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency")
+    );
+
+    RoamingGroup want = new RoamingGroup(new ID(groupID), "name", "description", RoamingGroupType.INTERNATIONAL, operators);
+
+    assertThat(got, deepEquals(want));
+  }
+
+  @Test
+  public void assignDisabledOperator() throws Exception {
+    Object operID1 =  operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency"));
+    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "emergency"));
+
+    Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.INTERNATIONAL));
+
+    roamingRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID1), new ID(operID2)));
+
+    RoamingGroup got = roamingRepository.findById(new ID(groupID)).get();
+
+    List<Operator> operators = Lists.newArrayList(new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency"));
+    RoamingGroup want = new RoamingGroup(new ID(groupID), "name", "description", RoamingGroupType.INTERNATIONAL, operators);
+
+    assertThat(got, deepEquals(want));
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void assignOperatorsToUnknownRoamingGroup() throws Exception {
+    Object operID1 =  operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency"));
+    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "emergency"));
+
+    roamingRepository.assignOperators(new ID("groupID"), Lists.newArrayList(new ID(operID1), new ID(operID2)));
+  }
+
+  @Test
+  public void removeOperatorsFromRoamingGroup() throws Exception {
+    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency"));
+    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency"));
+
+    Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.INTERNATIONAL));
+
+    roamingRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID1), new ID(operID2)));
+
+    roamingRepository.removeOperators(new ID(groupID), Lists.newArrayList(new ID(operID2)));
+
+    List<RoamingGroup> got = roamingRepository.findAll();
+
+    Operator operator = new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency");
+    List<RoamingGroup> want = Lists.newArrayList(new RoamingGroup(new ID(groupID), "name", "description", RoamingGroupType.INTERNATIONAL, Lists.newArrayList(operator)));
+
+    assertThat(got, deepEquals(want));
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void removeOperatorsFromUnknownRoamingGroup() throws Exception {
+    roamingRepository.removeOperators(new ID("groupID"), Lists.newArrayList(new ID("operatorID")));
   }
 
   @Test
   public void deleteById() throws Exception {
-    Object id = repository.create(new NewRoamingGroup("name", "description", RoamingGroupType.REGIONAL));
+    Object id = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.REGIONAL));
 
-    repository.delete(id);
+    roamingRepository.delete(new ID(id));
 
-    List<RoamingGroup> found = repository.findAll();
+    List<RoamingGroup> found = roamingRepository.findAll();
 
     assertTrue(found.isEmpty());
   }
 
   @Test
   public void deleteByUnknownId() throws Exception {
-    repository.create(new NewRoamingGroup("name", "description", RoamingGroupType.REGIONAL));
-    repository.delete("id");
+    roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.REGIONAL));
+    roamingRepository.delete(new ID("id"));
 
-    List<RoamingGroup> found = repository.findAll();
+    List<RoamingGroup> found = roamingRepository.findAll();
 
     assertThat(found.size(), is(1));
   }

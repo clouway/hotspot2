@@ -35,7 +35,7 @@ public interface OperatorRepository {
    *
    * @param id of the operator which wi will delete
    */
-  void delete(Object id);
+  void delete(ID id);
 
   /**
    * Find all operators
@@ -50,17 +50,17 @@ public interface OperatorRepository {
    *
    * @return {@link com.clouway.anqp.Operator}
    */
-  Optional<Operator> findById(Object id);
+  Optional<Operator> findById(ID id);
 
   /**
    * Implementation of this method activate operator
    * @param id of the operator which will be activated.
    */
-  void activate(Object id);
+  void activate(ID id);
 
   /**
    * Implementation of this method deactivate operator
    * @param id of the operator which will be deactivated.
    */
-  void deactivate(Object id);
+  void deactivate(ID id);
 }

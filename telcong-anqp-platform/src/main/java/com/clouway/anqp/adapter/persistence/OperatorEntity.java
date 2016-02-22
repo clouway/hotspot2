@@ -16,7 +16,8 @@ class OperatorEntity {
   String friendlyName;
   String emergencyNumber;
 
-  public OperatorEntity() {
+  @SuppressWarnings("unused")
+  OperatorEntity() {
   }
 
   OperatorEntity(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber) {
