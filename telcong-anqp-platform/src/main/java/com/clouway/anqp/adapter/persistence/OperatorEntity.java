@@ -8,19 +8,21 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 @Kind("operators")
 class OperatorEntity {
-   Object _id;
-   String name;
-   String description;
-   String domainName;
-   String friendlyName;
-   String emergencyNumber;
+  Object _id;
+  String name;
+  String state;
+  String description;
+  String domainName;
+  String friendlyName;
+  String emergencyNumber;
 
   public OperatorEntity() {
   }
 
-  OperatorEntity(Object id, String name, String description, String domainName, String friendlyName, String emergencyNumber) {
+  OperatorEntity(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber) {
     this._id = id;
     this.name = name;
+    this.state = state;
     this.description = description;
     this.domainName = domainName;
     this.friendlyName = friendlyName;

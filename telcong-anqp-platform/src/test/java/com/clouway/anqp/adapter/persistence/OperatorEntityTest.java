@@ -11,24 +11,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class OperatorEntityTest {
   @Test
   public void happyPath() throws Exception {
-    OperatorEntity got = new OperatorEntity("id", "name", "descr", "dName", "fName", "911");
-    OperatorEntity want = new OperatorEntity("id", "name", "descr", "dName", "fName", "911");
+    OperatorEntity got = new OperatorEntity("id", "ACTIVE", "name", "descr", "dName", "fName", "911");
+    OperatorEntity want = new OperatorEntity("id", "ACTIVE", "name", "descr", "dName", "fName", "911");
 
     assertThat(got, deepEquals(want));
   }
 
   @Test
   public void nullableEmergencyNumber() throws Exception {
-    OperatorEntity got = new OperatorEntity("id", "name", "descr", "dName", "fName", null);
-    OperatorEntity want = new OperatorEntity("id", "name", "descr", "dName", "fName", "112");
+    OperatorEntity got = new OperatorEntity("id", "ACTIVE", "name", "descr", "dName", "fName", null);
+    OperatorEntity want = new OperatorEntity("id", "ACTIVE", "name", "descr", "dName", "fName", "112");
 
     assertThat(got, deepEquals(want));
   }
 
   @Test
   public void emptyEmergencyNumber() throws Exception {
-    OperatorEntity got = new OperatorEntity("id", "name", "descr", "dName", "fName", "");
-    OperatorEntity want = new OperatorEntity("id", "name", "descr", "dName", "fName", "112");
+    OperatorEntity got = new OperatorEntity("id", "ACTIVE", "name", "descr", "dName", "fName", "");
+    OperatorEntity want = new OperatorEntity("id", "ACTIVE", "name", "descr", "dName", "fName", "112");
 
     assertThat(got, deepEquals(want));
   }

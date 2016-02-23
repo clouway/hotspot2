@@ -51,4 +51,16 @@ public interface OperatorRepository {
    * @return {@link com.clouway.anqp.Operator}
    */
   Optional<Operator> findById(Object id);
+
+  /**
+   * Implementation of this method activate operator
+   * @param id of the operator which will be activated.
+   */
+  void activate(Object id);
+
+  /**
+   * Implementation of this method deactivate operator
+   * @param id of the operator which will be deactivated.
+   */
+  void deactivate(Object id);
 }

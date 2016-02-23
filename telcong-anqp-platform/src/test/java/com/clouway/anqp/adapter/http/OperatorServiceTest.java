@@ -4,6 +4,7 @@ import com.clouway.anqp.NewEmergencyNumber;
 import com.clouway.anqp.NewOperator;
 import com.clouway.anqp.Operator;
 import com.clouway.anqp.OperatorRepository;
+import com.clouway.anqp.OperatorState;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -34,8 +35,8 @@ public class OperatorServiceTest {
 
   @Test
   public void create() throws Exception {
-    final NewOperator operator = new NewOperator("name", "description", "domainName", "friendlyName", "emergencyNumber");
-    final NewOperatorDTO dto = new NewOperatorDTO("name", "description", "domainName", "friendlyName", "emergencyNumber");
+    final NewOperator operator = new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
+    final NewOperatorDTO dto = new NewOperatorDTO("name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber");
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(operator)));
@@ -49,8 +50,8 @@ public class OperatorServiceTest {
 
   @Test
   public void findAll() throws Exception {
-    final Operator operator = new Operator("id1", "name1", "description1", "domainName1", "friendlyName1", "emergencyNumber");
-    final Operator anotherOperator = new Operator("id2", "name2", "description2", "domainName2", "friendlyName2", "emergencyNumber");
+    final Operator operator = new Operator("id1", "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber");
+    final Operator anotherOperator = new Operator("id2", "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber");
     final List<Operator> operators = Lists.newArrayList(operator, anotherOperator);
 
     context.checking(new Expectations() {{
@@ -60,8 +61,8 @@ public class OperatorServiceTest {
 
     Reply<?> reply = service.findAll();
     List<OperatorDTO> expected = Lists.newArrayList(
-            new OperatorDTO("id1", "name1", "description1", "domainName1", "friendlyName1", "emergencyNumber"),
-            new OperatorDTO("id2", "name2", "description2", "domainName2", "friendlyName2", "emergencyNumber")
+            new OperatorDTO("id1", "name1", "ACTIVE", "description1", "domainName1", "friendlyName1", "emergencyNumber"),
+            new OperatorDTO("id2", "name2", "ACTIVE", "description2", "domainName2", "friendlyName2", "emergencyNumber")
     );
 
     assertThat(reply, containsValue(expected));
@@ -70,7 +71,7 @@ public class OperatorServiceTest {
 
   @Test
   public void findById() throws Exception {
-    final Operator operator = new Operator("id", "name", "description", "domainName", "friendlyName", "emergencyNumber");
+    final Operator operator = new Operator("id", "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
 
     context.checking(new Expectations() {{
       oneOf(repository).findById("id");
@@ -78,7 +79,7 @@ public class OperatorServiceTest {
     }});
 
     Reply<?> replay = service.findById("id");
-    OperatorDTO expected = new OperatorDTO("id", "name", "description", "domainName", "friendlyName", "emergencyNumber");
+    OperatorDTO expected = new OperatorDTO("id", "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber");
 
     assertThat(replay, containsValue(expected));
     assertThat(replay, isOk());
@@ -98,8 +99,8 @@ public class OperatorServiceTest {
 
   @Test
   public void update() throws Exception {
-    final Operator operator = new Operator(1, "name", "description", "domainName", "friendlyName", "emergencyNumber");
-    final OperatorDTO dto = new OperatorDTO(1, "name", "description", "domainName", "friendlyName", "emergencyNumber");
+    final Operator operator = new Operator(1, "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber");
+    final OperatorDTO dto = new OperatorDTO(1, "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber");
 
     context.checking(new Expectations() {{
       oneOf(repository).update(with(matching(operator)));
@@ -107,6 +108,28 @@ public class OperatorServiceTest {
 
     Request request = makeRequestThatContains(dto);
     Reply<?> reply = service.update(1, request);
+
+    assertThat(reply, isOk());
+  }
+
+  @Test
+  public void activate() throws Exception {
+    context.checking(new Expectations() {{
+      oneOf(repository).activate("operatorID");
+    }});
+
+    Reply<?> reply = service.activate("operatorID");
+
+    assertThat(reply, isOk());
+  }
+
+  @Test
+  public void deactivate() throws Exception {
+    context.checking(new Expectations() {{
+      oneOf(repository).deactivate("operatorID");
+    }});
+
+    Reply<?> reply = service.deactivate("operatorID");
 
     assertThat(reply, isOk());
   }

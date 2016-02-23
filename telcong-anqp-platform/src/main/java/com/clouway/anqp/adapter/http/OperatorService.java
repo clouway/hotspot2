@@ -4,6 +4,7 @@ import com.clouway.anqp.NewEmergencyNumber;
 import com.clouway.anqp.NewOperator;
 import com.clouway.anqp.Operator;
 import com.clouway.anqp.OperatorRepository;
+import com.clouway.anqp.OperatorState;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -75,6 +76,22 @@ public class OperatorService {
     return Reply.saying().ok();
   }
 
+  @Post
+  @At("/:id/activate")
+  public Reply<?> activate(@Named("id") Object id) {
+    repository.activate(id);
+
+    return Reply.saying().ok();
+  }
+
+  @Post
+  @At("/:id/deactivate")
+  public Reply<?> deactivate(@Named("id") Object id) {
+    repository.deactivate(id);
+
+    return Reply.saying().ok();
+  }
+
   @Put
   @At("/:id/emergency")
   public Reply<?> updateEmergencyNumber(@Named("id")Object id, Request request) {
@@ -99,7 +116,7 @@ public class OperatorService {
   }
 
   private Operator adapt(Object id, OperatorDTO dto) {
-    return new Operator(id, dto.name, dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
+    return new Operator(id, dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
   }
 
   private List<OperatorDTO> adapt(List<Operator> operators) {
@@ -113,10 +130,10 @@ public class OperatorService {
   }
 
   private OperatorDTO adapt(Operator operator) {
-    return new OperatorDTO(operator.id, operator.name, operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
+    return new OperatorDTO(operator.id, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber);
   }
 
   private NewOperator adapt(NewOperatorDTO dto) {
-    return new NewOperator(dto.name, dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
+    return new NewOperator(dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber);
   }
 }
