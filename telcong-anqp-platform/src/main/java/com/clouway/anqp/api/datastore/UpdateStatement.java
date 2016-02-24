@@ -14,15 +14,20 @@ public class UpdateStatement {
     return new UpdateStatement(name);
   }
 
+  public static UpdateStatement updateBulk(String name) {
+    return new UpdateStatement(name, true);
+  }
+
   private final LinkedList<String> stack = new LinkedList<String>();
   private final Map<String, Object> params = new HashMap<String, Object>();
-  private final boolean bulkUpdate;
 
-  public UpdateStatement(String name) {
+  private boolean bulkUpdate;
+
+  private UpdateStatement(String name) {
     this(name, false);
   }
 
-  public UpdateStatement(String name, boolean bulkUpdate) {
+  private UpdateStatement(String name, boolean bulkUpdate) {
     this.bulkUpdate = bulkUpdate;
     stack.add(name);
   }

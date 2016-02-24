@@ -406,7 +406,7 @@ public abstract class DatastoreContract {
     datastore.save(new Person(2l, "name1"));
     datastore.save(new Person(3l, "name2"));
 
-    datastore.update(Person.class, where("name").is("name1"), new UpdateStatement("name", true).toBe("updated-name"));
+    datastore.update(Person.class, where("name").is("name1"), UpdateStatement.updateBulk("name").toBe("updated-name"));
 
     Person firstUpdate = datastore.findById(Person.class, 1l);
     Person secondUpdated = datastore.findById(Person.class, 2l);
@@ -425,7 +425,7 @@ public abstract class DatastoreContract {
     datastore.save(new Person(3l, "name1", 20));
 
     datastore.update(Person.class, where("age").isLessThan(15).and("name").is("name1"),
-            new UpdateStatement("age", true).toBe(1));
+            UpdateStatement.updateBulk("age").toBe(1));
 
     List<Person> people = datastore.findAll(Person.class);
 

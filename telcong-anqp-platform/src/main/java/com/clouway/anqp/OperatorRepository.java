@@ -63,4 +63,21 @@ public interface OperatorRepository {
    * @param id of the operator which will be deactivated.
    */
   void deactivate(ID id);
+
+  /**
+   * Assign access points to operator
+   *
+   * @param operID id of the operator to which will be assigned access points
+   * @param apIDs ids of the access points which will be assigned to operator
+   */
+  void assignAccessPoints(ID operID, List<ID> apIDs);
+
+  /**
+   * This method retrieves all APs assigned to certain operator
+   *
+   * @param id if the operator for which we will retrieve all APs
+   *
+   * @return list with {@link com.clouway.anqp.AccessPoint}
+   */
+  List<AccessPoint> findAccessPoints(ID id);
 }

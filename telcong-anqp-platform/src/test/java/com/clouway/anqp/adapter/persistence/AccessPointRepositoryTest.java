@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.IpType.PUBLIC;
 import static com.clouway.anqp.OperatorState.ACTIVE;
 import static com.clouway.anqp.VenueBuilder.newVenueBuilder;
@@ -48,14 +49,14 @@ public class AccessPointRepositoryTest {
 
     Object operatorId = operatorRepository.create(new NewOperator("name", ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC));
 
-    NewAccessPoint ap = new NewAccessPoint(operatorId, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
+    NewAccessPoint ap = new NewAccessPoint(new ID(operatorId), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     Object id = repository.create(ap);
 
     AccessPoint got = repository.findById(id).get();
 
     Venue wantedVenue = newVenueBuilder().group("group").type("type").names(defaultName()).build();
-    AccessPoint want = new AccessPoint(id, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", wantedVenue);
+    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", wantedVenue);
 
     assertThat(got, deepEquals(want));
   }
@@ -66,12 +67,12 @@ public class AccessPointRepositoryTest {
 
     Object operatorId = operatorRepository.create(new NewOperator("name", ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC));
 
-    NewAccessPoint ap = new NewAccessPoint(operatorId, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
+    NewAccessPoint ap = new NewAccessPoint(new ID(operatorId), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     Object id = repository.create(ap);
 
     AccessPoint got = repository.findById(id).get();
-    AccessPoint want = new AccessPoint(id, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
+    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     assertThat(got, deepEquals(want));
   }
@@ -89,12 +90,12 @@ public class AccessPointRepositoryTest {
 
     Object operatorId = operatorRepository.create(new NewOperator("name", ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC));
 
-    NewAccessPoint ap = new NewAccessPoint(operatorId, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
+    NewAccessPoint ap = new NewAccessPoint(new ID(operatorId), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     Object id = repository.create(ap);
 
     AccessPoint got = repository.findByIp("ip").get();
-    AccessPoint want = new AccessPoint(id, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
+    AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     assertThat(got, deepEquals(want));
   }
@@ -112,7 +113,7 @@ public class AccessPointRepositoryTest {
 
     Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
 
-    NewAccessPoint ap = new NewAccessPoint(operatorId, "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
+    NewAccessPoint ap = new NewAccessPoint(new ID(operatorId), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     context.checking(new Expectations() {{
       oneOf(catalog).findId("PUBLIC");
@@ -136,7 +137,7 @@ public class AccessPointRepositoryTest {
   public void findQueryListForMissingOperator() throws Exception {
     Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
 
-    NewAccessPoint ap = new NewAccessPoint("operatorId", "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
+    NewAccessPoint ap = new NewAccessPoint(new ID("operatorId"), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", venue);
 
     Object apId = repository.create(ap);
 
@@ -147,11 +148,10 @@ public class AccessPointRepositoryTest {
   public void findAll() throws Exception {
     Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
 
-    Object operatorId1 = operatorRepository.create(new NewOperator("name1", ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", PUBLIC));
-    Object operatorId2 = operatorRepository.create(new NewOperator("name2", ACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber2", PUBLIC));
+    Object operID = operatorRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "112", IpType.PUBLIC));
 
-    NewAccessPoint ap1 = new NewAccessPoint(operatorId1, "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue);
-    NewAccessPoint ap2 = new NewAccessPoint(operatorId2, "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue);
+    NewAccessPoint ap1 = new NewAccessPoint(new ID(operID), "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue);
+    NewAccessPoint ap2 = new NewAccessPoint(new ID(operID), "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue);
 
     Object id1 = repository.create(ap1);
     Object id2 = repository.create(ap2);
@@ -159,8 +159,8 @@ public class AccessPointRepositoryTest {
     List<AccessPoint> got = repository.findAll();
 
     List<AccessPoint> want = Lists.newArrayList(
-            new AccessPoint(id1, "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue),
-            new AccessPoint(id2, "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue)
+            new AccessPoint(new ID(id1), "ip1", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn1", "model1", venue),
+            new AccessPoint(new ID(id2), "ip2", new MacAddress("ff:ee:dd:cc:bb:aa"), "sn2", "model2", venue)
     );
 
     assertThat(got, deepEquals(want));
@@ -168,22 +168,20 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void update() throws Exception {
+    Object operID = operatorRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "112", IpType.PUBLIC));
+
     Venue venue = newVenueBuilder().group("group").type("type").names(new VenueName("Info", new Language("en"))).build();
-    Venue newVenue = newVenueBuilder().group("group").type("type").names(
-            new VenueName("Info", new Language("en")),
-            new VenueName("Info2", new Language("Bg"))).build();
+    Venue newVenue = newVenueBuilder().group("group").type("type").names(new VenueName("Info", new Language("en")), new VenueName("Info2", new Language("Bg"))).build();
 
-    Object operatorId = operatorRepository.create(new NewOperator("name", ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC));
+    Object id = repository.create(new NewAccessPoint(new ID(operID), "ip", new MacAddress("aa:bb"), "sn", "model", venue));
 
-    Object id = repository.create(new NewAccessPoint(operatorId, "ip", new MacAddress("aa:bb"), "sn", "model", venue));
-
-    AccessPoint ap = new AccessPoint(id, "ip2", new MacAddress("bb:aa"), "sn2", "model2", newVenue);
+    AccessPoint ap = new AccessPoint(new ID(id), "ip2", new MacAddress("bb:aa"), "sn2", "model2", newVenue);
 
     repository.update(ap);
 
-    AccessPoint found = repository.findById(id).get();
+    AccessPoint got = repository.findById(id).get();
 
-    assertThat(found, deepEquals(ap));
+    assertThat(got, deepEquals(ap));
   }
 
   @Test
@@ -192,7 +190,7 @@ public class AccessPointRepositoryTest {
 
     Object operatorId = operatorRepository.create(new NewOperator("name", ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC));
 
-    Object id = repository.create(new NewAccessPoint(operatorId, "ip", new MacAddress("aa:bb"), "sn", "model", venue));
+    Object id = repository.create(new NewAccessPoint(new ID(operatorId), "ip", new MacAddress("aa:bb"), "sn", "model", venue));
 
     repository.delete(id);
 
@@ -207,7 +205,7 @@ public class AccessPointRepositoryTest {
 
     Object operatorId = operatorRepository.create(new NewOperator("name", ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC));
 
-    repository.create(new NewAccessPoint(operatorId, "ip", new MacAddress("aa:bb"), "sn", "model", venue));
+    repository.create(new NewAccessPoint(new ID(operatorId), "ip", new MacAddress("aa:bb"), "sn", "model", venue));
 
     repository.delete("id");
 

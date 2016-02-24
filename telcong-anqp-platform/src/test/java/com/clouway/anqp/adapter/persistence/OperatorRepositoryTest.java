@@ -7,12 +7,14 @@ import com.clouway.anqp.api.datastore.FakeDatastore;
 import com.clouway.anqp.core.NotFoundException;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.NewOperatorBuilder.newOperator;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -27,9 +29,12 @@ public class OperatorRepositoryTest {
 
   @Rule
   public DatastoreCleaner datastoreCleaner = new DatastoreCleaner(datastoreRule.db());
+  public JUnitRuleMockery context = new JUnitRuleMockery();
 
   private FakeDatastore datastore = new FakeDatastore(datastoreRule.db());
+  private IpTypeCatalog catalog = context.mock(IpTypeCatalog.class);
 
+  private AccessPointRepository accessPointRepository = new PersistentAccessPointRepository(datastore, catalog);
   private RoamingGroupRepository groupRepository = new PersistentRoamingGroupRepository(datastore);
   private OperatorRepository operRepository = new PersistentOperatorRepository(datastore);
 
@@ -88,15 +93,16 @@ public class OperatorRepositoryTest {
 
   @Test
   public void updateOperatorName() throws Exception {
-    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", IpType.PUBLIC));
+    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "911", IpType.PUBLIC));
 
-    Operator operator = new Operator(new ID(id), "newName", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", IpType.PUBLIC);
+    Operator operator = new Operator(new ID(id), "newName", OperatorState.ACTIVE, "description", "dName", "fName", "911", IpType.PUBLIC);
 
     operRepository.update(operator);
 
-    Operator found = operRepository.findById(new ID(id)).get();
+    Operator got = operRepository.findById(new ID(id)).get();
+    Operator want = new Operator(new ID(id), "newName", OperatorState.ACTIVE, "description", "dName", "fName", "911", IpType.PUBLIC);
 
-    assertThat(found, deepEquals(operator));
+    assertThat(got, deepEquals(want));
   }
 
   @Test(expected = OperatorException.class)
@@ -146,11 +152,6 @@ public class OperatorRepositoryTest {
     assertThat(got, deepEquals(want));
   }
 
-  @Test(expected = NotFoundException.class)
-  public void deactivateUnknownOperator() throws Exception {
-    operRepository.deactivate(new ID("id"));
-  }
-
   @Test(expected = OperatorException.class)
   public void deactivateOperatorAssignedToRoamingGroup() throws Exception {
     Object operID = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "112", IpType.PUBLIC));
@@ -161,11 +162,61 @@ public class OperatorRepositoryTest {
     operRepository.deactivate(new ID(operID));
   }
 
+  @Test (expected = NotFoundException.class)
+  public void deactivateUnknownOperator() throws Exception {
+    operRepository.deactivate(new ID("operID"));
+  }
+
+  @Test
+  public void assignAccessPoints() throws Exception {
+    NewOperator operator = newOperator().build();
+
+    Object operID = operRepository.create(operator);
+
+    Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
+    Object apID1 = accessPointRepository.create(new NewAccessPoint(new ID(operID), "8.8.8.8", new MacAddress("aa:bb:cc"), "33:22:11", "model1", venue));
+    Object apID2 = accessPointRepository.create(new NewAccessPoint(new ID(operID), "9.9.9.9", new MacAddress("cc:bb:aa"), "11:22:33", "model2", venue));
+
+    List<ID> apIDs = Lists.newArrayList(new ID(apID1), new ID(apID2));
+
+    operRepository.assignAccessPoints(new ID(operID), apIDs);
+
+    List<AccessPoint> got = operRepository.findAccessPoints(new ID(operID));
+
+    List<AccessPoint> want = Lists.newArrayList(
+            new AccessPoint(new ID(apID1), "8.8.8.8", new MacAddress("aa:bb:cc"), "33:22:11", "model1", venue),
+            new AccessPoint(new ID(apID2), "9.9.9.9", new MacAddress("cc:bb:aa"), "11:22:33", "model2", venue)
+    );
+
+    assertThat(got, deepEquals(want));
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void findAPsOfUnknownOperator() throws Exception {
+    ID id = new ID("id");
+
+    operRepository.findAccessPoints(id);
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void assignAPsToUnknownOperator() throws Exception {
+    List<ID> apIDs = Lists.newArrayList(new ID("id1"), new ID("id2"));
+
+    operRepository.assignAccessPoints(new ID("operID3"), apIDs);
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void assignAccessPointsToInactiveOperator() throws Exception {
+    Object operID = operRepository.create(new NewOperator("name", OperatorState.INACTIVE, "description", "dName", "fName", "911", IpType.PUBLIC));
+
+    List<ID> apIDs = Lists.newArrayList(new ID("id1"), new ID("id2"));
+    operRepository.assignAccessPoints(new ID(operID), apIDs);
+  }
+
   @Test
   public void setEmergencyNumber() throws Exception {
     Object id1 = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "911", IpType.PUBLIC));
     Object id2 = operRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "1234", IpType.PUBLIC));
-
 
     NewEmergencyNumber number = new NewEmergencyNumber(new ID(id1), "112");
 

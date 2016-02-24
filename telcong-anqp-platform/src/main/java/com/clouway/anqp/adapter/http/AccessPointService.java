@@ -90,22 +90,22 @@ public class AccessPointService {
   }
 
   private AccessPointDTO adapt(AccessPoint ap) {
-    return new AccessPointDTO(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
+    return new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
   }
 
   private NewAccessPoint adapt(NewAccessPointDTO dto) {
-    return new NewAccessPoint(dto.operatorId, dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue));
+    return new NewAccessPoint(new ID(dto.operatorId), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue));
   }
 
   private AccessPoint adapt(Object id, AccessPointDTO dto) {
-    return new AccessPoint(id, dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue));
+    return new AccessPoint(new ID(id), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue));
   }
 
   private List<AccessPointDTO> adapt(List<AccessPoint> aps) {
     List<AccessPointDTO> dtos = Lists.newArrayList();
 
     for (AccessPoint ap : aps) {
-      dtos.add(new AccessPointDTO(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue)));
+      dtos.add(new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue)));
     }
 
     return dtos;

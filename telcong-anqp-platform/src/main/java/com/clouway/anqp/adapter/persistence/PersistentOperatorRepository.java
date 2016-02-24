@@ -11,6 +11,8 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
+import static com.clouway.anqp.VenueName.defaultName;
+
 /**
  */
 class PersistentOperatorRepository implements OperatorRepository {
@@ -43,7 +45,11 @@ class PersistentOperatorRepository implements OperatorRepository {
   public Optional<Operator> findById(ID id) {
     OperatorEntity entity = datastore.findOne(OperatorEntity.class, Filter.where("_id").is(id.value));
 
-    return adapt(entity);
+    if (entity == null) {
+      return Optional.absent();
+    }
+
+    return Optional.of(adapt(entity));
   }
 
   @Override
@@ -75,6 +81,36 @@ class PersistentOperatorRepository implements OperatorRepository {
   }
 
   @Override
+  public void assignAccessPoints(ID operID, List<ID> apIDs) {
+    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(operID.value).and("state").is(OperatorState.ACTIVE.name()));
+
+    if (count == 0) {
+      throw new NotFoundException("Operator is unknown or deactivate!");
+    }
+
+    List<Object> ids = Lists.newArrayList();
+
+    for (ID id : apIDs) {
+      ids.add(id.value);
+    }
+
+    datastore.update(AccessPointEntity.class, Filter.where("_id").in(ids), UpdateStatement.updateBulk("operatorId").toBe(operID.value));
+  }
+
+  @Override
+  public List<AccessPoint> findAccessPoints(ID id) {
+    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(id.value));
+
+    if (count == 0) {
+      throw new NotFoundException("Operator is unknown!");
+    }
+
+    List<AccessPointEntity> entities = datastore.findAllObjectsByFilter(AccessPointEntity.class, Filter.where("operatorId").is(id.value));
+
+    return adaptToAPs(entities);
+  }
+
+  @Override
   public void update(Operator operator) {
     Long count = datastore.entityCount(OperatorEntity.class, Filter.where("name").is(operator.name).and("_id").isNot(operator.id.value));
 
@@ -101,33 +137,50 @@ class PersistentOperatorRepository implements OperatorRepository {
     datastore.deleteById(OperatorEntity.class, id.value);
   }
 
-  private List<Operator> adapt(List<OperatorEntity> entities) {
-    List<Operator> operators = Lists.newArrayList();
-
-    for(OperatorEntity entity : entities) {
-      IpType ipType = IpType.valueOf(entity.ipType);
-
-      operators.add(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber, ipType));
-    }
-
-    return operators;
-  }
-
-  private Optional<Operator> adapt(OperatorEntity entity) {
-    if (entity == null) {
-      return Optional.absent();
-    }
-
-    IpType ipType = IpType.valueOf(entity.ipType);
-
-    return Optional.of(new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber, ipType));
-  }
-
   private OperatorEntity adapt(Operator operator) {
     return new OperatorEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
   }
 
   private NewOperatorEntity adapt(NewOperator operator) {
     return  new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
+  }
+
+  private List<Operator> adapt(List<OperatorEntity> entities) {
+    List<Operator> operators = Lists.newArrayList();
+
+    for (OperatorEntity entity : entities) {
+      operators.add(adapt(entity));
+    }
+
+    return operators;
+  }
+
+  private Operator adapt(OperatorEntity entity) {
+    IpType ipType = IpType.valueOf(entity.ipType);
+
+    return new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName,entity.emergencyNumber, ipType);
+  }
+
+  private List<AccessPoint> adaptToAPs(List<AccessPointEntity> entities) {
+    List<AccessPoint> aps = Lists.newArrayList();
+
+    for (AccessPointEntity entity : entities) {
+      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue)));
+    }
+
+    return aps;
+  }
+
+  private Venue adapt(VenueEntity entity) {
+    if (entity.venueNames.isEmpty()) {
+      return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), Lists.newArrayList(defaultName()));
+    }
+    List<VenueName> names = Lists.newArrayList();
+
+    for (VenueNameEntity infoEntity : entity.venueNames) {
+      names.add(new VenueName(infoEntity.name, new Language(infoEntity.language)));
+    }
+
+    return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), names);
   }
 }

@@ -1,11 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.ID;
-import com.clouway.anqp.NewEmergencyNumber;
-import com.clouway.anqp.NewOperator;
-import com.clouway.anqp.Operator;
-import com.clouway.anqp.OperatorRepository;
-import com.clouway.anqp.OperatorState;
+import com.clouway.anqp.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -111,6 +106,43 @@ public class OperatorServiceTest {
     Request request = makeRequestThatContains(dto);
     Reply<?> reply = service.update(1, request);
 
+    assertThat(reply, isOk());
+  }
+
+  @Test
+  public void assignAccessPoints() throws Exception {
+    final List<String> dto = Lists.newArrayList("apID1", "apID2", "apID3");
+    final List<ID> apIDs = Lists.newArrayList(new ID("apID1"), new ID("apID2"), new ID("apID3"));
+    final ID operID = new ID("operID");
+
+    context.checking(new Expectations() {{
+      oneOf(repository).assignAccessPoints(with(matching(operID)) , with(matching(apIDs)));
+    }});
+
+    Request request = makeRequestThatContains(dto);
+    Reply<?> reply = service.assignAccessPoints("operID", request);
+
+    assertThat(reply, isOk());
+  }
+
+
+  @Test
+  public void findAccessPoints() throws Exception {
+    Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+
+    final List<AccessPoint> aps = Lists.newArrayList(new AccessPoint(new ID("apID"), "ip", new MacAddress("aa:bb"), "sn", "model", venue));
+    final List<AccessPointDTO> dtos = Lists.newArrayList(new AccessPointDTO("apID", "ip", "aa:bb", "sn", "model", venueDTO));
+    final ID operID = new ID("operID");
+
+    context.checking(new Expectations() {{
+      oneOf(repository).findAccessPoints(with(matching(operID)));
+      will(returnValue(aps));
+    }});
+
+    Reply<?> reply = service.findAccessPoints("operID");
+
+    assertThat(reply, containsValue(dtos));
     assertThat(reply, isOk());
   }
 

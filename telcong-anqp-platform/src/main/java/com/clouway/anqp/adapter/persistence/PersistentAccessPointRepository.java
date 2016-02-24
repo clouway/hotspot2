@@ -26,7 +26,7 @@ class PersistentAccessPointRepository implements AccessPointRepository {
 
   @Override
   public Object create(NewAccessPoint ap) {
-    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(ap.operatorId));
+    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(ap.operatorId.value));
 
     if (count == 0) {
       throw new NotFoundException("AP creation failed due to non-existing operator");
@@ -86,7 +86,11 @@ class PersistentAccessPointRepository implements AccessPointRepository {
   }
 
   private NewAccessPointEntity adapt(NewAccessPoint ap) {
-    return new NewAccessPointEntity(ap.operatorId, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
+    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
+  }
+
+  private AccessPointRequestEntity adapt(AccessPoint ap) {
+    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
   }
 
   private Optional<AccessPoint> adapt(AccessPointEntity entity) {
@@ -94,14 +98,14 @@ class PersistentAccessPointRepository implements AccessPointRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new AccessPoint(entity._id, entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue)));
+    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue)));
   }
 
   private List<AccessPoint> adapt(List<AccessPointEntity> entities) {
     List<AccessPoint> aps = Lists.newArrayList();
 
     for (AccessPointEntity entity : entities) {
-      aps.add(new AccessPoint(entity._id, entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue)));
+      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue)));
     }
 
     return aps;
@@ -128,9 +132,5 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     }
 
     return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), names);
-  }
-
-  private AccessPointRequestEntity adapt(AccessPoint ap) {
-    return new AccessPointRequestEntity(ap.id, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
   }
 }

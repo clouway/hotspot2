@@ -35,8 +35,8 @@ public class AccessPointServiceTest {
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
     Venue venue = new Venue(new VenueGroup(venueDTO.group), new VenueType(venueDTO.type), Lists.newArrayList(new VenueName("info", new Language("en"))));
 
-    final NewAccessPoint ap = new NewAccessPoint("operatorId","ip", new MacAddress("aa:bb"), "sn", "model", venue);
-    final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId","ip", "aa:bb", "sn", "model", venueDTO);
+    final NewAccessPoint ap = new NewAccessPoint(new ID("operatorId"), "ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId", "ip", "aa:bb", "sn", "model", venueDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(ap)));
@@ -53,7 +53,7 @@ public class AccessPointServiceTest {
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
     Venue venue = new Venue(new VenueGroup(venueDTO.group), new VenueType(venueDTO.type), Lists.newArrayList(new VenueName("info", new Language("en"))));
 
-    final NewAccessPoint ap = new NewAccessPoint("operatorId", "ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final NewAccessPoint ap = new NewAccessPoint(new ID("operatorId"), "ip", new MacAddress("aa:bb"), "sn", "model", venue);
     final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId", "ip", "aa:bb", "sn", "model", venueDTO);
 
     context.checking(new Expectations() {{
@@ -71,8 +71,8 @@ public class AccessPointServiceTest {
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
 
     final List<AccessPoint> aps = Lists.newArrayList(
-            new AccessPoint(1, "ip1", new MacAddress("aa:bb"), "sn1", "model1", venue),
-            new AccessPoint(2, "ip2", new MacAddress("bb:aa"), "sn2", "model2", venue)
+            new AccessPoint(new ID(1), "ip1", new MacAddress("aa:bb"), "sn1", "model1", venue),
+            new AccessPoint(new ID(2), "ip2", new MacAddress("bb:aa"), "sn2", "model2", venue)
     );
 
     final List<AccessPointDTO> dtos = Lists.newArrayList(
@@ -96,7 +96,7 @@ public class AccessPointServiceTest {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
 
-    final AccessPoint ap = new AccessPoint(1, "ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final AccessPoint ap = new AccessPoint(new ID(1), "ip", new MacAddress("aa:bb"), "sn", "model", venue);
     final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model", venueDTO);
 
     context.checking(new Expectations() {{
@@ -146,7 +146,7 @@ public class AccessPointServiceTest {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
 
-    final AccessPoint ap = new AccessPoint(1, "ip", new MacAddress("aa:bb"), "sn", "model", venue);
+    final AccessPoint ap = new AccessPoint(new ID(1), "ip", new MacAddress("aa:bb"), "sn", "model", venue);
     final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model", venueDTO);
 
     context.checking(new Expectations() {{

@@ -1,15 +1,11 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.ID;
+import com.clouway.anqp.*;
 import com.clouway.anqp.IpType;
-import com.clouway.anqp.NewEmergencyNumber;
-import com.clouway.anqp.NewOperator;
-import com.clouway.anqp.Operator;
-import com.clouway.anqp.OperatorRepository;
-import com.clouway.anqp.OperatorState;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.sitebricks.At;
 import com.google.sitebricks.headless.Reply;
@@ -41,7 +37,7 @@ public class OperatorService {
 
     repository.create(operator);
 
-    return Reply.with("Successfully created operator").ok();
+    return Reply.saying().ok();
   }
 
   @Get
@@ -55,11 +51,11 @@ public class OperatorService {
 
   @Get
   @At("/:id")
-  public Reply<?> findById(@Named("id") String id) {
+  public Reply<?> findById(@Named("id")String id) {
     Optional<Operator> operator = repository.findById(new ID(id));
 
     if (!operator.isPresent()) {
-      return Reply.with("Not found operator with id " + id).notFound();
+      return Reply.saying().notFound();
     }
 
     OperatorDTO dto = adapt(operator.get());
@@ -75,7 +71,27 @@ public class OperatorService {
 
     repository.update(operator);
 
-    return Reply.with("Successfully updated operator").ok();
+    return Reply.saying().ok();
+  }
+
+  @Post
+  @At("/:id/aps")
+  public Reply<?> assignAccessPoints(@Named("id")String id, Request request) {
+    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {}).as(Json.class);
+    List<ID> apIDs = adaptToIDs(dtos);
+
+    repository.assignAccessPoints(new ID(id), apIDs);
+
+    return Reply.saying().ok();
+  }
+
+  @Get
+  @At("/:id/aps")
+  public Reply<?> findAccessPoints(@Named("id") Object id) {
+    List<AccessPoint> aps = repository.findAccessPoints(new ID(id));
+    List<AccessPointDTO> dtos = adaptToAPs(aps);
+
+    return Reply.with(dtos).ok();
   }
 
   @Post
@@ -96,7 +112,7 @@ public class OperatorService {
 
   @Put
   @At("/:id/emergency")
-  public Reply<?> updateEmergencyNumber(@Named("id") Object id, Request request) {
+  public Reply<?> updateEmergencyNumber(@Named("id")Object id, Request request) {
     NewEmergencyNumberDTO dto = request.read(NewEmergencyNumberDTO.class).as(Json.class);
     NewEmergencyNumber newNumber = adapt(id, dto);
 
@@ -137,9 +153,43 @@ public class OperatorService {
     return new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
   }
 
+  private List<AccessPointDTO> adaptToAPs(List<AccessPoint> aps) {
+    List<AccessPointDTO> dtos = Lists.newArrayList();
+
+    for (AccessPoint ap : aps) {
+      dtos.add(new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue)));
+    }
+
+    return dtos;
+  }
+
+  private VenueDTO adapt(Venue venue) {
+    return new VenueDTO(venue.group.name, venue.type.name, adaptToVenueNameDTOs(venue.names));
+  }
+
+  private List<VenueNameDTO> adaptToVenueNameDTOs(List<VenueName> names) {
+    List<VenueNameDTO> dtos = Lists.newArrayList();
+
+    for (VenueName name : names) {
+      dtos.add(new VenueNameDTO(name.name, name.language.code));
+    }
+
+    return dtos;
+  }
+
   private NewOperator adapt(NewOperatorDTO dto) {
-    IpType ipType = IpType.valueOf(dto.ipType);
+   IpType ipType = IpType.valueOf(dto.ipType);
 
     return new NewOperator(dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, ipType);
+  }
+
+  private List<ID> adaptToIDs(List<Object> dtos) {
+    List<ID> ids = Lists.newArrayList();
+
+    for(Object dto : dtos) {
+      ids.add(new ID(dto));
+    }
+
+    return ids;
   }
 }
