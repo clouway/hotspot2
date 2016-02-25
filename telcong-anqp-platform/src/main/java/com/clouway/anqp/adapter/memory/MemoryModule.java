@@ -1,11 +1,6 @@
 package com.clouway.anqp.adapter.memory;
 
-import com.clouway.anqp.IpTypeCatalog;
-import com.clouway.anqp.VenueFinder;
-import com.clouway.anqp.VenueGroup;
-import com.clouway.anqp.VenueItem;
-import com.clouway.anqp.VenueType;
-import com.clouway.anqp.VenueTypeList;
+import com.clouway.anqp.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -112,16 +107,26 @@ public class MemoryModule extends AbstractModule {
             )));
   }
 
-        @Provides
-        @Singleton
-        public IpTypeCatalog getCatalog() {
-                // The catalog contains only currently supported types
-                return new InMemoryIpTypeCatalog(new LinkedHashMap<String, Integer>() {{
-                        put(NOT_AVAILABLE.name(), 0);
-                        put(PUBLIC.name(), 1);
-                        put(PORT_RESTRICTED.name(), 2);
-                        put(SINGLE_NAT_PRIVATE.name(), 3);
-                        put(UNKNOWN.name(), 7);
-                }});
-        }
+  @Provides
+  @Singleton
+  public IpTypeCatalog getCatalog() {
+    // The catalog contains only currently supported types
+    return new InMemoryIpTypeCatalog(new LinkedHashMap<String, Integer>() {{
+      put(NOT_AVAILABLE.name(), 0);
+      put(PUBLIC.name(), 1);
+      put(PORT_RESTRICTED.name(), 2);
+      put(SINGLE_NAT_PRIVATE.name(), 3);
+      put(UNKNOWN.name(), 7);
+    }});
+  }
+
+  @Provides
+  @Singleton
+  public AuthenticationTypeFinder getAuthenticationTypeFinder() {
+    return new InMemoryAuthenticationTypeFinder(
+            new AuthenticationType(0, "Acceptance of terms and conditions"),
+            new AuthenticationType(1, "On-line enrollment supported"),
+            new AuthenticationType(2, "http/https redirection"),
+            new AuthenticationType(3, "DNS redirection"));
+  }
 }
