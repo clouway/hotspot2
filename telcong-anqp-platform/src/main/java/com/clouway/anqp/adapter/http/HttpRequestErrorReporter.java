@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.OperatorException;
 import com.clouway.anqp.core.NotFoundException;
 import com.clouway.anqp.core.ProgrammerMistake;
 import com.google.common.collect.Lists;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**

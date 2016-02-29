@@ -66,9 +66,15 @@ class PersistentOperatorRepository implements OperatorRepository {
 
   @Override
   public void deactivate(ID id) {
-    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(id.value));
+    Long groupCount = datastore.entityCount(RoamingGroupEntity.class, Filter.where("operatorIDs").is(id.value));
 
-    if (count == 0) {
+    if (groupCount > 0) {
+      throw new OperatorException("Operator is assigned to roaming group.");
+    }
+
+    Long operCount = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(id.value));
+
+    if (operCount == 0) {
       throw new NotFoundException("Operator is undefined!");
     }
 
