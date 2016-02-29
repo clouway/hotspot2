@@ -17,11 +17,11 @@ import java.util.List;
  */
 @Service
 @At("/r/venues")
-public class VenueService {
+public class VenueEndpoint {
   private final VenueFinder finder;
 
   @Inject
-  public VenueService(VenueFinder finder) {
+  public VenueEndpoint(VenueFinder finder) {
     this.finder = finder;
   }
 

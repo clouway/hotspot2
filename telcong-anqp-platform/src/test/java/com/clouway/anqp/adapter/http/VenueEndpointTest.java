@@ -20,13 +20,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  */
-public class VenueServiceTest {
+public class VenueEndpointTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
   private VenueFinder venueFinder = context.mock(VenueFinder.class);
 
-  private     VenueService service = new VenueService(venueFinder);
+  private VenueEndpoint service = new VenueEndpoint(venueFinder);
 
   @Test
   public void fetchAll() throws Exception {

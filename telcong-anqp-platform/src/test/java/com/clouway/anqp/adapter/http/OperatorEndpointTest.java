@@ -22,13 +22,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  */
-public class OperatorServiceTest {
+public class OperatorEndpointTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
   private OperatorRepository repository = context.mock(OperatorRepository.class);
 
-  private OperatorService service = new OperatorService(repository);
+  private OperatorEndpoint service = new OperatorEndpoint(repository);
 
   @Test
   public void create() throws Exception {

@@ -20,11 +20,11 @@ import java.util.List;
  */
 @Service
 @At("/r/aps")
-public class AccessPointService {
+public class AccessPointEndpoint {
   private final AccessPointRepository repository;
 
   @Inject
-  public AccessPointService(AccessPointRepository repository) {
+  public AccessPointEndpoint(AccessPointRepository repository) {
     this.repository = repository;
   }
 

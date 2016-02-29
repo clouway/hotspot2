@@ -23,11 +23,11 @@ import java.util.List;
  */
 @Service
 @At("/r/controllers")
-public class ApControllerService {
+public class ApControllerEndpoint {
   private final ApControllerRepository repository;
 
   @Inject
-  public ApControllerService(ApControllerRepository repository) {
+  public ApControllerEndpoint(ApControllerRepository repository) {
     this.repository = repository;
   }
 

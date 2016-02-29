@@ -24,13 +24,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  */
-public class ApControllerServiceTest {
+public class ApControllerEndpointTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
   private ApControllerRepository repository = context.mock(ApControllerRepository.class);
 
-  private ApControllerService service = new ApControllerService(repository);
+  private ApControllerEndpoint service = new ApControllerEndpoint(repository);
 
   @Test
   public void create() throws Exception {

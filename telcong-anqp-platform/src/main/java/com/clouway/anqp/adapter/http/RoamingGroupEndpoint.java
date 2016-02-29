@@ -27,11 +27,11 @@ import java.util.List;
  */
 @Service
 @At("/r/roaming-groups")
-public class RoamingGroupService {
+public class RoamingGroupEndpoint {
   private final RoamingGroupRepository repository;
 
   @Inject
-  public RoamingGroupService(RoamingGroupRepository repository) {
+  public RoamingGroupEndpoint(RoamingGroupRepository repository) {
     this.repository = repository;
   }
 

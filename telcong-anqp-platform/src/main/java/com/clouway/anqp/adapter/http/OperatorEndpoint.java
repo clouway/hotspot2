@@ -22,11 +22,11 @@ import java.util.List;
  */
 @Service
 @At("/r/operators")
-public class OperatorService {
+public class OperatorEndpoint {
   private final OperatorRepository repository;
 
   @Inject
-  public OperatorService(OperatorRepository repository) {
+  public OperatorEndpoint(OperatorRepository repository) {
     this.repository = repository;
   }
 

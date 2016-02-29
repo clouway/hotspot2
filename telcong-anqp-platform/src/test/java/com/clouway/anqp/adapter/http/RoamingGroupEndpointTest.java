@@ -23,13 +23,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  */
-public class RoamingGroupServiceTest {
+public class RoamingGroupEndpointTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
   private RoamingGroupRepository repository = context.mock(RoamingGroupRepository.class);
 
-  private RoamingGroupService service = new RoamingGroupService(repository);
+  private RoamingGroupEndpoint service = new RoamingGroupEndpoint(repository);
 
   @Test
   public void create() throws Exception {
