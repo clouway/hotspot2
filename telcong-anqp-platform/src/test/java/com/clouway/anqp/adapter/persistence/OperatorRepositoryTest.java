@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.NewOperatorBuilder.newOperator;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -160,6 +161,22 @@ public class OperatorRepositoryTest {
     groupRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID)));
 
     operRepository.deactivate(new ID(operID));
+  }
+
+  @Test(expected = OperatorException.class)
+  public void deactivateOperatorWithAssignedAccessPoints() throws Exception {
+    NewOperator operator = newOperator().build();
+    Object operID = operRepository.create(operator);
+    ID operatorID = new ID(operID);
+
+    NewAccessPoint ap = newAP().operatorId(operatorID).build();
+
+    Object apID = accessPointRepository.create(ap);
+    List<ID> apIDs = Lists.newArrayList(new ID(apID));
+
+    operRepository.assignAccessPoints(operatorID, apIDs);
+
+    operRepository.deactivate(operatorID);
   }
 
   @Test (expected = NotFoundException.class)
