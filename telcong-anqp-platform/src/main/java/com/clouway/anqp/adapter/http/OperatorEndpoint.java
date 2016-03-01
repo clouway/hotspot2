@@ -129,16 +129,6 @@ public class OperatorEndpoint {
     return Reply.saying().ok();
   }
 
-  private NewEmergencyNumber adapt(Object id, NewEmergencyNumberDTO dto) {
-    return new NewEmergencyNumber(new ID(id), dto.value);
-  }
-
-  private Operator adapt(Object id, OperatorDTO dto) {
-    IpType ipType = IpType.valueOf(dto.ipType);
-
-    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, ipType);
-  }
-
   private List<OperatorDTO> adapt(List<Operator> operators) {
     List<OperatorDTO> dtos = Lists.newArrayList();
 
@@ -163,10 +153,6 @@ public class OperatorEndpoint {
     return dtos;
   }
 
-  private GeoLocationDTO adapt(GeoLocation location) {
-    return new GeoLocationDTO(location.latitude, location.longitude);
-  }
-
   private VenueDTO adapt(Venue venue) {
     return new VenueDTO(venue.group.name, venue.type.name, adaptToVenueNameDTOs(venue.names));
   }
@@ -179,6 +165,20 @@ public class OperatorEndpoint {
     }
 
     return dtos;
+  }
+
+  private GeoLocationDTO adapt(GeoLocation location) {
+    return new GeoLocationDTO(location.latitude, location.longitude);
+  }
+
+  private NewEmergencyNumber adapt(Object id, NewEmergencyNumberDTO dto) {
+    return new NewEmergencyNumber(new ID(id), dto.value);
+  }
+
+  private Operator adapt(Object id, OperatorDTO dto) {
+    IpType ipType = IpType.valueOf(dto.ipType);
+
+    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, ipType);
   }
 
   private NewOperator adapt(NewOperatorDTO dto) {

@@ -143,14 +143,6 @@ class PersistentOperatorRepository implements OperatorRepository {
     datastore.deleteById(OperatorEntity.class, id.value);
   }
 
-  private OperatorEntity adapt(Operator operator) {
-    return new OperatorEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
-  }
-
-  private NewOperatorEntity adapt(NewOperator operator) {
-    return  new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
-  }
-
   private List<Operator> adapt(List<OperatorEntity> entities) {
     List<Operator> operators = Lists.newArrayList();
 
@@ -177,10 +169,6 @@ class PersistentOperatorRepository implements OperatorRepository {
     return aps;
   }
 
-  private GeoLocation adapt(GeoLocationEntity location) {
-    return new GeoLocation(location.latitude, location.longitude);
-  }
-
   private Venue adapt(VenueEntity entity) {
     if (entity.venueNames.isEmpty()) {
       return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), Lists.newArrayList(defaultName()));
@@ -192,5 +180,17 @@ class PersistentOperatorRepository implements OperatorRepository {
     }
 
     return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), names);
+  }
+
+  private GeoLocation adapt(GeoLocationEntity location) {
+    return new GeoLocation(location.latitude, location.longitude);
+  }
+
+  private OperatorEntity adapt(Operator operator) {
+    return new OperatorEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
+  }
+
+  private NewOperatorEntity adapt(NewOperator operator) {
+    return  new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
   }
 }

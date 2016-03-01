@@ -1,7 +1,7 @@
 package com.clouway.anqp;
 
 /**
- * This object is used to represent geospetial location location in LCI format
+ * This object is used to represent geospetial location in LCI format
  */
 public class GeoLocation {
   public final Double latitude;

@@ -85,30 +85,6 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     return new QueryList(response.get());
   }
 
-  private NewAccessPointEntity adapt(NewAccessPoint ap) {
-    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
-  }
-
-  private GeoLocationEntity adapt(GeoLocation location) {
-    return new GeoLocationEntity(location.latitude, location.longitude);
-  }
-
-  private AccessPointRequestEntity adapt(AccessPoint ap) {
-    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
-  }
-
-  private Optional<AccessPoint> adapt(AccessPointEntity entity) {
-    if (entity == null) {
-      return Optional.absent();
-    }
-
-    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.location)));
-  }
-
-  private GeoLocation adapt(GeoLocationEntity location) {
-    return new GeoLocation(location.latitude, location.longitude);
-  }
-
   private List<AccessPoint> adapt(List<AccessPointEntity> entities) {
     List<AccessPoint> aps = Lists.newArrayList();
 
@@ -119,14 +95,12 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     return aps;
   }
 
-  private VenueEntity adapt(Venue venue) {
-    List<VenueNameEntity> nameEntities = Lists.newArrayList();
-
-    for (VenueName info : venue.names) {
-      nameEntities.add(new VenueNameEntity(info.name, info.language.code));
+  private Optional<AccessPoint> adapt(AccessPointEntity entity) {
+    if (entity == null) {
+      return Optional.absent();
     }
 
-    return new VenueEntity(venue.group.name, venue.type.name, nameEntities);
+    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.location)));
   }
 
   private Venue adapt(VenueEntity entity) {
@@ -140,5 +114,31 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     }
 
     return new Venue(new VenueGroup(entity.group), new VenueType(entity.type), names);
+  }
+
+  private GeoLocation adapt(GeoLocationEntity location) {
+    return new GeoLocation(location.latitude, location.longitude);
+  }
+
+  private NewAccessPointEntity adapt(NewAccessPoint ap) {
+    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
+  }
+
+  private AccessPointRequestEntity adapt(AccessPoint ap) {
+    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
+  }
+
+  private VenueEntity adapt(Venue venue) {
+    List<VenueNameEntity> nameEntities = Lists.newArrayList();
+
+    for (VenueName info : venue.names) {
+      nameEntities.add(new VenueNameEntity(info.name, info.language.code));
+    }
+
+    return new VenueEntity(venue.group.name, venue.type.name, nameEntities);
+  }
+
+  private GeoLocationEntity adapt(GeoLocation location) {
+    return new GeoLocationEntity(location.latitude, location.longitude);
   }
 }

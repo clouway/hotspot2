@@ -89,8 +89,28 @@ public class AccessPointEndpoint {
     return Reply.saying().ok();
   }
 
+  private List<AccessPointDTO> adapt(List<AccessPoint> aps) {
+    List<AccessPointDTO> dtos = Lists.newArrayList();
+
+    for (AccessPoint ap : aps) {
+      dtos.add(adapt(ap));
+    }
+
+    return dtos;
+  }
+
   private AccessPointDTO adapt(AccessPoint ap) {
     return new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
+  }
+
+  private VenueDTO adapt(Venue venue) {
+    List<VenueNameDTO> names = Lists.newArrayList();
+
+    for (VenueName info : venue.names) {
+      names.add(new VenueNameDTO(info.name, info.language.code));
+    }
+
+    return new VenueDTO(venue.group.name, venue.type.name, names);
   }
 
   private GeoLocationDTO adapt(GeoLocation location) {
@@ -101,22 +121,8 @@ public class AccessPointEndpoint {
     return new NewAccessPoint(new ID(dto.operatorId), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.location));
   }
 
-  private GeoLocation adapt(GeoLocationDTO location) {
-    return new GeoLocation(location.latitude, location.longitude);
-  }
-
   private AccessPoint adapt(Object id, AccessPointDTO dto) {
     return new AccessPoint(new ID(id), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.location));
-  }
-
-  private List<AccessPointDTO> adapt(List<AccessPoint> aps) {
-    List<AccessPointDTO> dtos = Lists.newArrayList();
-
-    for (AccessPoint ap : aps) {
-      dtos.add(new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location)));
-    }
-
-    return dtos;
   }
 
   private Venue adapt(VenueDTO dto) {
@@ -129,13 +135,7 @@ public class AccessPointEndpoint {
     return new Venue(new VenueGroup(dto.group), new VenueType(dto.type), names);
   }
 
-  private VenueDTO adapt(Venue venue) {
-    List<VenueNameDTO> names = Lists.newArrayList();
-
-    for (VenueName info : venue.names) {
-      names.add(new VenueNameDTO(info.name, info.language.code));
-    }
-
-    return new VenueDTO(venue.group.name, venue.type.name, names);
+  private GeoLocation adapt(GeoLocationDTO location) {
+    return new GeoLocation(location.latitude, location.longitude);
   }
 }
