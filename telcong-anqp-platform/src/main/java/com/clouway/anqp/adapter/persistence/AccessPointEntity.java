@@ -13,11 +13,12 @@ class AccessPointEntity {
   String serialNumber;
   String model;
   VenueEntity venue;
+  GeoLocationEntity location;
 
   AccessPointEntity() {
   }
 
-  AccessPointEntity(Object id, Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue) {
+  AccessPointEntity(Object id, Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity location) {
     this._id = id;
     this.operatorId = operatorId;
     this.ip = ip;
@@ -25,5 +26,6 @@ class AccessPointEntity {
     this.serialNumber = serialNumber;
     this.model = model;
     this.venue = venue;
+    this.location = location;
   }
 }

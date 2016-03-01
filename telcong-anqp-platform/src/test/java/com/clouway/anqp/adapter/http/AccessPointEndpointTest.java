@@ -34,9 +34,11 @@ public class AccessPointEndpointTest {
   public void create() throws Exception {
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
     Venue venue = new Venue(new VenueGroup(venueDTO.group), new VenueType(venueDTO.type), Lists.newArrayList(new VenueName("info", new Language("en"))));
+    GeoLocation location = new GeoLocation(24.3456789, 45.5678934);
+    GeoLocationDTO locationDTO = new GeoLocationDTO(24.3456789, 45.5678934);
 
-    final NewAccessPoint ap = new NewAccessPoint(new ID("operatorId"), "ip", new MacAddress("aa:bb"), "sn", "model", venue);
-    final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId", "ip", "aa:bb", "sn", "model", venueDTO);
+    final NewAccessPoint ap = new NewAccessPoint(new ID("operatorId"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, location);
+    final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId", "ip", "aa:bb", "sn", "model", venueDTO, locationDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(ap)));
@@ -52,9 +54,12 @@ public class AccessPointEndpointTest {
   public void failedCreation() throws Exception {
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
     Venue venue = new Venue(new VenueGroup(venueDTO.group), new VenueType(venueDTO.type), Lists.newArrayList(new VenueName("info", new Language("en"))));
+    GeoLocation location = new GeoLocation(24.3456789, 45.5678934);
+    GeoLocationDTO locationDTO = new GeoLocationDTO(24.3456789, 45.5678934);
 
-    final NewAccessPoint ap = new NewAccessPoint(new ID("operatorId"), "ip", new MacAddress("aa:bb"), "sn", "model", venue);
-    final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId", "ip", "aa:bb", "sn", "model", venueDTO);
+
+    final NewAccessPoint ap = new NewAccessPoint(new ID("operatorId"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, location);
+    final NewAccessPointDTO dto = new NewAccessPointDTO("operatorId", "ip", "aa:bb", "sn", "model", venueDTO, locationDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(ap)));
@@ -70,14 +75,17 @@ public class AccessPointEndpointTest {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
 
+    GeoLocation location = new GeoLocation(22.222222, 33.3333333);
+    GeoLocationDTO locationDTO = new GeoLocationDTO(22.222222, 33.3333333);
+
     final List<AccessPoint> aps = Lists.newArrayList(
-            new AccessPoint(new ID(1), "ip1", new MacAddress("aa:bb"), "sn1", "model1", venue),
-            new AccessPoint(new ID(2), "ip2", new MacAddress("bb:aa"), "sn2", "model2", venue)
+            new AccessPoint(new ID(1), "ip1", new MacAddress("aa:bb"), "sn1", "model1", venue, location),
+            new AccessPoint(new ID(2), "ip2", new MacAddress("bb:aa"), "sn2", "model2", venue, location)
     );
 
     final List<AccessPointDTO> dtos = Lists.newArrayList(
-            new AccessPointDTO(1, "ip1", "aa:bb", "sn1", "model1", venueDTO),
-            new AccessPointDTO(2, "ip2", "bb:aa", "sn2", "model2", venueDTO)
+            new AccessPointDTO(1, "ip1", "aa:bb", "sn1", "model1", venueDTO, locationDTO),
+            new AccessPointDTO(2, "ip2", "bb:aa", "sn2", "model2", venueDTO, locationDTO)
     );
 
     context.checking(new Expectations() {{
@@ -96,8 +104,11 @@ public class AccessPointEndpointTest {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
 
-    final AccessPoint ap = new AccessPoint(new ID(1), "ip", new MacAddress("aa:bb"), "sn", "model", venue);
-    final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model", venueDTO);
+    GeoLocation location = new GeoLocation(22.222222, 33.3333333);
+    GeoLocationDTO locationDTO = new GeoLocationDTO(22.222222, 33.3333333);
+
+    final AccessPoint ap = new AccessPoint(new ID(1), "ip", new MacAddress("aa:bb"), "sn", "model", venue, location);
+    final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model", venueDTO, locationDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).findById("id");
@@ -146,8 +157,11 @@ public class AccessPointEndpointTest {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
 
-    final AccessPoint ap = new AccessPoint(new ID(1), "ip", new MacAddress("aa:bb"), "sn", "model", venue);
-    final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model", venueDTO);
+    GeoLocation location = new GeoLocation(22.222222, 33.3333333);
+    GeoLocationDTO locationDTO = new GeoLocationDTO(22.222222, 33.3333333);
+
+    final AccessPoint ap = new AccessPoint(new ID(1), "ip", new MacAddress("aa:bb"), "sn", "model", venue, location);
+    final AccessPointDTO dto = new AccessPointDTO(1, "ip", "aa:bb", "sn", "model", venueDTO, locationDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).update(with(matching(ap)));

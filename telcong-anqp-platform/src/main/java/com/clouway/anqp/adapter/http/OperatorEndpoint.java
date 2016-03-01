@@ -157,10 +157,14 @@ public class OperatorEndpoint {
     List<AccessPointDTO> dtos = Lists.newArrayList();
 
     for (AccessPoint ap : aps) {
-      dtos.add(new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue)));
+      dtos.add(new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location)));
     }
 
     return dtos;
+  }
+
+  private GeoLocationDTO adapt(GeoLocation location) {
+    return new GeoLocationDTO(location.latitude, location.longitude);
   }
 
   private VenueDTO adapt(Venue venue) {

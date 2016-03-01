@@ -86,11 +86,15 @@ class PersistentAccessPointRepository implements AccessPointRepository {
   }
 
   private NewAccessPointEntity adapt(NewAccessPoint ap) {
-    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
+    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
+  }
+
+  private GeoLocationEntity adapt(GeoLocation location) {
+    return new GeoLocationEntity(location.latitude, location.longitude);
   }
 
   private AccessPointRequestEntity adapt(AccessPoint ap) {
-    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue));
+    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
   }
 
   private Optional<AccessPoint> adapt(AccessPointEntity entity) {
@@ -98,14 +102,18 @@ class PersistentAccessPointRepository implements AccessPointRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue)));
+    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.location)));
+  }
+
+  private GeoLocation adapt(GeoLocationEntity location) {
+    return new GeoLocation(location.latitude, location.longitude);
   }
 
   private List<AccessPoint> adapt(List<AccessPointEntity> entities) {
     List<AccessPoint> aps = Lists.newArrayList();
 
     for (AccessPointEntity entity : entities) {
-      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue)));
+      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.location)));
     }
 
     return aps;

@@ -186,13 +186,13 @@ public class OperatorRepositoryTest {
 
   @Test
   public void assignAccessPoints() throws Exception {
-    NewOperator operator = newOperator().build();
-
-    Object operID = operRepository.create(operator);
+    Object operID = operRepository.create(newOperator().build());
+    GeoLocation location1 = new GeoLocation(24.3456789, 45.5678934);
+    GeoLocation location2 = new GeoLocation(55.5555555, 37.1234568);
 
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
-    Object apID1 = accessPointRepository.create(new NewAccessPoint(new ID(operID), "8.8.8.8", new MacAddress("aa:bb:cc"), "33:22:11", "model1", venue));
-    Object apID2 = accessPointRepository.create(new NewAccessPoint(new ID(operID), "9.9.9.9", new MacAddress("cc:bb:aa"), "11:22:33", "model2", venue));
+    Object apID1 = accessPointRepository.create(new NewAccessPoint(new ID(operID), "8.8.8.8", new MacAddress("aa:bb:cc"), "33:22:11", "model1", venue, location1));
+    Object apID2 = accessPointRepository.create(new NewAccessPoint(new ID(operID), "9.9.9.9", new MacAddress("cc:bb:aa"), "11:22:33", "model2", venue, location2));
 
     List<ID> apIDs = Lists.newArrayList(new ID(apID1), new ID(apID2));
 
@@ -201,8 +201,8 @@ public class OperatorRepositoryTest {
     List<AccessPoint> got = operRepository.findAccessPoints(new ID(operID));
 
     List<AccessPoint> want = Lists.newArrayList(
-            new AccessPoint(new ID(apID1), "8.8.8.8", new MacAddress("aa:bb:cc"), "33:22:11", "model1", venue),
-            new AccessPoint(new ID(apID2), "9.9.9.9", new MacAddress("cc:bb:aa"), "11:22:33", "model2", venue)
+            new AccessPoint(new ID(apID1), "8.8.8.8", new MacAddress("aa:bb:cc"), "33:22:11", "model1", venue, location1),
+            new AccessPoint(new ID(apID2), "9.9.9.9", new MacAddress("cc:bb:aa"), "11:22:33", "model2", venue, location2)
     );
 
     assertThat(got, deepEquals(want));

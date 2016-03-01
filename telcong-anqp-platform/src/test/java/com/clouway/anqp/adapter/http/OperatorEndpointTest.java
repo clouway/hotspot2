@@ -131,8 +131,11 @@ public class OperatorEndpointTest {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
 
-    final List<AccessPoint> aps = Lists.newArrayList(new AccessPoint(new ID("apID"), "ip", new MacAddress("aa:bb"), "sn", "model", venue));
-    final List<AccessPointDTO> dtos = Lists.newArrayList(new AccessPointDTO("apID", "ip", "aa:bb", "sn", "model", venueDTO));
+    GeoLocation location = new GeoLocation(22.222222, 33.3333333);
+    GeoLocationDTO locationDTO = new GeoLocationDTO(22.222222, 33.3333333);
+
+    final List<AccessPoint> aps = Lists.newArrayList(new AccessPoint(new ID("apID"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, location));
+    final List<AccessPointDTO> dtos = Lists.newArrayList(new AccessPointDTO("apID", "ip", "aa:bb", "sn", "model", venueDTO, locationDTO));
     final ID operID = new ID("operID");
 
     context.checking(new Expectations() {{
