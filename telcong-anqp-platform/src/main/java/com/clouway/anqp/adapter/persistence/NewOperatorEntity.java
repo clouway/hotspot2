@@ -16,17 +16,19 @@ class NewOperatorEntity {
   final String domainName;
   final String friendlyName;
   final String emergencyNumber;
-  final String ipType;
   final List<Object> serviceProviderIDs;
+  final String ipV4;
+  final String ipV6;
 
-  NewOperatorEntity(String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipType) {
+  NewOperatorEntity(String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipV4, String ipV6) {
     this.name = name;
     this.state = state;
     this.description = description;
     this.domainName = domainName;
     this.friendlyName = friendlyName;
     this.emergencyNumber = emergencyNumber;
-    this.ipType = ipType;
     this.serviceProviderIDs = ImmutableList.copyOf(Lists.newArrayList());
+    this.ipV4 = ipV4;
+    this.ipV6 = ipV6;
   }
 }

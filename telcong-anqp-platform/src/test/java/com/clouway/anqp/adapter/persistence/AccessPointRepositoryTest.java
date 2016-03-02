@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.IPv4.Availability.PUBLIC;
 import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.NewOperatorBuilder.newOperator;
 import static com.clouway.anqp.VenueBuilder.newVenueBuilder;
@@ -22,8 +23,7 @@ import static com.clouway.anqp.VenueName.defaultName;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  */
@@ -38,9 +38,11 @@ public class AccessPointRepositoryTest {
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
   private FakeDatastore datastore = new FakeDatastore(datastoreRule.db());
-  private IpTypeCatalog catalog = context.mock(IpTypeCatalog.class);
-  private PersistentAccessPointRepository repository = new PersistentAccessPointRepository(datastore, catalog);
   private PersistentOperatorRepository operatorRepository = new PersistentOperatorRepository(datastore);
+
+  private IPv4AvailabilityCatalog v4Catalog = context.mock(IPv4AvailabilityCatalog.class);
+
+  private PersistentAccessPointRepository repository = new PersistentAccessPointRepository(datastore, v4Catalog);
 
   @Test
   public void createApWithoutVenueNames() throws Exception {
@@ -117,15 +119,15 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void findQueryList() throws Exception {
-    NewOperator operator = newOperator().build();
+    NewOperator operator = newOperator().iPv4(new IPv4(PUBLIC)).build();
     Object operID = operatorRepository.create(operator);
 
     NewAccessPoint ap = NewAccessPointBuilder.newAP().operatorId(new ID(operID)).build();
     Object apID = repository.create(ap);
 
     context.checking(new Expectations() {{
-      oneOf(catalog).findId("PUBLIC");
-      will(returnValue(Optional.of(1)));
+      oneOf(v4Catalog).findAvailability("PUBLIC");
+      will(returnValue(Optional.of(PUBLIC)));
     }});
 
     QueryList actual = repository.findQueryList(apID);

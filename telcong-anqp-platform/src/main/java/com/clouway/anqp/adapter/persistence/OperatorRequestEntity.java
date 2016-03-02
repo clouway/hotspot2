@@ -13,9 +13,11 @@ class OperatorRequestEntity {
   final String domainName;
   final String friendlyName;
   final String emergencyNumber;
-  final String ipType;
+  final String ipV4;
+  final String ipV6;
 
-  OperatorRequestEntity(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipType) {
+
+  OperatorRequestEntity(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipV4, String ipV6) {
     this._id = id;
     this.name = name;
     this.state = state;
@@ -23,6 +25,7 @@ class OperatorRequestEntity {
     this.domainName = domainName;
     this.friendlyName = friendlyName;
     this.emergencyNumber = emergencyNumber;
-    this.ipType = ipType;
+    this.ipV4 = ipV4;
+    this.ipV6 = ipV6;
   }
 }

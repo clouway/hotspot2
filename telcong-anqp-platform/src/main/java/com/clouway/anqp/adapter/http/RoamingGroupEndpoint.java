@@ -1,12 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.ID;
-import com.clouway.anqp.NewRoamingGroup;
-import com.clouway.anqp.Operator;
-import com.clouway.anqp.RoamingGroup;
-import com.clouway.anqp.RoamingGroupRepository;
-import com.clouway.anqp.RoamingGroupRequest;
-import com.clouway.anqp.RoamingGroupType;
+import com.clouway.anqp.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -142,7 +136,7 @@ public class RoamingGroupEndpoint {
     List<OperatorDTO> dtos = Lists.newArrayList();
 
     for (Operator operator : operators) {
-      dtos.add(new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name()));
+      dtos.add(new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipV4.availability.name(), operator.ipV6.availability.name()));
     }
 
     return dtos;

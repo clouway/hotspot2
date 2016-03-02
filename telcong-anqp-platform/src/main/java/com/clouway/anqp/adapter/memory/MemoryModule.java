@@ -16,11 +16,6 @@ import static com.clouway.anqp.Auth.Info.INNER_AUTHENTICATION_EAP_METHOD_TYPE;
 import static com.clouway.anqp.Auth.Info.NON_EAP_INNER_AUTHENTICATION_TYPE;
 import static com.clouway.anqp.Auth.Info.TUNNELED_EAP_METHOD_CREDENTIAL_TYPE;
 import static com.clouway.anqp.Auth.Type.*;
-import static com.clouway.anqp.IpType.NOT_AVAILABLE;
-import static com.clouway.anqp.IpType.PORT_RESTRICTED;
-import static com.clouway.anqp.IpType.PUBLIC;
-import static com.clouway.anqp.IpType.SINGLE_NAT_PRIVATE;
-import static com.clouway.anqp.IpType.UNKNOWN;
 
 /**
  * MemoryModule is a guice module which is used for the In-Memory configuration of the temporary or caching implementations.
@@ -117,15 +112,26 @@ public class MemoryModule extends AbstractModule {
 
   @Provides
   @Singleton
-  public IpTypeCatalog getIpTypeCatalog() {
+  public IPv4AvailabilityCatalog getV4Catalog() {
     // The catalog contains only currently supported types
-    return new InMemoryIpTypeCatalog(new LinkedHashMap<String, Integer>() {{
-      put(NOT_AVAILABLE.name(), 0);
-      put(PUBLIC.name(), 1);
-      put(PORT_RESTRICTED.name(), 2);
-      put(SINGLE_NAT_PRIVATE.name(), 3);
-      put(UNKNOWN.name(), 7);
-    }});
+    return new InMemoryIPv4AvailabilityCatalog(
+            IPv4.Availability.NOT_AVAILABLE,
+            IPv4.Availability.PUBLIC,
+            IPv4.Availability.PORT_RESTRICTED,
+            IPv4.Availability.SINGLE_NAT_PRIVATE,
+            IPv4.Availability.UNKNOWN
+    );
+  }
+
+  @Provides
+  @Singleton
+  public IPv6AvailabilityCatalog getV6Catalog() {
+    // The catalog contains only currently supported types
+    return new InMemoryIPv6AvailabilityCatalog(
+            IPv6.Availability.NOT_AVAILABLE,
+            IPv6.Availability.AVAILABLE,
+            IPv6.Availability.UNKNOWN
+    );
   }
 
   @Provides

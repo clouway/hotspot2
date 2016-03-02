@@ -2,7 +2,6 @@ package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
 import com.clouway.anqp.Capability;
-import com.clouway.anqp.IpType;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -160,6 +159,14 @@ public class OperatorEndpoint {
     return Reply.saying().ok();
   }
 
+  private NewEmergencyNumber adapt(Object id, NewEmergencyNumberDTO dto) {
+    return new NewEmergencyNumber(new ID(id), dto.value);
+  }
+
+  private Operator adapt(Object id, OperatorDTO dto) {
+    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, new IPv4(IPv4.Availability.valueOf(dto.ipV4)), new IPv6(IPv6.Availability.valueOf(dto.ipv6)));
+  }
+
   private List<OperatorDTO> adapt(List<Operator> operators) {
     List<OperatorDTO> dtos = Lists.newArrayList();
 
@@ -171,7 +178,7 @@ public class OperatorEndpoint {
   }
 
   private OperatorDTO adapt(Operator operator) {
-    return new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
+    return new OperatorDTO(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipV4.availability.name(), operator.ipV6.availability.name());
   }
 
   private List<AccessPointDTO> adaptToAPs(List<AccessPoint> aps) {
@@ -206,20 +213,8 @@ public class OperatorEndpoint {
     return new GeoLocationDTO(location.latitude, location.longitude);
   }
 
-  private NewEmergencyNumber adapt(Object id, NewEmergencyNumberDTO dto) {
-    return new NewEmergencyNumber(new ID(id), dto.value);
-  }
-
-  private Operator adapt(Object id, OperatorDTO dto) {
-    IpType ipType = IpType.valueOf(dto.ipType);
-
-    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, ipType);
-  }
-
   private NewOperator adapt(NewOperatorDTO dto) {
-    IpType ipType = IpType.valueOf(dto.ipType);
-
-    return new NewOperator(dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, ipType);
+    return new NewOperator(dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, new IPv4(IPv4.Availability.valueOf(dto.ipV4)), new IPv6(IPv6.Availability.valueOf(dto.ipV6)));
   }
 
   private List<ID> adaptToIDs(List<Object> dtos) {

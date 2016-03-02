@@ -47,7 +47,7 @@ public class HttpModule extends AbstractModule {
         at("/r/operators").serve(OperatorEndpoint.class);
         at("/r/roaming-groups").serve(RoamingGroupEndpoint.class);
         at("/r/venues").serve(VenueEndpoint.class);
-        at("/r/ip-types").serve(IpTypeService.class);
+        at("/r/ip-availabilities").serve(IpAvailabilityEndpoint.class);
         at("/r/auth-types").serve(AuthTypeEndpoint.class);
         at("/r/service-providers").serve(ServiceProviderEndpoint.class);
         at("/r/capabilities").serve(CapabilityEndpoint.class);

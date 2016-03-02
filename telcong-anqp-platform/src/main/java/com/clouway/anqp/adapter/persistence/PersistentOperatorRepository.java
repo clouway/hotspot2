@@ -194,9 +194,8 @@ class PersistentOperatorRepository implements OperatorRepository {
   }
 
   private Operator adapt(OperatorEntity entity) {
-    IpType ipType = IpType.valueOf(entity.ipType);
 
-    return new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber, ipType);
+    return new Operator(new ID(entity._id), entity.name, OperatorState.valueOf(entity.state), entity.description, entity.domainName, entity.friendlyName, entity.emergencyNumber, new IPv4(IPv4.Availability.valueOf(entity.ipV4)), new IPv6(IPv6.Availability.valueOf(entity.ipV6)));
   }
 
   private List<AccessPoint> adaptToAPs(List<AccessPointEntity> entities) {
@@ -293,11 +292,11 @@ class PersistentOperatorRepository implements OperatorRepository {
   }
 
   private OperatorRequestEntity adapt(Operator operator) {
-    return new OperatorRequestEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
+    return new OperatorRequestEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber,operator.ipV4.availability.name(), operator.ipV6.availability.name());
   }
 
   private NewOperatorEntity adapt(NewOperator operator) {
-    return new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
+    return new NewOperatorEntity(operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipV4.availability.name(), operator.ipV6.availability.name());
   }
 
   private CapabilityList adaptCapabilityEntities(List<CapabilityEntity> entities) {

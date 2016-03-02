@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.IPv4.Availability;
 import com.clouway.anqp.api.datastore.DatastoreCleaner;
 import com.clouway.anqp.api.datastore.DatastoreRule;
 import com.clouway.anqp.api.datastore.FakeDatastore;
@@ -13,11 +14,11 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.NewOperatorBuilder.newOperator;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  */
@@ -67,7 +68,9 @@ public class RoamingGroupRepositoryTest {
 
   @Test
   public void update() throws Exception {
-    Object operID = operatorRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "emergency", IpType.PUBLIC));
+    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
+    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+    Object operID = operatorRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "emergency", iPv4, iPv6));
     Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.REGIONAL));
 
     roamingRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID)));
@@ -79,7 +82,7 @@ public class RoamingGroupRepositoryTest {
     RoamingGroup got = roamingRepository.findById(new ID(groupID)).get();
     RoamingGroup want = new RoamingGroup(
             new ID(groupID), "newName", "newDescription", RoamingGroupType.INTERNATIONAL,
-            Lists.newArrayList(new Operator(new ID(operID), "name", OperatorState.ACTIVE, "description", "dName", "fName", "emergency", IpType.PUBLIC))
+            Lists.newArrayList(new Operator(new ID(operID), "name", OperatorState.ACTIVE, "description", "dName", "fName", "emergency", iPv4, iPv6))
     );
 
     assertThat(got, deepEquals(want));
@@ -87,8 +90,10 @@ public class RoamingGroupRepositoryTest {
 
   @Test
   public void assignOperators() throws Exception {
-    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", IpType.PUBLIC));
-    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency", IpType.PUBLIC));
+    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
+    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", iPv4, iPv6));
+    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency", iPv4, iPv6));
 
     Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.INTERNATIONAL));
 
@@ -98,8 +103,8 @@ public class RoamingGroupRepositoryTest {
     RoamingGroup got = roamingRepository.findById(new ID(groupID)).get();
 
     List<Operator> operators = Lists.newArrayList(
-            new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", IpType.PUBLIC),
-            new Operator(new ID(operID2), "name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency", IpType.PUBLIC)
+            new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", iPv4, iPv6),
+            new Operator(new ID(operID2), "name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency", iPv4, iPv6)
     );
 
     RoamingGroup want = new RoamingGroup(new ID(groupID), "name", "description", RoamingGroupType.INTERNATIONAL, operators);
@@ -109,8 +114,10 @@ public class RoamingGroupRepositoryTest {
 
   @Test
   public void assignDisabledOperator() throws Exception {
-    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", IpType.PUBLIC));
-    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "emergency", IpType.PUBLIC));
+    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
+    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", iPv4, iPv6));
+    Object operID2 = operatorRepository.create(newOperator().name("name2").state(OperatorState.INACTIVE).build());
 
     Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.INTERNATIONAL));
 
@@ -118,7 +125,7 @@ public class RoamingGroupRepositoryTest {
 
     RoamingGroup got = roamingRepository.findById(new ID(groupID)).get();
 
-    List<Operator> operators = Lists.newArrayList(new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", IpType.PUBLIC));
+    List<Operator> operators = Lists.newArrayList(new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", iPv4, iPv6));
     RoamingGroup want = new RoamingGroup(new ID(groupID), "name", "description", RoamingGroupType.INTERNATIONAL, operators);
 
     assertThat(got, deepEquals(want));
@@ -126,16 +133,18 @@ public class RoamingGroupRepositoryTest {
 
   @Test(expected = NotFoundException.class)
   public void assignOperatorsToUnknownRoamingGroup() throws Exception {
-    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", IpType.PUBLIC));
-    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "emergency", IpType.PUBLIC));
+    Object operID1 = operatorRepository.create(newOperator().name("name1").build());
+    Object operID2 = operatorRepository.create(newOperator().name("name2").build());
 
     roamingRepository.assignOperators(new ID("groupID"), Lists.newArrayList(new ID(operID1), new ID(operID2)));
   }
 
   @Test
   public void removeOperatorsFromRoamingGroup() throws Exception {
-    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", IpType.PUBLIC));
-    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency", IpType.PUBLIC));
+    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
+    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", iPv4, iPv6));
+    Object operID2 = operatorRepository.create(newOperator().build());
 
     Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.INTERNATIONAL));
 
@@ -145,7 +154,7 @@ public class RoamingGroupRepositoryTest {
 
     List<RoamingGroup> got = roamingRepository.findAll();
 
-    Operator operator = new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", IpType.PUBLIC);
+    Operator operator = new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", iPv4, iPv6);
     List<RoamingGroup> want = Lists.newArrayList(new RoamingGroup(new ID(groupID), "name", "description", RoamingGroupType.INTERNATIONAL, Lists.newArrayList(operator)));
 
     assertThat(got, deepEquals(want));

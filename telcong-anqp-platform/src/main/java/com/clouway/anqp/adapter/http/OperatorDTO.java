@@ -13,10 +13,12 @@ class OperatorDTO {
   final String domainName;
   final String friendlyName;
   final String emergencyNumber;
-  @IpType
-  final String ipType;
+  @ValidIPv4
+  final String ipV4;
+  @ValidIPv6
+  final String ipv6;
 
-  OperatorDTO(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipType) {
+  OperatorDTO(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipV4, String ipv6) {
     this.id = id;
     this.name = name;
     this.state = state;
@@ -24,6 +26,7 @@ class OperatorDTO {
     this.domainName = domainName;
     this.friendlyName = friendlyName;
     this.emergencyNumber = emergencyNumber;
-    this.ipType = ipType;
+    this.ipV4 = ipV4;
+    this.ipv6 = ipv6;
   }
 }

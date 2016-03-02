@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.IPv4.Availability;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
 import com.clouway.anqp.core.NotFoundException;
@@ -16,12 +17,12 @@ import static com.clouway.anqp.VenueName.defaultName;
  */
 class PersistentAccessPointRepository implements AccessPointRepository {
   private final Datastore datastore;
-  private final IpTypeCatalog catalog;
+  private final IPv4AvailabilityCatalog v4Catalog;
 
   @Inject
-  public PersistentAccessPointRepository(Datastore datastore, IpTypeCatalog catalog) {
+  public PersistentAccessPointRepository(Datastore datastore, IPv4AvailabilityCatalog v4Catalog) {
     this.datastore = datastore;
-    this.catalog = catalog;
+    this.v4Catalog = v4Catalog;
   }
 
   @Override
@@ -80,9 +81,9 @@ class PersistentAccessPointRepository implements AccessPointRepository {
       throw new NotFoundException("Unsuccessful retrieving of query list due to missing operator");
     }
 
-    Optional<Integer> response = catalog.findId(operatorEntity.ipType);
+    Availability availability = v4Catalog.findAvailability(operatorEntity.ipV4).get();
 
-    return new QueryList(response.get());
+    return new QueryList(availability.id);
   }
 
   @Override

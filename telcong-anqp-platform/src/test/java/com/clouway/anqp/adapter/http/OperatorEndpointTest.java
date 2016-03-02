@@ -2,6 +2,7 @@ package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
 import com.clouway.anqp.Capability;
+import com.clouway.anqp.IPv4.Availability;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -16,7 +17,6 @@ import java.util.List;
 import static com.clouway.anqp.Auth.Info.CREDENTIAL_TYPE;
 import static com.clouway.anqp.Auth.Type.EXPANDED_EAP_METHOD_SUBFIELD;
 import static com.clouway.anqp.EAP.Method.EAP_SIM;
-import static com.clouway.anqp.IpType.PUBLIC;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isOk;
@@ -36,8 +36,10 @@ public class OperatorEndpointTest {
 
   @Test
   public void create() throws Exception {
-    final NewOperator operator = new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC);
-    final NewOperatorDTO dto = new NewOperatorDTO("name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", "PUBLIC");
+    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
+    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+    final NewOperator operator = new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", iPv4, iPv6);
+    final NewOperatorDTO dto = new NewOperatorDTO("name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", "UNKNOWN", "UNKNOWN");
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(operator)));
@@ -51,8 +53,10 @@ public class OperatorEndpointTest {
 
   @Test
   public void findAll() throws Exception {
-    final Operator operator = new Operator(new ID("id1"), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber", PUBLIC);
-    final Operator anotherOperator = new Operator(new ID("id2"), "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber", PUBLIC);
+    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
+    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+    final Operator operator = new Operator(new ID("id1"), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber", iPv4, iPv6);
+    final Operator anotherOperator = new Operator(new ID("id2"), "name2", OperatorState.ACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber", iPv4, iPv6);
     final List<Operator> operators = Lists.newArrayList(operator, anotherOperator);
 
     context.checking(new Expectations() {{
@@ -62,8 +66,8 @@ public class OperatorEndpointTest {
 
     Reply<?> reply = service.findAll();
     List<OperatorDTO> expected = Lists.newArrayList(
-            new OperatorDTO("id1", "name1", "ACTIVE", "description1", "domainName1", "friendlyName1", "emergencyNumber", "PUBLIC"),
-            new OperatorDTO("id2", "name2", "ACTIVE", "description2", "domainName2", "friendlyName2", "emergencyNumber", "PUBLIC")
+            new OperatorDTO("id1", "name1", "ACTIVE", "description1", "domainName1", "friendlyName1", "emergencyNumber", "UNKNOWN", "UNKNOWN"),
+            new OperatorDTO("id2", "name2", "ACTIVE", "description2", "domainName2", "friendlyName2", "emergencyNumber", "UNKNOWN", "UNKNOWN")
     );
 
     assertThat(reply, containsValue(expected));
@@ -72,7 +76,10 @@ public class OperatorEndpointTest {
 
   @Test
   public void findById() throws Exception {
-    final Operator operator = new Operator(new ID("id"), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC);
+    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
+    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+
+    final Operator operator = new Operator(new ID("id"), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", iPv4, iPv6);
 
     context.checking(new Expectations() {{
       oneOf(repository).findById(with(matching(new ID("id"))));
@@ -80,7 +87,7 @@ public class OperatorEndpointTest {
     }});
 
     Reply<?> replay = service.findById("id");
-    OperatorDTO expected = new OperatorDTO("id", "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", "PUBLIC");
+    OperatorDTO expected = new OperatorDTO("id", "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", "UNKNOWN", "UNKNOWN");
 
     assertThat(replay, containsValue(expected));
     assertThat(replay, isOk());
@@ -100,8 +107,11 @@ public class OperatorEndpointTest {
 
   @Test
   public void update() throws Exception {
-    final Operator operator = new Operator(new ID(1), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC);
-    final OperatorDTO dto = new OperatorDTO(1, "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", PUBLIC.name());
+    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
+    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+
+    final Operator operator = new Operator(new ID(1), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", iPv4, iPv6);
+    final OperatorDTO dto = new OperatorDTO(1, "name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", "UNKNOWN","UNKNOWN");
 
     context.checking(new Expectations() {{
       oneOf(repository).update(with(matching(operator)));
@@ -128,7 +138,6 @@ public class OperatorEndpointTest {
 
     assertThat(reply, isOk());
   }
-
 
   @Test
   public void findAccessPoints() throws Exception {
