@@ -113,7 +113,8 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void findQueryList() throws Exception {
-    Object operID = operatorRepository.create(newOperator().build());
+    NewOperator operator = newOperator().build();
+    Object operID = operatorRepository.create(operator);
 
     NewAccessPoint ap = newAP().operatorId(new ID(operID)).build();
 
@@ -170,7 +171,8 @@ public class AccessPointRepositoryTest {
 
   @Test
   public void update() throws Exception {
-    Object operID = operatorRepository.create(newOperator().build());
+    NewOperator operator = newOperator().build();
+    Object operID = operatorRepository.create(operator);
 
     Venue venue = newVenueBuilder().group("group").type("type").names(new VenueName("Info", new Language("en"))).build();
     Venue newVenue = newVenueBuilder().group("group").type("type").names(new VenueName("Info", new Language("en")), new VenueName("Info2", new Language("Bg"))).build();
