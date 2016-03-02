@@ -1,5 +1,7 @@
 package com.clouway.anqp.adapter.persistence;
 
+import com.clouway.anqp.CivicLocation;
+import com.clouway.anqp.GeoLocation;
 import com.clouway.anqp.api.datastore.Kind;
 
 /**
@@ -12,15 +14,17 @@ class NewAccessPointEntity {
   final String serialNumber;
   final String model;
   final VenueEntity venue;
-  final GeoLocationEntity location;
+  final GeoLocationEntity geoLocation;
+  final CivicLocationEntity civicLocation;
 
-  NewAccessPointEntity(Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity location) {
+  NewAccessPointEntity(Object operatorId, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity geoLocation, CivicLocationEntity civicLocation) {
     this.operatorId = operatorId;
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;
     this.model = model;
     this.venue = venue;
-    this.location = location;
+    this.geoLocation = geoLocation;
+    this.civicLocation = civicLocation;
   }
 }

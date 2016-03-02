@@ -89,7 +89,7 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     List<AccessPoint> aps = Lists.newArrayList();
 
     for (AccessPointEntity entity : entities) {
-      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.location)));
+      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation)));
     }
 
     return aps;
@@ -100,7 +100,7 @@ class PersistentAccessPointRepository implements AccessPointRepository {
       return Optional.absent();
     }
 
-    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.location)));
+    return Optional.of(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation)));
   }
 
   private Venue adapt(VenueEntity entity) {
@@ -120,12 +120,16 @@ class PersistentAccessPointRepository implements AccessPointRepository {
     return new GeoLocation(location.latitude, location.longitude);
   }
 
-  private NewAccessPointEntity adapt(NewAccessPoint ap) {
-    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
+  private CivicLocation adapt(CivicLocationEntity address) {
+    return new CivicLocation(address.country, address.city, address.street, address.streetNumber, address.postCode);
   }
 
   private AccessPointRequestEntity adapt(AccessPoint ap) {
-    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
+    return new AccessPointRequestEntity(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation));
+  }
+
+  private NewAccessPointEntity adapt(NewAccessPoint ap) {
+    return new NewAccessPointEntity(ap.operatorId.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation));
   }
 
   private VenueEntity adapt(Venue venue) {
@@ -140,5 +144,9 @@ class PersistentAccessPointRepository implements AccessPointRepository {
 
   private GeoLocationEntity adapt(GeoLocation location) {
     return new GeoLocationEntity(location.latitude, location.longitude);
+  }
+
+  private CivicLocationEntity adapt(CivicLocation civicLocation) {
+    return new CivicLocationEntity(civicLocation.country, civicLocation.city, civicLocation.street, civicLocation.streetNumber, civicLocation.postCode);
   }
 }

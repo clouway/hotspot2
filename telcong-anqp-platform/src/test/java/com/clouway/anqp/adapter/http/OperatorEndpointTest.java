@@ -131,19 +131,24 @@ public class OperatorEndpointTest {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
     VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
 
-    GeoLocation location = new GeoLocation(22.222222, 33.3333333);
-    GeoLocationDTO locationDTO = new GeoLocationDTO(22.222222, 33.3333333);
+    CivicLocation civic = new CivicLocation("country", "city", "street", "number", "postCode");
+    CivicLocationDTO civicDTO = new CivicLocationDTO("country", "city", "street", "number", "postCode");
 
-    final List<AccessPoint> aps = Lists.newArrayList(new AccessPoint(new ID("apID"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, location));
-    final List<AccessPointDTO> dtos = Lists.newArrayList(new AccessPointDTO("apID", "ip", "aa:bb", "sn", "model", venueDTO, locationDTO));
-    final ID operID = new ID("operID");
+    GeoLocation geo = new GeoLocation(65.65656565, 75.75757575);
+    GeoLocationDTO geoDTO = new GeoLocationDTO(65.65656565, 75.75757575);
+
+    final AccessPoint ap = new AccessPoint(new ID("id"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, geo, civic);
+    final AccessPointDTO apDTO = new AccessPointDTO("id", "ip", "aa:bb", "sn", "model", venueDTO, geoDTO, civicDTO);
+    final List<AccessPoint> aps = Lists.newArrayList(ap);
+    final List<AccessPointDTO> dtos = Lists.newArrayList(apDTO);
+    final ID operID = new ID("id");
 
     context.checking(new Expectations() {{
       oneOf(repository).findAccessPoints(with(matching(operID)));
       will(returnValue(aps));
     }});
 
-    Reply<?> reply = service.findAccessPoints("operID");
+    Reply<?> reply = service.findAccessPoints("id");
 
     assertThat(reply, containsValue(dtos));
     assertThat(reply, isOk());

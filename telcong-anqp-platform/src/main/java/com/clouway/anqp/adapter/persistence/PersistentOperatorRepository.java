@@ -163,10 +163,14 @@ class PersistentOperatorRepository implements OperatorRepository {
     List<AccessPoint> aps = Lists.newArrayList();
 
     for (AccessPointEntity entity : entities) {
-      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.location)));
+      aps.add(new AccessPoint(new ID(entity._id), entity.ip, new MacAddress(entity.mac), entity.serialNumber, entity.model, adapt(entity.venue), adapt(entity.geoLocation), adapt(entity.civicLocation)));
     }
 
     return aps;
+  }
+
+  private CivicLocation adapt(CivicLocationEntity address) {
+    return new CivicLocation(address.country, address.city, address.street, address.streetNumber, address.postCode);
   }
 
   private Venue adapt(VenueEntity entity) {

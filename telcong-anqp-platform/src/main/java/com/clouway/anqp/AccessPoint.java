@@ -9,15 +9,17 @@ public class AccessPoint {
   public final String serialNumber;
   public final String model;
   public final Venue venue;
-  public final GeoLocation location;
+  public final GeoLocation geoLocation;
+  public final CivicLocation civicLocation;
 
-  public AccessPoint(ID id, String ip, MacAddress mac, String serialNumber, String model, Venue venue, GeoLocation location) {
+  public AccessPoint(ID id, String ip, MacAddress mac, String serialNumber, String model, Venue venue, GeoLocation geoLocation, CivicLocation civicLocation) {
     this.id = id;
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;
     this.model = model;
     this.venue = venue;
-    this.location = location;
+    this.geoLocation = geoLocation;
+    this.civicLocation = civicLocation;
   }
 }

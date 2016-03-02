@@ -100,7 +100,7 @@ public class AccessPointEndpoint {
   }
 
   private AccessPointDTO adapt(AccessPoint ap) {
-    return new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.location));
+    return new AccessPointDTO(ap.id.value, ap.ip, ap.mac.value, ap.serialNumber, ap.model, adapt(ap.venue), adapt(ap.geoLocation), adapt(ap.civicLocation));
   }
 
   private VenueDTO adapt(Venue venue) {
@@ -113,16 +113,20 @@ public class AccessPointEndpoint {
     return new VenueDTO(venue.group.name, venue.type.name, names);
   }
 
+  private CivicLocationDTO adapt(CivicLocation civicLocation) {
+    return new CivicLocationDTO(civicLocation.country, civicLocation.city, civicLocation.street, civicLocation.streetNumber, civicLocation.postCode);
+  }
+
   private GeoLocationDTO adapt(GeoLocation location) {
     return new GeoLocationDTO(location.latitude, location.longitude);
   }
 
   private NewAccessPoint adapt(NewAccessPointDTO dto) {
-    return new NewAccessPoint(new ID(dto.operatorId), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.location));
+    return new NewAccessPoint(new ID(dto.operatorId), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.geoLocation), adapt(dto.civicLocation));
   }
 
   private AccessPoint adapt(Object id, AccessPointDTO dto) {
-    return new AccessPoint(new ID(id), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.location));
+    return new AccessPoint(new ID(id), dto.ip, new MacAddress(dto.mac), dto.serialNumber, dto.model, adapt(dto.venue), adapt(dto.geoLocation), adapt(dto.civicLocation));
   }
 
   private Venue adapt(VenueDTO dto) {
@@ -133,6 +137,10 @@ public class AccessPointEndpoint {
     }
 
     return new Venue(new VenueGroup(dto.group), new VenueType(dto.type), names);
+  }
+
+  private CivicLocation adapt(CivicLocationDTO address) {
+    return new CivicLocation(address.country, address.city, address.street, address.streetNumber, address.postCode);
   }
 
   private GeoLocation adapt(GeoLocationDTO location) {

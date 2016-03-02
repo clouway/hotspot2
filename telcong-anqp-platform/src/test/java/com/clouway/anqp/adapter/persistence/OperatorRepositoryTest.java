@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.NewOperatorBuilder.newOperator;
+import static com.clouway.anqp.VenueBuilder.newVenueBuilder;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -186,14 +187,18 @@ public class OperatorRepositoryTest {
 
   @Test
   public void assignAccessPoints() throws Exception {
-    Object operID = operRepository.create(newOperator().build());
-    GeoLocation location1 = new GeoLocation(24.3456789, 45.5678934);
-    GeoLocation location2 = new GeoLocation(55.5555555, 37.1234568);
+    Venue venue = newVenueBuilder().names(new VenueName("Info", new Language("en"))).build();
+    CivicLocation civic = new CivicLocation("country", "city", "street", "number", "postCode");
+    GeoLocation geo = new GeoLocation(22.2222222, 33.3333333);
 
-    Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
-    Object apID1 = accessPointRepository.create(new NewAccessPoint(new ID(operID), "8.8.8.8", new MacAddress("aa:bb:cc"), "33:22:11", "model1", venue, location1));
-    Object apID2 = accessPointRepository.create(new NewAccessPoint(new ID(operID), "9.9.9.9", new MacAddress("cc:bb:aa"), "11:22:33", "model2", venue, location2));
+    NewOperator operator = newOperator().build();
+    Object operID = operRepository.create(operator);
 
+    NewAccessPoint ap1 = new NewAccessPoint(new ID(operID), "ip1", new MacAddress("aa:bb:cc"), "sn1", "model1", venue, geo, civic);
+    NewAccessPoint ap2 = new NewAccessPoint(new ID(operID), "ip2", new MacAddress("cc:bb:aa"), "sn2", "model2", venue, geo, civic);
+
+    Object apID1 = accessPointRepository.create(ap1);
+    Object apID2 = accessPointRepository.create(ap2);
     List<ID> apIDs = Lists.newArrayList(new ID(apID1), new ID(apID2));
 
     operRepository.assignAccessPoints(new ID(operID), apIDs);
@@ -201,8 +206,8 @@ public class OperatorRepositoryTest {
     List<AccessPoint> got = operRepository.findAccessPoints(new ID(operID));
 
     List<AccessPoint> want = Lists.newArrayList(
-            new AccessPoint(new ID(apID1), "8.8.8.8", new MacAddress("aa:bb:cc"), "33:22:11", "model1", venue, location1),
-            new AccessPoint(new ID(apID2), "9.9.9.9", new MacAddress("cc:bb:aa"), "11:22:33", "model2", venue, location2)
+            new AccessPoint(new ID(apID1), "ip1", new MacAddress("aa:bb:cc"), "sn1", "model1", venue, geo, civic),
+            new AccessPoint(new ID(apID2), "ip2", new MacAddress("cc:bb:aa"), "sn2", "model2", venue, geo, civic)
     );
 
     assertThat(got, deepEquals(want));

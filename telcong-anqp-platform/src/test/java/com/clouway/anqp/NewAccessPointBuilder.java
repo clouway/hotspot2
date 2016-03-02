@@ -9,7 +9,9 @@ public class NewAccessPointBuilder {
   private String serialNumber = "sn";
   private String model = "model";
   private Venue venue =  new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
-  private GeoLocation location = new GeoLocation(22.222222, 33.3333333);
+  private GeoLocation geoLocation = new GeoLocation(22.222222, 33.333333);
+  private CivicLocation civicLocation = new CivicLocation("country", "city", "street", "streetNumber", "postCode");
+
 
   public static NewAccessPointBuilder newAP() {
     return new NewAccessPointBuilder();
@@ -45,12 +47,17 @@ public class NewAccessPointBuilder {
     return this;
   }
 
-  public NewAccessPointBuilder location(GeoLocation location) {
-    this.location = location;
+  public NewAccessPointBuilder geoLocation(GeoLocation geoLocation) {
+    this.geoLocation = geoLocation;
+    return this;
+  }
+
+  public NewAccessPointBuilder civicLocation(CivicLocation civicLocation) {
+    this.civicLocation = civicLocation;
     return this;
   }
 
   public NewAccessPoint build() {
-    return new NewAccessPoint(operatorId, ip, mac, serialNumber, model, venue, location);
+    return new NewAccessPoint(operatorId, ip, mac, serialNumber, model, venue, geoLocation, civicLocation);
   }
 }

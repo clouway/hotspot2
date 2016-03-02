@@ -14,15 +14,17 @@ class NewAccessPointDTO {
   final String model;
   @Valid
   final VenueDTO venue;
-  final GeoLocationDTO location;
+  final GeoLocationDTO geoLocation;
+  final CivicLocationDTO civicLocation;
 
-  public NewAccessPointDTO(Object operatorId, String ip, String mac, String serialNumber, String model, VenueDTO venue, GeoLocationDTO location) {
+  public NewAccessPointDTO(Object operatorId, String ip, String mac, String serialNumber, String model, VenueDTO venue, GeoLocationDTO geoLocation, CivicLocationDTO civicLocation) {
     this.operatorId = operatorId;
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;
     this.model = model;
     this.venue = venue;
-    this.location = location;
+    this.geoLocation = geoLocation;
+    this.civicLocation = civicLocation;
   }
 }

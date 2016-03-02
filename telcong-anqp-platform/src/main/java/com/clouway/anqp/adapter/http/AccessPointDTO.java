@@ -1,5 +1,8 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.CivicLocation;
+import com.clouway.anqp.GeoLocation;
+
 import javax.validation.Valid;
 
 /**
@@ -12,15 +15,17 @@ class AccessPointDTO {
   final String model;
   @Valid
   final VenueDTO venue;
-  final GeoLocationDTO location;
+  final GeoLocationDTO geoLocation;
+  final CivicLocationDTO civicLocation;
 
-  public AccessPointDTO(Object id, String ip, String mac, String serialNumber, String model, VenueDTO venue, GeoLocationDTO location) {
+  AccessPointDTO(Object id, String ip, String mac, String serialNumber, String model, VenueDTO venue, GeoLocationDTO geoLocation, CivicLocationDTO civicLocation) {
     this.id = id;
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;
     this.model = model;
     this.venue = venue;
-    this.location = location;
+    this.geoLocation = geoLocation;
+    this.civicLocation = civicLocation;
   }
 }

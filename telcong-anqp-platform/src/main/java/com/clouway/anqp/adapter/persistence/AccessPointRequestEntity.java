@@ -12,15 +12,17 @@ class AccessPointRequestEntity {
   final String serialNumber;
   final String model;
   final VenueEntity venue;
-  final GeoLocationEntity location;
+  final GeoLocationEntity geoLocation;
+  final CivicLocationEntity civicLocation;
 
-  AccessPointRequestEntity(Object id, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity location) {
+  AccessPointRequestEntity(Object id, String ip, String mac, String serialNumber, String model, VenueEntity venue, GeoLocationEntity geoLocation, CivicLocationEntity civicLocation) {
     this._id = id;
     this.ip = ip;
     this.mac = mac;
     this.serialNumber = serialNumber;
     this.model = model;
     this.venue = venue;
-    this.location = location;
+    this.geoLocation = geoLocation;
+    this.civicLocation = civicLocation;
   }
 }
