@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.persistence;
 
+import com.clouway.anqp.Network3GPP;
 import com.clouway.anqp.ID;
 import com.clouway.anqp.NewServiceProvider;
 import com.clouway.anqp.ServiceProvider;
@@ -7,7 +8,6 @@ import com.clouway.anqp.ServiceProviderException;
 import com.clouway.anqp.ServiceProviderRepository;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
-import com.clouway.anqp.core.NotFoundException;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -67,28 +67,48 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
   }
 
   private NewServiceProviderEntity adapt(NewServiceProvider provider) {
-    return new NewServiceProviderEntity(provider.name, provider.description);
+    return new NewServiceProviderEntity(provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks));
+  }
+
+  private ServiceProviderEntity adapt(ServiceProvider provider) {
+    Object id = provider.id.value;
+
+    return new ServiceProviderEntity(id, provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks));
+  }
+
+  private List<Network3GPPEntity> adaptToNetwork3GPPEntities(List<Network3GPP> networks) {
+    List<Network3GPPEntity> entities = Lists.newArrayList();
+
+    for (Network3GPP network : networks) {
+      entities.add(new Network3GPPEntity(network.name, network.mobileCountryCode, network.mobileNetworkCode));
+    }
+
+    return entities;
   }
 
   private Optional<ServiceProvider> adapt(ServiceProviderEntity entity) {
     if (entity == null) {
       return Optional.absent();
     }
-    return Optional.of(new ServiceProvider(new ID(entity._id), entity.name, entity.description));
+    return Optional.of(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks)));
   }
 
   private List<ServiceProvider> adapt(List<ServiceProviderEntity> entities) {
     List<ServiceProvider> providers = Lists.newArrayList();
 
     for (ServiceProviderEntity entity : entities) {
-      providers.add(new ServiceProvider(new ID(entity._id), entity.name, entity.description));
+      providers.add(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks)));
     }
     return providers;
   }
 
-  private ServiceProviderEntity adapt(ServiceProvider provider) {
-    Object value = provider.id.value;
+  private List<Network3GPP> adaptToNetwork3GPPs(List<Network3GPPEntity> entities) {
+    List<Network3GPP> networks = Lists.newArrayList();
 
-    return new ServiceProviderEntity(value, provider.name, provider.description);
+    for (Network3GPPEntity entity : entities) {
+      networks.add(new Network3GPP(entity.name, entity.mobileCountryCode, entity.mobileNetworkCode));
+    }
+
+    return networks;
   }
 }

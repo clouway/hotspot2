@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.Network3GPP;
 import com.clouway.anqp.ID;
 import com.clouway.anqp.NewServiceProvider;
 import com.clouway.anqp.ServiceProvider;
@@ -83,25 +84,44 @@ public class ServiceProviderEndpoint {
     return Reply.saying().ok();
   }
 
-  private NewServiceProvider adapt(NewServiceProviderDTO dto) {
-    return new NewServiceProvider(dto.name, dto.description);
-  }
-
-  private ServiceProviderDTO adapt(ServiceProvider provider) {
-    return new ServiceProviderDTO(provider.id, provider.name, provider.description);
-  }
-
   private List<ServiceProviderDTO> adapt(List<ServiceProvider> serviceProviders) {
     List<ServiceProviderDTO> dtos = Lists.newArrayList();
 
     for (ServiceProvider provider : serviceProviders) {
-      dtos.add(new ServiceProviderDTO(provider.id, provider.name, provider.description));
+      dtos.add(adapt(provider));
+    }
+
+    return dtos;
+  }
+
+  private ServiceProviderDTO adapt(ServiceProvider provider) {
+    return new ServiceProviderDTO(provider.id.value, provider.name, provider.description, adaptToNetwork3GPPDTOs(provider.networks));
+  }
+
+  private List<Network3GPPDTO> adaptToNetwork3GPPDTOs(List<Network3GPP> networks) {
+    List<Network3GPPDTO> dtos = Lists.newArrayList();
+
+    for (Network3GPP network : networks) {
+      dtos.add(new Network3GPPDTO(network.name, network.mobileCountryCode, network.mobileNetworkCode));
     }
 
     return dtos;
   }
 
   private ServiceProvider adapt(Object id, ServiceProviderDTO dto) {
-    return new ServiceProvider(new ID(id), dto.name, dto.description);
+    return new ServiceProvider(new ID(id), dto.name, dto.description, adaptToNetwork3GPPs(dto.networks));
+  }
+
+  private NewServiceProvider adapt(NewServiceProviderDTO dto) {
+    return new NewServiceProvider(dto.name, dto.description, adaptToNetwork3GPPs(dto.networks));
+  }
+
+  private List<Network3GPP> adaptToNetwork3GPPs(List<Network3GPPDTO> dtos) {
+    List<Network3GPP> networks = Lists.newArrayList();
+
+    for(Network3GPPDTO dto : dtos) {
+      networks.add(new Network3GPP(dto.name, dto.mobileCountryCode, dto.mobileNetworkCode));
+    }
+    return networks;
   }
 }

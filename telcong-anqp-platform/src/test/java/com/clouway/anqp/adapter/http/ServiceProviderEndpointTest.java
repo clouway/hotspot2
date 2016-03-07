@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.Network3GPP;
 import com.clouway.anqp.ID;
 import com.clouway.anqp.NewServiceProvider;
 import com.clouway.anqp.ServiceProvider;
@@ -34,8 +35,11 @@ public class ServiceProviderEndpointTest {
 
   @Test
   public void create() throws Exception {
-    NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description");
-    final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description);
+    List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
+    List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
+
+    NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs);
+    final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks);
     Request request = makeRequestThatContains(dto);
 
     context.checking(new Expectations() {{
@@ -50,8 +54,10 @@ public class ServiceProviderEndpointTest {
   @Test
   public void findById() throws Exception {
     final ID id = new ID("id");
-    final ServiceProvider provider = new ServiceProvider(id, "Mtel", "zzzzzzz");
-    ServiceProviderDTO dto = new ServiceProviderDTO(id, "Mtel", "zzzzzzz");
+    final List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
+    final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
+    final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks);
+    final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs);
 
 
     context.checking(new Expectations() {{
@@ -81,8 +87,10 @@ public class ServiceProviderEndpointTest {
 
   @Test
   public void findAll() throws Exception {
-    ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc");
-    ServiceProviderDTO dto = new ServiceProviderDTO(provider.id, provider.name, provider.description);
+    List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
+    List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
+    ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks);
+    ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs);
     List<ServiceProviderDTO> dtos = Lists.newArrayList(dto);
 
     final List<ServiceProvider> providers = Lists.newArrayList(provider);
@@ -101,9 +109,11 @@ public class ServiceProviderEndpointTest {
   @Test
   public void update() throws Exception {
     String id = "id123";
-    ServiceProviderDTO dto = new ServiceProviderDTO("id", "name", "description");
+    List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
+    List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
+    ServiceProviderDTO dto = new ServiceProviderDTO("id", "name", "description", networkDTOs);
 
-    final ServiceProvider provider = new ServiceProvider(new ID(id), dto.name, dto.description);
+    final ServiceProvider provider = new ServiceProvider(new ID(id), dto.name, dto.description, networks);
 
     Request request = makeRequestThatContains(dto);
 
