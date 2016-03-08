@@ -2,6 +2,7 @@ package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.DomainNameList;
 import com.clouway.anqp.Network3GPP;
+import com.clouway.anqp.RoamingConsortium;
 import com.clouway.anqp.ID;
 import com.clouway.anqp.NewServiceProvider;
 import com.clouway.anqp.ServiceProvider;
@@ -96,7 +97,7 @@ public class ServiceProviderEndpoint {
   }
 
   private ServiceProviderDTO adapt(ServiceProvider provider) {
-    return new ServiceProviderDTO(provider.id.value, provider.name, provider.description, adaptToNetwork3GPPDTOs(provider.networks), provider.domainNames.values);
+    return new ServiceProviderDTO(provider.id.value, provider.name, provider.description, adaptToNetwork3GPPDTOs(provider.networks), provider.domainNames.values, adaptToConsortiomDTOs(provider.consortiums));
   }
 
   private List<Network3GPPDTO> adaptToNetwork3GPPDTOs(List<Network3GPP> networks) {
@@ -109,16 +110,26 @@ public class ServiceProviderEndpoint {
     return dtos;
   }
 
+  private List<RoamingConsortiumDTO> adaptToConsortiomDTOs(List<RoamingConsortium> consortiumList) {
+    List<RoamingConsortiumDTO> dtos = Lists.newArrayList();
+
+    for (RoamingConsortium consortium : consortiumList) {
+      dtos.add(new RoamingConsortiumDTO(consortium.name, consortium.organizationID));
+    }
+
+    return dtos;
+  }
+
   private ServiceProvider adapt(Object id, ServiceProviderDTO dto) {
     DomainNameList domainNames = new DomainNameList(dto.domainNames);
 
-    return new ServiceProvider(new ID(id), dto.name, dto.description, adaptToNetwork3GPPs(dto.networks), domainNames);
+    return new ServiceProvider(new ID(id), dto.name, dto.description, adaptToNetwork3GPPs(dto.networks), domainNames, adaptToConsortioms(dto.consortiums));
   }
 
   private NewServiceProvider adapt(NewServiceProviderDTO dto) {
     DomainNameList domainNames = new DomainNameList(dto.domainNames);
 
-    return new NewServiceProvider(dto.name, dto.description, adaptToNetwork3GPPs(dto.networks), domainNames);
+    return new NewServiceProvider(dto.name, dto.description, adaptToNetwork3GPPs(dto.networks), domainNames, adaptToConsortioms(dto.consortiums));
   }
 
   private List<Network3GPP> adaptToNetwork3GPPs(List<Network3GPPDTO> dtos) {
@@ -128,5 +139,15 @@ public class ServiceProviderEndpoint {
       networks.add(new Network3GPP(dto.name, dto.mobileCountryCode, dto.mobileNetworkCode));
     }
     return networks;
+  }
+
+  private List<RoamingConsortium> adaptToConsortioms(List<RoamingConsortiumDTO> dtos) {
+    List<RoamingConsortium> consortiumList = Lists.newArrayList();
+
+    for (RoamingConsortiumDTO dto : dtos) {
+      consortiumList.add(new RoamingConsortium(dto.name, dto.organizationID));
+    }
+
+    return consortiumList;
   }
 }

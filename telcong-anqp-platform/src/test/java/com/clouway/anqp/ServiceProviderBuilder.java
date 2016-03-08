@@ -12,6 +12,7 @@ public class ServiceProviderBuilder {
   private String description = "description";
   private List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
   private DomainNameList domainNames = new DomainNameList(Lists.<String>newArrayList());
+  private List<RoamingConsortium> consortiums = Lists.newArrayList();
 
   public static ServiceProviderBuilder newProvider() {
     return new ServiceProviderBuilder();
@@ -42,7 +43,12 @@ public class ServiceProviderBuilder {
     return this;
   }
 
+  public ServiceProviderBuilder consortiums(RoamingConsortium... consortiumList) {
+    this.consortiums = Lists.newArrayList(consortiumList);
+    return this;
+  }
+
   public ServiceProvider build() {
-    return new ServiceProvider(id, name, description, networks, domainNames);
+    return new ServiceProvider(id, name, description, networks, domainNames, consortiums);
   }
 }

@@ -1,12 +1,6 @@
 package com.clouway.anqp.adapter.persistence;
 
-import com.clouway.anqp.DomainNameList;
-import com.clouway.anqp.ID;
-import com.clouway.anqp.Network3GPP;
-import com.clouway.anqp.NewServiceProvider;
-import com.clouway.anqp.ServiceProvider;
-import com.clouway.anqp.ServiceProviderBuilder;
-import com.clouway.anqp.ServiceProviderException;
+import com.clouway.anqp.*;
 import com.clouway.anqp.api.datastore.DatastoreCleaner;
 import com.clouway.anqp.api.datastore.DatastoreRule;
 import com.clouway.anqp.api.datastore.FakeDatastore;
@@ -55,19 +49,20 @@ public class ServiceProviderRepositoryTest {
 
   @Test
   public void findAll() throws Exception {
-    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName"));
+    DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
+    List<RoamingConsortium> list =  Lists.newArrayList(new RoamingConsortium("name", "0xFFFFFF"));
 
-    NewServiceProvider newProvider1 = new NewServiceProvider("name1", "descr1", networks, domainNames);
-    NewServiceProvider newProvider2 = new NewServiceProvider("name2", "descr2", networks, domainNames);
+    NewServiceProvider newProvider1 = new NewServiceProvider("name1", "descr1", networks, names, list);
+    NewServiceProvider newProvider2 = new NewServiceProvider("name2", "descr2", networks, names, list);
 
     Object id1 = repository.create(newProvider1);
     Object id2 = repository.create(newProvider2);
 
     List<ServiceProvider> result = repository.findAll();
 
-    ServiceProvider provider1 = new ServiceProvider(new ID(id1), "name1", "descr1", networks, domainNames);
-    ServiceProvider provider2 = new ServiceProvider(new ID(id2), "name2", "descr2", networks, domainNames);
+    ServiceProvider provider1 = new ServiceProvider(new ID(id1), "name1", "descr1", networks, names, list);
+    ServiceProvider provider2 = new ServiceProvider(new ID(id2), "name2", "descr2", networks, names, list);
 
     List<ServiceProvider> providers = Lists.newArrayList(provider1, provider2);
 
@@ -76,13 +71,15 @@ public class ServiceProviderRepositoryTest {
 
   @Test
   public void update() throws Exception {
-    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName"));
+    DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
-    Object id = repository.create(new NewServiceProvider("name", "descr", networks, domainNames));
+    List<RoamingConsortium> list =  Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
+    Object id = repository.create(new NewServiceProvider("name", "descr", networks, names, list));
 
     List<Network3GPP> newNetworks = Lists.newArrayList(new Network3GPP("newName", "321", "555"));
-    DomainNameList newDomainNames = new DomainNameList(Lists.newArrayList("newDomainName"));
-    ServiceProvider newService = new ServiceProvider(new ID(id), "name", "newDescr", newNetworks, domainNames);
+    DomainNameList newNames = new DomainNameList(Lists.newArrayList("newDomainName"));
+    List<RoamingConsortium> newList =  Lists.newArrayList(new RoamingConsortium("newName", "0xAAAAAA"));
+    ServiceProvider newService = new ServiceProvider(new ID(id), "name", "newDescr", newNetworks, newNames, newList);
 
     repository.update(newService);
     ServiceProvider result = repository.findById(new ID(id)).get();
@@ -92,11 +89,12 @@ public class ServiceProviderRepositoryTest {
 
   @Test
   public void updateProviderName() throws Exception {
-    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName"));
+    DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
-    Object id = repository.create(new NewServiceProvider("name", "descr", networks, domainNames));
+    List<RoamingConsortium> list =  Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
+    Object id = repository.create(new NewServiceProvider("name", "descr", networks, names, list));
 
-    ServiceProvider newService = new ServiceProvider(new ID(id), "newName", "descr", networks, domainNames);
+    ServiceProvider newService = new ServiceProvider(new ID(id), "newName", "descr", networks, names, list);
 
     repository.update(newService);
     ServiceProvider result = repository.findById(new ID(id)).get();

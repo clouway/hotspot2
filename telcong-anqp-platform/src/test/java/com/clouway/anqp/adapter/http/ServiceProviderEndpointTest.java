@@ -2,6 +2,7 @@ package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.DomainNameList;
 import com.clouway.anqp.Network3GPP;
+import com.clouway.anqp.RoamingConsortium;
 import com.clouway.anqp.ID;
 import com.clouway.anqp.NewServiceProvider;
 import com.clouway.anqp.ServiceProvider;
@@ -36,14 +37,17 @@ public class ServiceProviderEndpointTest {
 
   @Test
   public void create() throws Exception {
-    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName"));
-    List<String> domainNamesDTO = Lists.newArrayList("dName");
+    DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
+    List<String> namesDTO = Lists.newArrayList("dName");
 
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
-    NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs, domainNamesDTO);
-    final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks, domainNames);
+    List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
+    List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
+
+    NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs, namesDTO, listDTO);
+    final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks, names, list);
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(provider)));
@@ -58,14 +62,17 @@ public class ServiceProviderEndpointTest {
   @Test
   public void findById() throws Exception {
     final ID id = new ID("id");
-    final DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
-    final List<String> domainNamesDTO = Lists.newArrayList("dName1", "dName2");
+    final DomainNameList names = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
+    final List<String> namesDTO = Lists.newArrayList("dName1", "dName2");
+
+    List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
+    List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
     final List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
-    final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks, domainNames);
-    final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs, domainNamesDTO);
+    final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks, names, list);
+    final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs, namesDTO, listDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).findById(with(matching(id)));
@@ -94,14 +101,17 @@ public class ServiceProviderEndpointTest {
 
   @Test
   public void findAll() throws Exception {
-    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
-    List<String> domainNamesDTO = Lists.newArrayList("dName1", "dName2");
+    DomainNameList names = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
+    List<String> namesDTO = Lists.newArrayList("dName1", "dName2");
 
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
-    ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks, domainNames);
-    ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs, domainNamesDTO);
+    List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
+    List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
+
+    ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks, names, list);
+    ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs, namesDTO, listDTO);
     List<ServiceProviderDTO> dtos = Lists.newArrayList(dto);
 
     final List<ServiceProvider> providers = Lists.newArrayList(provider);
@@ -119,15 +129,17 @@ public class ServiceProviderEndpointTest {
 
   @Test
   public void update() throws Exception {
-    String id = "id123";
-    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
-    List<String> domainNamesDTO = Lists.newArrayList("dName1", "dName2");
+    DomainNameList names = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
+    List<String> namesDTO = Lists.newArrayList("dName1", "dName2");
 
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
-    ServiceProviderDTO dto = new ServiceProviderDTO("id", "name", "description", networkDTOs, domainNamesDTO);
-    final ServiceProvider provider = new ServiceProvider(new ID(id), dto.name, dto.description, networks, domainNames);
+    List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
+    List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
+
+    ServiceProviderDTO dto = new ServiceProviderDTO("1234", "name", "description", networkDTOs, namesDTO, listDTO);
+    final ServiceProvider provider = new ServiceProvider(new ID("id"), dto.name, dto.description, networks, names, list);
 
     Request request = makeRequestThatContains(dto);
 
@@ -135,7 +147,7 @@ public class ServiceProviderEndpointTest {
       oneOf(repository).update(with(matching(provider)));
     }});
 
-    Reply<?> reply = service.update(id, request);
+    Reply<?> reply = service.update("id", request);
 
     assertThat(reply, isOk());
   }
