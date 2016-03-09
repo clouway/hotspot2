@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.DomainNameList;
 import com.clouway.anqp.Network3GPP;
 import com.clouway.anqp.ID;
 import com.clouway.anqp.NewServiceProvider;
@@ -95,7 +96,7 @@ public class ServiceProviderEndpoint {
   }
 
   private ServiceProviderDTO adapt(ServiceProvider provider) {
-    return new ServiceProviderDTO(provider.id.value, provider.name, provider.description, adaptToNetwork3GPPDTOs(provider.networks));
+    return new ServiceProviderDTO(provider.id.value, provider.name, provider.description, adaptToNetwork3GPPDTOs(provider.networks), provider.domainNames.values);
   }
 
   private List<Network3GPPDTO> adaptToNetwork3GPPDTOs(List<Network3GPP> networks) {
@@ -109,11 +110,15 @@ public class ServiceProviderEndpoint {
   }
 
   private ServiceProvider adapt(Object id, ServiceProviderDTO dto) {
-    return new ServiceProvider(new ID(id), dto.name, dto.description, adaptToNetwork3GPPs(dto.networks));
+    DomainNameList domainNames = new DomainNameList(dto.domainNames);
+
+    return new ServiceProvider(new ID(id), dto.name, dto.description, adaptToNetwork3GPPs(dto.networks), domainNames);
   }
 
   private NewServiceProvider adapt(NewServiceProviderDTO dto) {
-    return new NewServiceProvider(dto.name, dto.description, adaptToNetwork3GPPs(dto.networks));
+    DomainNameList domainNames = new DomainNameList(dto.domainNames);
+
+    return new NewServiceProvider(dto.name, dto.description, adaptToNetwork3GPPs(dto.networks), domainNames);
   }
 
   private List<Network3GPP> adaptToNetwork3GPPs(List<Network3GPPDTO> dtos) {

@@ -10,6 +10,7 @@ public class NewServiceProviderBuilder {
   private String name = "names";
   private String description = "description";
   private List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
+  private DomainNameList domainNames = new DomainNameList(Lists.<String>newArrayList());
 
   public static NewServiceProviderBuilder newServiceProvider() {
     return new NewServiceProviderBuilder();
@@ -30,7 +31,12 @@ public class NewServiceProviderBuilder {
     return this;
   }
 
+  public NewServiceProviderBuilder domainNames(DomainNameList domainNames) {
+    this.domainNames = domainNames;
+    return this;
+  }
+
   public NewServiceProvider build() {
-    return new NewServiceProvider(name, description, networks);
+    return new NewServiceProvider(name, description, networks, domainNames);
   }
 }

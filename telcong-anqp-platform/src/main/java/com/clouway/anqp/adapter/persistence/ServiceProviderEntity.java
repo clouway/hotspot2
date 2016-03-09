@@ -13,15 +13,17 @@ class ServiceProviderEntity {
   String name;
   String description;
   List<Network3GPPEntity> networks;
+  List<String> domainNames;
 
   @SuppressWarnings("unused")
   public ServiceProviderEntity() {
   }
 
-  ServiceProviderEntity(Object id, String name, String description, List<Network3GPPEntity> networks) {
+  ServiceProviderEntity(Object id, String name, String description, List<Network3GPPEntity> networks, List<String> domainNames) {
     this._id = id;
     this.name = name;
     this.description = description;
     this.networks = ImmutableList.copyOf(networks);
+    this.domainNames = ImmutableList.copyOf(domainNames);
   }
 }

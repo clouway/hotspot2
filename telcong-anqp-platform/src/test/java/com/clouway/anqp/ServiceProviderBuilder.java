@@ -11,6 +11,7 @@ public class ServiceProviderBuilder {
   private String name = "name";
   private String description = "description";
   private List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
+  private DomainNameList domainNames = new DomainNameList(Lists.<String>newArrayList());
 
   public static ServiceProviderBuilder newProvider() {
     return new ServiceProviderBuilder();
@@ -36,7 +37,12 @@ public class ServiceProviderBuilder {
     return this;
   }
 
+  public ServiceProviderBuilder domainNames(DomainNameList domainNames) {
+    this.domainNames = domainNames;
+    return this;
+  }
+
   public ServiceProvider build() {
-    return new ServiceProvider(id, name, description, networks);
+    return new ServiceProvider(id, name, description, networks, domainNames);
   }
 }

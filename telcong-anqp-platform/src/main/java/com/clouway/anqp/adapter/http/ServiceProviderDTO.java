@@ -17,11 +17,13 @@ class ServiceProviderDTO {
   final String description;
   @Valid
   final List<Network3GPPDTO> networks;
+  final List<String> domainNames;
 
-  public ServiceProviderDTO(Object id, String name, String description, List<Network3GPPDTO> networks) {
+  public ServiceProviderDTO(Object id, String name, String description, List<Network3GPPDTO> networks, List<String> domainNames) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.networks = ImmutableList.copyOf(networks);
+    this.domainNames = ImmutableList.copyOf(domainNames);
   }
 }

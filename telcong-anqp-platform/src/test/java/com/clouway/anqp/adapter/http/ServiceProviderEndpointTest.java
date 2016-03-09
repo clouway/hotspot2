@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.DomainNameList;
 import com.clouway.anqp.Network3GPP;
 import com.clouway.anqp.ID;
 import com.clouway.anqp.NewServiceProvider;
@@ -35,17 +36,20 @@ public class ServiceProviderEndpointTest {
 
   @Test
   public void create() throws Exception {
+    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName"));
+    List<String> domainNamesDTO = Lists.newArrayList("dName");
+
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
-    NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs);
-    final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks);
-    Request request = makeRequestThatContains(dto);
+    NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs, domainNamesDTO);
+    final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks, domainNames);
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(provider)));
     }});
 
+    Request request = makeRequestThatContains(dto);
     Reply<?> reply = service.create(request);
 
     assertThat(reply, isOk());
@@ -54,11 +58,14 @@ public class ServiceProviderEndpointTest {
   @Test
   public void findById() throws Exception {
     final ID id = new ID("id");
+    final DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
+    final List<String> domainNamesDTO = Lists.newArrayList("dName1", "dName2");
+
     final List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
-    final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks);
-    final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs);
 
+    final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks, domainNames);
+    final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs, domainNamesDTO);
 
     context.checking(new Expectations() {{
       oneOf(repository).findById(with(matching(id)));
@@ -87,10 +94,14 @@ public class ServiceProviderEndpointTest {
 
   @Test
   public void findAll() throws Exception {
+    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
+    List<String> domainNamesDTO = Lists.newArrayList("dName1", "dName2");
+
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
-    ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks);
-    ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs);
+
+    ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks, domainNames);
+    ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs, domainNamesDTO);
     List<ServiceProviderDTO> dtos = Lists.newArrayList(dto);
 
     final List<ServiceProvider> providers = Lists.newArrayList(provider);
@@ -109,11 +120,14 @@ public class ServiceProviderEndpointTest {
   @Test
   public void update() throws Exception {
     String id = "id123";
+    DomainNameList domainNames = new DomainNameList(Lists.newArrayList("dName1", "dName2"));
+    List<String> domainNamesDTO = Lists.newArrayList("dName1", "dName2");
+
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
-    ServiceProviderDTO dto = new ServiceProviderDTO("id", "name", "description", networkDTOs);
 
-    final ServiceProvider provider = new ServiceProvider(new ID(id), dto.name, dto.description, networks);
+    ServiceProviderDTO dto = new ServiceProviderDTO("id", "name", "description", networkDTOs, domainNamesDTO);
+    final ServiceProvider provider = new ServiceProvider(new ID(id), dto.name, dto.description, networks, domainNames);
 
     Request request = makeRequestThatContains(dto);
 

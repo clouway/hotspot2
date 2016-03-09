@@ -12,10 +12,12 @@ class NewServiceProviderEntity {
   String name;
   String description;
   List<Network3GPPEntity> networks;
+  List<String> domainNames;
 
-  NewServiceProviderEntity(String name, String description, List<Network3GPPEntity> networks) {
+  NewServiceProviderEntity(String name, String description, List<Network3GPPEntity> networks, List<String> domainNames) {
     this.name = name;
     this.description = description;
     this.networks = ImmutableList.copyOf(networks);
+    this.domainNames = domainNames;
   }
 }

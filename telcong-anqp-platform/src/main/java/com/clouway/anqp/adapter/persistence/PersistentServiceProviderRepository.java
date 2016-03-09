@@ -1,5 +1,6 @@
 package com.clouway.anqp.adapter.persistence;
 
+import com.clouway.anqp.DomainNameList;
 import com.clouway.anqp.Network3GPP;
 import com.clouway.anqp.ID;
 import com.clouway.anqp.NewServiceProvider;
@@ -67,13 +68,13 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
   }
 
   private NewServiceProviderEntity adapt(NewServiceProvider provider) {
-    return new NewServiceProviderEntity(provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks));
+    return new NewServiceProviderEntity(provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks), provider.domainNames.values);
   }
 
   private ServiceProviderEntity adapt(ServiceProvider provider) {
     Object id = provider.id.value;
 
-    return new ServiceProviderEntity(id, provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks));
+    return new ServiceProviderEntity(id, provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks), provider.domainNames.values);
   }
 
   private List<Network3GPPEntity> adaptToNetwork3GPPEntities(List<Network3GPP> networks) {
@@ -90,14 +91,18 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
     if (entity == null) {
       return Optional.absent();
     }
-    return Optional.of(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks)));
+
+    DomainNameList domainNames = new DomainNameList(entity.domainNames);
+
+    return Optional.of(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks), domainNames));
   }
 
   private List<ServiceProvider> adapt(List<ServiceProviderEntity> entities) {
     List<ServiceProvider> providers = Lists.newArrayList();
 
     for (ServiceProviderEntity entity : entities) {
-      providers.add(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks)));
+      DomainNameList domainNames = new DomainNameList(entity.domainNames);
+      providers.add(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks), domainNames));
     }
     return providers;
   }

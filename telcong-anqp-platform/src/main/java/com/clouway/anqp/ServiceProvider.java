@@ -11,11 +11,13 @@ public class ServiceProvider {
   public final String name;
   public final String description;
   public final List<Network3GPP> networks;
+  public final DomainNameList domainNames;
 
-  public ServiceProvider(ID id, String name, String description, List<Network3GPP> networks) {
+  public ServiceProvider(ID id, String name, String description, List<Network3GPP> networks, DomainNameList domainNames) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.networks = ImmutableList.copyOf(networks);
+    this.domainNames = domainNames;
   }
 }
