@@ -8,6 +8,7 @@ import com.clouway.anqp.NewServiceProvider;
 import com.clouway.anqp.ServiceProvider;
 import com.clouway.anqp.ServiceProviderException;
 import com.clouway.anqp.ServiceProviderRepository;
+import com.clouway.anqp.*;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
 import com.google.common.base.Optional;
@@ -69,13 +70,13 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
   }
 
   private NewServiceProviderEntity adapt(NewServiceProvider provider) {
-    return new NewServiceProviderEntity(provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks), provider.domainNames.values, adaptToConsortiumEntities(provider.consortiums));
+    return new NewServiceProviderEntity(provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks), provider.domainNames.values, adaptToConsortiumEntities(provider.consortiums), adaptToNaiEntities(provider.naiRealms));
   }
 
   private ServiceProviderEntity adapt(ServiceProvider provider) {
     Object id = provider.id.value;
 
-    return new ServiceProviderEntity(id, provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks), provider.domainNames.values, adaptToConsortiumEntities(provider.consortiums));
+    return new ServiceProviderEntity(id, provider.name, provider.description, adaptToNetwork3GPPEntities(provider.networks), provider.domainNames.values, adaptToConsortiumEntities(provider.consortiums), adaptToNaiEntities(provider.naiRealms));
   }
 
   private List<Network3GPPEntity> adaptToNetwork3GPPEntities(List<Network3GPP> networks) {
@@ -95,7 +96,7 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
 
     DomainNameList domainNames = new DomainNameList(entity.domainNames);
 
-    return Optional.of(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks), domainNames, adaptToConsortiums(entity.consortiums)));
+    return Optional.of(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks), domainNames, adaptToConsortiums(entity.consortiums), adaptToNAIs(entity.naiRealms)));
   }
 
   private List<ServiceProvider> adapt(List<ServiceProviderEntity> entities) {
@@ -103,7 +104,7 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
 
     for (ServiceProviderEntity entity : entities) {
       DomainNameList domainNames = new DomainNameList(entity.domainNames);
-      providers.add(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks), domainNames, adaptToConsortiums(entity.consortiums)));
+      providers.add(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks), domainNames, adaptToConsortiums(entity.consortiums), adaptToNAIs(entity.naiRealms)));
     }
     return providers;
   }
@@ -136,5 +137,25 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
     }
 
     return entities;
+  }
+
+  private List<NaiEntity> adaptToNaiEntities(List<NAI> naiRealms) {
+    List<NaiEntity> entities = Lists.newArrayList();
+
+    for (NAI nai : naiRealms) {
+      entities.add(new NaiEntity(nai.name));
+    }
+
+    return entities;
+  }
+
+  private List<NAI> adaptToNAIs(List<NaiEntity> entities) {
+    List<NAI> naiList = Lists.newArrayList();
+
+    for (NaiEntity entity : entities) {
+      naiList.add(new NAI(entity.name));
+    }
+
+    return naiList;
   }
 }

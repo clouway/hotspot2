@@ -20,13 +20,16 @@ class ServiceProviderDTO {
   final List<String> domainNames;
   @Valid
   final List<RoamingConsortiumDTO> consortiums;
+  @Valid
+  final List<NaiDTO> naiRealms;
 
-  public ServiceProviderDTO(Object id, String name, String description, List<Network3GPPDTO> networks, List<String> domainNames, List<RoamingConsortiumDTO> consortiums) {
+  public ServiceProviderDTO(Object id, String name, String description, List<Network3GPPDTO> networks, List<String> domainNames, List<RoamingConsortiumDTO> consortiums, List<NaiDTO> naiRealms) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.networks = ImmutableList.copyOf(networks);
     this.domainNames = ImmutableList.copyOf(domainNames);
     this.consortiums = ImmutableList.copyOf(consortiums);
+    this.naiRealms = ImmutableList.copyOf(naiRealms);
   }
 }

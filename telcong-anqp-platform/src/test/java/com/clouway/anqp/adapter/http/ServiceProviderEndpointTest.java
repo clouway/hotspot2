@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.DomainNameList;
+import com.clouway.anqp.NAI;
 import com.clouway.anqp.Network3GPP;
 import com.clouway.anqp.RoamingConsortium;
 import com.clouway.anqp.ID;
@@ -45,9 +46,11 @@ public class ServiceProviderEndpointTest {
 
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A"));
 
-    NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs, namesDTO, listDTO);
-    final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks, names, list);
+    NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs, namesDTO, listDTO, naiDTOList);
+    final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks, names, list, naiList);
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(provider)));
@@ -71,8 +74,12 @@ public class ServiceProviderEndpointTest {
     final List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
-    final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks, names, list);
-    final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs, namesDTO, listDTO);
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A"));
+    
+    final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks, names, list, naiList);
+    final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs, namesDTO, listDTO, naiDTOList);
+   
 
     context.checking(new Expectations() {{
       oneOf(repository).findById(with(matching(id)));
@@ -110,8 +117,11 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
-    ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks, names, list);
-    ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs, namesDTO, listDTO);
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A"));
+
+    ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks, names, list, naiList);
+    ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs, namesDTO, listDTO, naiDTOList);
     List<ServiceProviderDTO> dtos = Lists.newArrayList(dto);
 
     final List<ServiceProvider> providers = Lists.newArrayList(provider);
@@ -138,8 +148,12 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
-    ServiceProviderDTO dto = new ServiceProviderDTO("1234", "name", "description", networkDTOs, namesDTO, listDTO);
-    final ServiceProvider provider = new ServiceProvider(new ID("id"), dto.name, dto.description, networks, names, list);
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A"));
+
+
+    ServiceProviderDTO dto = new ServiceProviderDTO("1234", "name", "description", networkDTOs, namesDTO, listDTO, naiDTOList);
+    final ServiceProvider provider = new ServiceProvider(new ID("id"), dto.name, dto.description, networks, names, list, naiList);
 
     Request request = makeRequestThatContains(dto);
 

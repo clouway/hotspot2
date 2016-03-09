@@ -1,5 +1,6 @@
 package com.clouway.anqp;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class ServiceProviderBuilder {
   private List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
   private DomainNameList domainNames = new DomainNameList(Lists.<String>newArrayList());
   private List<RoamingConsortium> consortiums = Lists.newArrayList();
+  private List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
 
   public static ServiceProviderBuilder newProvider() {
     return new ServiceProviderBuilder();
@@ -48,7 +50,13 @@ public class ServiceProviderBuilder {
     return this;
   }
 
+  public ServiceProviderBuilder naiList(NAI... naiRealms) {
+    this.naiList = ImmutableList.copyOf(naiRealms);
+    return this;
+  }
+
+
   public ServiceProvider build() {
-    return new ServiceProvider(id, name, description, networks, domainNames, consortiums);
+    return new ServiceProvider(id, name, description, networks, domainNames, consortiums, naiList);
   }
 }
