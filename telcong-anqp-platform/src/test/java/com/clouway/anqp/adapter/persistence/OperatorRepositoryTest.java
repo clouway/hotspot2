@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.NewOperatorBuilder.newOperator;
+import static com.clouway.anqp.NewServiceProviderBuilder.newServiceProvider;
 import static com.clouway.anqp.VenueBuilder.newVenueBuilder;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,7 +39,9 @@ public class OperatorRepositoryTest {
 
   private AccessPointRepository accessPointRepository = new PersistentAccessPointRepository(datastore, catalog);
   private RoamingGroupRepository groupRepository = new PersistentRoamingGroupRepository(datastore);
+  private ServiceProviderRepository providerRepository = new PersistentServiceProviderRepository(datastore);
   private OperatorRepository operRepository = new PersistentOperatorRepository(datastore);
+
 
   @Test(expected = OperatorException.class)
   public void createOperatorWithExistingName() throws Exception {
@@ -82,9 +85,9 @@ public class OperatorRepositoryTest {
 
   @Test
   public void update() throws Exception {
-    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", IpType.PUBLIC));
+    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "descr", "dName", "fName", "123", IpType.PUBLIC));
 
-    Operator operator = new Operator(new ID(id), "newName", OperatorState.INACTIVE, "newDescription", "newDomainName", "newFriendlyName", "*88", IpType.PUBLIC);
+    Operator operator = new Operator(new ID(id), "name", OperatorState.INACTIVE, "newDescr", "newDomainName", "newFriendlyName", "*88", IpType.PUBLIC);
 
     operRepository.update(operator);
 
@@ -234,6 +237,65 @@ public class OperatorRepositoryTest {
 
     List<ID> apIDs = Lists.newArrayList(new ID("id1"), new ID("id2"));
     operRepository.assignAccessPoints(new ID(operID), apIDs);
+  }
+
+  @Test
+  public void assignServiceProviders() throws Exception {
+    NewOperator operator = newOperator().build();
+    Object operID = operRepository.create(operator);
+
+    List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "12"));
+    DomainNameList list = new DomainNameList(Lists.newArrayList("dName"));
+    List<RoamingConsortium> consortiums = Lists.newArrayList(new RoamingConsortium("name", "0xAABBCC"));
+    List<NAI> nais = Lists.newArrayList(new NAI("name", Encoding.UTF_8));
+
+    NewServiceProvider newSP = new NewServiceProvider("name1", "descr1", networks, list, consortiums, nais);
+    Object spID = providerRepository.create(newSP);
+
+    List<ID> spIDs = Lists.newArrayList(new ID(spID));
+    operRepository.assignServiceProviders(new ID(operID), spIDs);
+
+    List<ServiceProvider> got = operRepository.findServiceProviders(new ID(operID));
+
+    List<ServiceProvider> want = Lists.newArrayList(new ServiceProvider(new ID(spID), "name1", "descr1", networks, list, consortiums, nais));
+
+    assertThat(got, deepEquals(want));
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void assignServiceProvidersToUnknownOperator() throws Exception {
+    List<ID> spIDs = Lists.newArrayList(new ID("spID"));
+    operRepository.assignServiceProviders(new ID("operID"), spIDs);
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void findServiceProvidersForUnknownOperator() throws Exception {
+    operRepository.findServiceProviders(new ID("id"));
+  }
+
+  @Test
+  public void removeServiceProviders() throws Exception {
+    NewOperator operator = newOperator().build();
+    Object operID = operRepository.create(operator);
+
+    NewServiceProvider newSP = newServiceProvider().build();
+    Object spID = providerRepository.create(newSP);
+
+    List<ID> spIDs = Lists.newArrayList(new ID(spID));
+    operRepository.assignServiceProviders(new ID(operID), spIDs);
+
+    operRepository.removeServiceProviders(new ID(operID), spIDs);
+
+    List<ServiceProvider> got = operRepository.findServiceProviders(new ID(operID));
+
+    assertTrue(got.isEmpty());
+  }
+
+  @Test(expected = NotFoundException.class)
+  public void removeServiceProvidersFromUnknownOperator() throws Exception {
+    ID operID = new ID("operID");
+    List<ID> spIDs = Lists.newArrayList(new ID("spID"));
+    operRepository.removeServiceProviders(operID, spIDs);
   }
 
   @Test

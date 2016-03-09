@@ -78,8 +78,7 @@ public class OperatorEndpoint {
   @Post
   @At("/:id/aps")
   public Reply<?> assignAccessPoints(@Named("id") String id, Request request) {
-    List<Object> dtos = request.read(new TypeLiteral<List<Object>>() {
-    }).as(Json.class);
+    List dtos = request.read(List.class).as(Json.class);
     List<ID> apIDs = adaptToIDs(dtos);
 
     repository.assignAccessPoints(new ID(id), apIDs);
@@ -92,6 +91,37 @@ public class OperatorEndpoint {
   public Reply<?> findAccessPoints(@Named("id") Object id) {
     List<AccessPoint> aps = repository.findAccessPoints(new ID(id));
     List<AccessPointDTO> dtos = adaptToAPs(aps);
+
+    return Reply.with(dtos).ok();
+  }
+
+  @Post
+  @At("/:id/sps")
+  public Reply<?> assignServiceProviders(@Named("id")Object id, Request request) {
+    List dtos = request.read(List.class).as(Json.class);
+    List<ID> spIDs = adaptToIDs(dtos);
+
+    repository.assignServiceProviders(new ID(id), spIDs);
+
+    return Reply.saying().ok();
+  }
+
+  @Put
+  @At("/:id/sps/remove")
+  public Reply<?> removeServiceProviders(@Named("id") String operID, Request request) {
+    List dtos = request.read(List.class).as(Json.class);
+    List<ID> spIDs = adaptToIDs(dtos);
+
+    repository.removeServiceProviders(new ID(operID), spIDs);
+
+    return Reply.saying().ok();
+  }
+
+  @Get
+  @At("/:id/sps")
+  public Reply<?> findServiceProviders(@Named("id") Object id) {
+    List<ServiceProvider> sps = repository.findServiceProviders(new ID(id));
+    List<ServiceProviderDTO> dtos = adaptToServiceProviderDTOs(sps);
 
     return Reply.with(dtos).ok();
   }
@@ -201,6 +231,46 @@ public class OperatorEndpoint {
     }
 
     return ids;
+  }
+
+  private List<ServiceProviderDTO> adaptToServiceProviderDTOs(List<ServiceProvider> sps) {
+    List<ServiceProviderDTO> dtos = Lists.newArrayList();
+
+    for (ServiceProvider sp : sps) {
+      dtos.add(new ServiceProviderDTO(sp.id, sp.name, sp.description, adaptToNetwork3GPPDTOs(sp.networks), sp.domainNames.values, adaptToConsortiumDTOs(sp.consortiums), adaptToNaiDTOs(sp.naiRealms)));
+    }
+
+    return dtos;
+  }
+
+  private List<RoamingConsortiumDTO> adaptToConsortiumDTOs(List<RoamingConsortium> consortiums) {
+    List<RoamingConsortiumDTO> dtos = Lists.newArrayList();
+
+    for(RoamingConsortium consortium : consortiums) {
+      dtos.add(new RoamingConsortiumDTO(consortium.name, consortium.organizationID));
+    }
+
+    return dtos;
+  }
+
+  private List<NaiDTO> adaptToNaiDTOs(List<NAI> naiRealms) {
+    List<NaiDTO> dtos = Lists.newArrayList();
+
+    for(NAI nai : naiRealms) {
+      dtos.add(new NaiDTO(nai.name, nai.encoding.name()));
+    }
+
+    return dtos;
+  }
+
+  private List<Network3GPPDTO> adaptToNetwork3GPPDTOs(List<Network3GPP> networks) {
+    List<Network3GPPDTO> dtos = Lists.newArrayList();
+
+    for (Network3GPP network : networks) {
+      dtos.add(new Network3GPPDTO(network.name, network.mobileCountryCode, network.mobileNetworkCode));
+    }
+
+    return dtos;
   }
 
   private List<CapabilityDTO> adapt(CapabilityList list) {

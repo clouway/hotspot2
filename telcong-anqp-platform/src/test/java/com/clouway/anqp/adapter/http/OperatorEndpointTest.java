@@ -156,6 +156,67 @@ public class OperatorEndpointTest {
   }
 
   @Test
+  public void assignServiceProviders() throws Exception {
+    final List<String> dto = Lists.newArrayList("spID1", "spID2", "spID3");
+    final List<ID> spIDs = Lists.newArrayList(new ID("spID1"), new ID("spID2"), new ID("spID3"));
+    final ID operID = new ID("operID");
+
+    context.checking(new Expectations() {{
+      oneOf(repository).assignServiceProviders(with(matching(operID)) , with(matching(spIDs)));
+    }});
+
+    Request request = makeRequestThatContains(dto);
+    Reply<?> reply = service.assignServiceProviders("operID", request);
+
+    assertThat(reply, isOk());
+  }
+
+  @Test
+  public void removeServiceProviders() throws Exception {
+    final List<String> dto = Lists.newArrayList("spID1", "spID2", "spID3");
+    final List<ID> spIDs = Lists.newArrayList(new ID("spID1"), new ID("spID2"), new ID("spID3"));
+    final ID operID = new ID("operID");
+
+    context.checking(new Expectations() {{
+      oneOf(repository).removeServiceProviders(with(matching(operID)) , with(matching(spIDs)));
+    }});
+
+    Request request = makeRequestThatContains(dto);
+    Reply<?> reply = service.removeServiceProviders("operID", request);
+
+    assertThat(reply, isOk());
+  }
+
+  @Test
+  public void findServiceProviders() throws Exception {
+    final List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "33"));
+    final DomainNameList list = new DomainNameList(Lists.newArrayList("dName"));
+    final List<RoamingConsortium> consortiums = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFBB"));
+    final List<NAI> nais = Lists.newArrayList(new NAI("name", Encoding.UTF_8));
+    final ServiceProvider sp = new ServiceProvider(new ID("id"), "name", "descr", networks, list, consortiums, nais);
+    final List<ServiceProvider> sps = Lists.newArrayList(sp);
+
+    final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "123", "33"));
+    final List<String> listDTO = Lists.newArrayList("dName");
+    final List<RoamingConsortiumDTO> consortiumDTOs = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFBB"));
+    final List<NaiDTO> naiDTOs = Lists.newArrayList(new NaiDTO("name", Encoding.UTF_8.name()));
+    final ServiceProviderDTO spDTO = new ServiceProviderDTO(new ID("id"), "name", "descr", networkDTOs, listDTO, consortiumDTOs, naiDTOs);
+    final List<ServiceProviderDTO> spDTOs = Lists.newArrayList(spDTO);
+
+    final ID operID = new ID("id");
+
+    context.checking(new Expectations() {{
+      oneOf(repository).findServiceProviders(with(matching(operID)));
+      will(returnValue(sps));
+    }});
+
+    Reply<?> reply = service.findServiceProviders("id");
+
+    assertThat(reply, containsValue(spDTOs));
+    assertThat(reply, isOk());
+  }
+
+  @Test
   public void activate() throws Exception {
     context.checking(new Expectations() {{
       oneOf(repository).activate(with(matching(new ID("id"))));

@@ -94,11 +94,7 @@ class PersistentOperatorRepository implements OperatorRepository {
       throw new NotFoundException("Operator is unknown or deactivate!");
     }
 
-    List<Object> ids = Lists.newArrayList();
-
-    for (ID id : apIDs) {
-      ids.add(id.value);
-    }
+    List<Object> ids = getIDValues(apIDs);
 
     datastore.update(AccessPointEntity.class, Filter.where("_id").in(ids), UpdateStatement.updateBulk("operatorId").toBe(operID.value));
   }
@@ -114,6 +110,47 @@ class PersistentOperatorRepository implements OperatorRepository {
     List<AccessPointEntity> entities = datastore.findAllObjectsByFilter(AccessPointEntity.class, Filter.where("operatorId").is(id.value));
 
     return adaptToAPs(entities);
+  }
+
+  @Override
+  public void assignServiceProviders(ID operID, List<ID> spIDs) {
+    OperatorEntity entity = datastore.findById(OperatorEntity.class, operID.value);
+
+    if (entity == null) {
+      throw new NotFoundException("Operator in unknown");
+    }
+
+    List<Object> ids = getIDValues(spIDs);
+    entity.serviceProviderIDs.addAll(ids);
+
+    datastore.update(OperatorEntity.class, Filter.where("_id").is(operID.value), UpdateStatement.update("serviceProviderIDs").toBe(entity.serviceProviderIDs));
+  }
+
+  @Override
+  public List<ServiceProvider> findServiceProviders(ID id) {
+    OperatorEntity entity = datastore.findById(OperatorEntity.class, id.value);
+
+    if (entity == null) {
+      throw new NotFoundException("Operator is unknown");
+    }
+
+    List<ServiceProviderEntity> entities = datastore.findAllObjectsByFilter(ServiceProviderEntity.class, Filter.where("_id").in(entity.serviceProviderIDs));
+
+    return adaptToServiceProviders(entities);
+  }
+
+  @Override
+  public void removeServiceProviders(ID operID, List<ID> spIDs) {
+    OperatorEntity entity = datastore.findById(OperatorEntity.class, operID.value);
+
+    if (entity == null) {
+      throw new NotFoundException("Operator is unknown");
+    }
+
+    List<Object> ids = getIDValues(spIDs);
+    entity.serviceProviderIDs.removeAll(ids);
+
+    datastore.update(OperatorEntity.class, Filter.where("_id").is(operID.value), UpdateStatement.update("serviceProviderIDs").toBe(entity.serviceProviderIDs));
   }
 
   @Override
@@ -190,8 +227,50 @@ class PersistentOperatorRepository implements OperatorRepository {
     return new GeoLocation(location.latitude, location.longitude);
   }
 
-  private OperatorEntity adapt(Operator operator) {
-    return new OperatorEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
+  private List<ServiceProvider> adaptToServiceProviders(List<ServiceProviderEntity> entities) {
+    List<ServiceProvider> sps = Lists.newArrayList();
+
+    for (ServiceProviderEntity entity : entities) {
+      DomainNameList list = new DomainNameList(entity.domainNames);
+
+      sps.add(new ServiceProvider(new ID(entity._id), entity.name, entity.description, adaptToNetwork3GPPs(entity.networks), list, adaptToConsortiums(entity.consortiums), adaptToNAIs(entity.naiRealms)));
+    }
+
+    return sps;
+  }
+
+  private List<NAI> adaptToNAIs(List<NaiEntity> entities) {
+    List<NAI> nais = Lists.newArrayList();
+
+    for(NaiEntity entity : entities) {
+      nais.add(new NAI(entity.name, Encoding.valueOf(entity.encoding)));
+    }
+
+    return nais;
+  }
+
+  private List<RoamingConsortium> adaptToConsortiums(List<RoamingConsortiumEntity> entities) {
+    List<RoamingConsortium> consortiums = Lists.newArrayList();
+
+    for(RoamingConsortiumEntity entity : entities) {
+      consortiums.add(new RoamingConsortium(entity.name, entity.organizationID));
+    }
+
+    return consortiums;
+  }
+
+  private List<Network3GPP> adaptToNetwork3GPPs(List<Network3GPPEntity> entities) {
+    List<Network3GPP> networks = Lists.newArrayList();
+
+    for(Network3GPPEntity entity : entities) {
+      networks.add(new Network3GPP(entity.name, entity.mobileCountryCode, entity.mobileNetworkCode));
+    }
+
+    return networks;
+  }
+
+  private OperatorRequestEntity adapt(Operator operator) {
+    return new OperatorRequestEntity(operator.id.value, operator.name, operator.state.name(), operator.description, operator.domainName, operator.friendlyName, operator.emergencyNumber, operator.ipType.name());
   }
 
   private NewOperatorEntity adapt(NewOperator operator) {
@@ -206,5 +285,15 @@ class PersistentOperatorRepository implements OperatorRepository {
     }
 
     return new CapabilityList(list);
+  }
+
+  private List<Object> getIDValues(List<ID> ids) {
+    List<Object> values = Lists.newArrayList();
+
+    for(ID id : ids) {
+      values.add(id.value);
+    }
+
+    return values;
   }
 }

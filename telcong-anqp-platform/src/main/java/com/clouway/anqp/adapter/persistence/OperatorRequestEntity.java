@@ -1,15 +1,12 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.api.datastore.Kind;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import java.util.List;
 
 /**
  */
 @Kind("operators")
-class NewOperatorEntity {
+class OperatorRequestEntity {
+  final Object _id;
   final String name;
   final String state;
   final String description;
@@ -17,9 +14,9 @@ class NewOperatorEntity {
   final String friendlyName;
   final String emergencyNumber;
   final String ipType;
-  final List<Object> serviceProviderIDs;
 
-  NewOperatorEntity(String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipType) {
+  OperatorRequestEntity(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipType) {
+    this._id = id;
     this.name = name;
     this.state = state;
     this.description = description;
@@ -27,6 +24,5 @@ class NewOperatorEntity {
     this.friendlyName = friendlyName;
     this.emergencyNumber = emergencyNumber;
     this.ipType = ipType;
-    this.serviceProviderIDs = ImmutableList.copyOf(Lists.newArrayList());
   }
 }

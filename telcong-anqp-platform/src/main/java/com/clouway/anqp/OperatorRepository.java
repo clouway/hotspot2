@@ -80,4 +80,29 @@ public interface OperatorRepository {
    * @return list with {@link com.clouway.anqp.AccessPoint}
    */
   List<AccessPoint> findAccessPoints(ID id);
+
+  /**
+   * Assign service providers to operator
+   *
+   * @param operID id of the operator to which will be assigned service providers
+   * @param spIDs ids of the service providers which will be assigned to operator
+   */
+  void assignServiceProviders(ID operID, List<ID> spIDs);
+
+  /**
+   * This method retrieves all service providers assigned to certain operator
+   *
+   * @param id if the operator for which we will retrieve all service providers
+   *
+   * @return list with {@link com.clouway.anqp.AccessPoint}
+   */
+  List<ServiceProvider> findServiceProviders(ID id);
+
+  /**
+   * Remove service providers assigned to operator
+   *
+   * @param operID id of the operator from which we will remove service providers
+   * @param spIDs ids of service providers which will be removed from operator
+   */
+  void removeServiceProviders(ID operID, List<ID> spIDs);
 }
