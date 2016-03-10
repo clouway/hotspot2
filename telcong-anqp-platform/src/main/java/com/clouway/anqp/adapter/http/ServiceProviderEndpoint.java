@@ -1,6 +1,8 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.Auth.Info;
+import com.clouway.anqp.Auth.Type;
 import com.clouway.anqp.EAP.Method;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -169,17 +171,37 @@ public class ServiceProviderEndpoint {
     List<EAP> eaps = Lists.newArrayList();
 
     for (EapDTO dto : dtos) {
-      eaps.add(new EAP(Method.valueOf(dto.method)));
+      eaps.add(new EAP(Method.valueOf(dto.method), adaptToAuths(dto.authentications)));
     }
 
     return eaps;
+  }
+
+  private List<Auth> adaptToAuths(List<AuthDTO> dtos) {
+    List<Auth> auths = Lists.newArrayList();
+
+    for (AuthDTO dto : dtos) {
+      auths.add(new Auth(Info.valueOf(dto.info), Type.valueOf(dto.type)));
+    }
+
+    return auths;
   }
 
   private List<EapDTO> addaptToEapDTOs(List<EAP> eaps) {
     List<EapDTO> dtos = Lists.newArrayList();
 
     for (EAP eap : eaps) {
-      dtos.add(new EapDTO(eap.method.name()));
+      dtos.add(new EapDTO(eap.method.name(), adaptToAuthDTOs(eap.auths)));
+    }
+
+    return dtos;
+  }
+
+  private List<AuthDTO> adaptToAuthDTOs(List<Auth> auths) {
+    List<AuthDTO> dtos = Lists.newArrayList();
+
+    for (Auth auth : auths) {
+      dtos.add(new AuthDTO(auth.info.name(), auth.type.name()));
     }
 
     return dtos;

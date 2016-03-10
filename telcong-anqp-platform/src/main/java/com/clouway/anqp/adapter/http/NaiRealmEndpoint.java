@@ -1,6 +1,9 @@
 package com.clouway.anqp.adapter.http;
 
+import com.clouway.anqp.Auth.Type;
+import com.clouway.anqp.AuthEntry;
 import com.clouway.anqp.EAP.Method;
+import com.clouway.anqp.EapAuthCatalog;
 import com.clouway.anqp.EapMethodCatalog;
 import com.clouway.anqp.Encoding;
 import com.clouway.anqp.EncodingCatalog;
@@ -20,11 +23,13 @@ import java.util.List;
 public class NaiRealmEndpoint {
   private final EncodingCatalog encodingCatalog;
   private final EapMethodCatalog methodCatalog;
+  private final EapAuthCatalog authCatalog;
 
   @Inject
-  public NaiRealmEndpoint(EncodingCatalog encodingCatalog, EapMethodCatalog methodCatalog) {
+  public NaiRealmEndpoint(EncodingCatalog encodingCatalog, EapMethodCatalog methodCatalog, EapAuthCatalog authCatalog) {
     this.encodingCatalog = encodingCatalog;
     this.methodCatalog = methodCatalog;
+    this.authCatalog = authCatalog;
   }
 
   @Get
@@ -47,6 +52,16 @@ public class NaiRealmEndpoint {
     return Reply.with(dtos).as(Json.class).ok();
   }
 
+  @Get
+  @At("/auths")
+  public Reply<?> fetchEapAuthentications() {
+    List<AuthEntry> auths = authCatalog.findAll();
+
+    List<AuthEntryDTO> dtos = adaptAuthEntries(auths);
+
+    return Reply.with(dtos).as(Json.class).ok();
+  }
+
   private List<String> adaptEapMethods(List<Method> methods) {
     List<String> list = Lists.newArrayList();
 
@@ -63,6 +78,26 @@ public class NaiRealmEndpoint {
     for (Encoding encoding : encodings) {
       list.add(encoding.name());
     }
+    return list;
+  }
+
+  private List<AuthEntryDTO> adaptAuthEntries(List<AuthEntry> items) {
+    List<AuthEntryDTO> dtos = Lists.newArrayList();
+
+    for (AuthEntry item : items) {
+      dtos.add(new AuthEntryDTO(item.getInfo().name(), adaptAuthTypes(item.getTypes())));
+    }
+
+    return dtos;
+  }
+
+  private List<String> adaptAuthTypes(List<Type> types) {
+    List<String> list = Lists.newArrayList();
+
+    for (Type type : types) {
+      list.add(type.name());
+    }
+
     return list;
   }
 }

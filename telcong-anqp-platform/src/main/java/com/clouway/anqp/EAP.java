@@ -1,5 +1,9 @@
 package com.clouway.anqp;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+
 /**
  * Each NAI realm is a list of one or more EAP Method subfields, which that NAI realm uses for authentication.
  */
@@ -34,8 +38,10 @@ public class EAP {
   }
 
   public final Method method;
+  public final List<Auth> auths;
 
-  public EAP(Method method) {
+  public EAP(Method method, List<Auth> auths) {
     this.method = method;
+    this.auths = ImmutableList.copyOf(auths);
   }
 }

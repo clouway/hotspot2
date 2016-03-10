@@ -266,7 +266,17 @@ public class OperatorEndpoint {
     List<EapDTO> dtos = Lists.newArrayList();
 
     for (EAP eap : eaps) {
-      dtos.add(new EapDTO(eap.method.name()));
+      dtos.add(new EapDTO(eap.method.name(), adaptAuths(eap.auths)));
+    }
+
+    return dtos;
+  }
+
+  private List<AuthDTO> adaptAuths(List<Auth> auths) {
+    List<AuthDTO> dtos = Lists.newArrayList();
+
+    for (Auth auth : auths) {
+      dtos.add(new AuthDTO(auth.info.name(), auth.type.name()));
     }
 
     return dtos;

@@ -1,6 +1,8 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.Auth.Info;
+import com.clouway.anqp.Auth.Type;
 import com.clouway.anqp.EAP.Method;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
@@ -146,7 +148,17 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
     List<EapEntity> entities = Lists.newArrayList();
 
     for (EAP eap : eaps) {
-      entities.add(new EapEntity(eap.method.name()));
+      entities.add(new EapEntity(eap.method.name(), adaptToAuthEntities(eap.auths)));
+    }
+
+    return entities;
+  }
+
+  private List<AuthEntity> adaptToAuthEntities(List<Auth> auths) {
+    List<AuthEntity> entities = Lists.newArrayList();
+
+    for (Auth auth : auths) {
+      entities.add(new AuthEntity(auth.info.name(), auth.type.name()));
     }
 
     return entities;
@@ -166,9 +178,19 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
     List<EAP> eaps = Lists.newArrayList();
 
     for (EapEntity entity : entities) {
-      eaps.add(new EAP(Method.valueOf(entity.method)));
+      eaps.add(new EAP(Method.valueOf(entity.method), adaptToAuths(entity.auths)));
     }
 
     return eaps;
+  }
+
+  private List<Auth> adaptToAuths(List<AuthEntity> entities) {
+    List<Auth> auths = Lists.newArrayList();
+
+    for (AuthEntity entity : entities) {
+      auths.add(new Auth(Info.valueOf(entity.info), Type.valueOf(entity.type)));
+    }
+
+    return auths;
   }
 }

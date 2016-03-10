@@ -9,6 +9,13 @@ import com.google.inject.Singleton;
 
 import java.util.LinkedHashMap;
 
+import static com.clouway.anqp.Auth.Info.CREDENTIAL_TYPE;
+import static com.clouway.anqp.Auth.Info.EXPANDED_EAP_METHOD;
+import static com.clouway.anqp.Auth.Info.EXPANDED_INNER_EAP_METHOD;
+import static com.clouway.anqp.Auth.Info.INNER_AUTHENTICATION_EAP_METHOD_TYPE;
+import static com.clouway.anqp.Auth.Info.NON_EAP_INNER_AUTHENTICATION_TYPE;
+import static com.clouway.anqp.Auth.Info.TUNNELED_EAP_METHOD_CREDENTIAL_TYPE;
+import static com.clouway.anqp.Auth.Type.*;
 import static com.clouway.anqp.IpType.NOT_AVAILABLE;
 import static com.clouway.anqp.IpType.PORT_RESTRICTED;
 import static com.clouway.anqp.IpType.PUBLIC;
@@ -173,5 +180,17 @@ public class MemoryModule extends AbstractModule {
                     Lists.newArrayList(new CapArea("error_area1"))
             ))))
     );
+  }
+
+  @Provides
+  @Singleton
+  public EapAuthCatalog getEapAuthenticationCatalog() {
+    return new InMemoryEapAuthCatalog(
+            new AuthEntry(EXPANDED_EAP_METHOD, EXPANDED_EAP_METHOD_SUBFIELD),
+            new AuthEntry(NON_EAP_INNER_AUTHENTICATION_TYPE, RESERVED_0, PAP_1, CHAP_2, MSCHAP_3, MSCHAPV2_4),
+            new AuthEntry(INNER_AUTHENTICATION_EAP_METHOD_TYPE, EAP_TLS, EAP_SIM, EAP_TTLS, EAP_AKA),
+            new AuthEntry(EXPANDED_INNER_EAP_METHOD, EXPANDED_EAP_METHOD_SUBFIELD),
+            new AuthEntry(CREDENTIAL_TYPE, SIM_1, USIM_2, NFC_SECURE_ELEMENT_3, HARDWARE_TOKEN_4, SOFTOKEN_5, CERTIFICATE_6, USERNAME_PASSWORD_7, NONE_8, RESERVED_9, VENDOR_SPECIFIC_10),
+            new AuthEntry(TUNNELED_EAP_METHOD_CREDENTIAL_TYPE, SIM_1, USIM_2, NFC_SECURE_ELEMENT_3, HARDWARE_TOKEN_4, SOFTOKEN_5, CERTIFICATE_6, USERNAME_PASSWORD_7, RESERVED_8, ANONYMOUS_9, VENDOR_SPECIFIC_10));
   }
 }

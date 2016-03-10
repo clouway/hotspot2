@@ -1,6 +1,8 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.Auth.Info;
+import com.clouway.anqp.Auth.Type;
 import com.clouway.anqp.EAP.Method;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
@@ -254,10 +256,20 @@ class PersistentOperatorRepository implements OperatorRepository {
     List<EAP> eaps = Lists.newArrayList();
 
     for (EapEntity entity : entities) {
-      eaps.add(new EAP(Method.valueOf(entity.method)));
+      eaps.add(new EAP(Method.valueOf(entity.method), adaptToAuths(entity.auths)));
     }
 
     return eaps;
+  }
+
+  private List<Auth> adaptToAuths(List<AuthEntity> entities) {
+    List<Auth> auths = Lists.newArrayList();
+
+    for (AuthEntity entity : entities) {
+      auths.add(new Auth(Info.valueOf(entity.info), Type.valueOf(entity.type)));
+    }
+
+    return auths;
   }
 
   private List<RoamingConsortium> adaptToConsortiums(List<RoamingConsortiumEntity> entities) {
