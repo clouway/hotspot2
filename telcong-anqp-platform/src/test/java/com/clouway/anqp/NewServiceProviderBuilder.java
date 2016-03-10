@@ -15,7 +15,7 @@ public class NewServiceProviderBuilder {
   private List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
   private DomainNameList domainNames = new DomainNameList(Lists.<String>newArrayList());
   private List<RoamingConsortium> consortiums = Lists.newArrayList(new RoamingConsortium("name", "0xAABBFF"));
-  private List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
+  private List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8, Lists.<EAP>newArrayList()));
 
   public static NewServiceProviderBuilder newServiceProvider() {
     return new NewServiceProviderBuilder();

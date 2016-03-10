@@ -6,7 +6,6 @@ import com.clouway.anqp.IpType;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.sitebricks.At;
 import com.google.sitebricks.headless.Reply;
@@ -97,7 +96,7 @@ public class OperatorEndpoint {
 
   @Post
   @At("/:id/sps")
-  public Reply<?> assignServiceProviders(@Named("id")Object id, Request request) {
+  public Reply<?> assignServiceProviders(@Named("id") Object id, Request request) {
     List dtos = request.read(List.class).as(Json.class);
     List<ID> spIDs = adaptToIDs(dtos);
 
@@ -226,7 +225,7 @@ public class OperatorEndpoint {
   private List<ID> adaptToIDs(List<Object> dtos) {
     List<ID> ids = Lists.newArrayList();
 
-    for(Object dto : dtos) {
+    for (Object dto : dtos) {
       ids.add(new ID(dto));
     }
 
@@ -246,7 +245,7 @@ public class OperatorEndpoint {
   private List<RoamingConsortiumDTO> adaptToConsortiumDTOs(List<RoamingConsortium> consortiums) {
     List<RoamingConsortiumDTO> dtos = Lists.newArrayList();
 
-    for(RoamingConsortium consortium : consortiums) {
+    for (RoamingConsortium consortium : consortiums) {
       dtos.add(new RoamingConsortiumDTO(consortium.name, consortium.organizationID));
     }
 
@@ -256,8 +255,18 @@ public class OperatorEndpoint {
   private List<NaiDTO> adaptToNaiDTOs(List<NAI> naiRealms) {
     List<NaiDTO> dtos = Lists.newArrayList();
 
-    for(NAI nai : naiRealms) {
-      dtos.add(new NaiDTO(nai.name, nai.encoding.name()));
+    for (NAI nai : naiRealms) {
+      dtos.add(new NaiDTO(nai.name, nai.encoding.name(), adaptToEapDTOs(nai.eaps)));
+    }
+
+    return dtos;
+  }
+
+  private List<EapDTO> adaptToEapDTOs(List<EAP> eaps) {
+    List<EapDTO> dtos = Lists.newArrayList();
+
+    for (EAP eap : eaps) {
+      dtos.add(new EapDTO(eap.method.name()));
     }
 
     return dtos;

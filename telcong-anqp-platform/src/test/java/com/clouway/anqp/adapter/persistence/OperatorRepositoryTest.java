@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.EAP.Method;
 import com.clouway.anqp.api.datastore.DatastoreCleaner;
 import com.clouway.anqp.api.datastore.DatastoreRule;
 import com.clouway.anqp.api.datastore.FakeDatastore;
@@ -14,6 +15,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.EAP.Method.EAP_SIM;
 import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.NewOperatorBuilder.newOperator;
 import static com.clouway.anqp.NewServiceProviderBuilder.newServiceProvider;
@@ -21,8 +23,7 @@ import static com.clouway.anqp.VenueBuilder.newVenueBuilder;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  */
@@ -247,7 +248,8 @@ public class OperatorRepositoryTest {
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "12"));
     DomainNameList list = new DomainNameList(Lists.newArrayList("dName"));
     List<RoamingConsortium> consortiums = Lists.newArrayList(new RoamingConsortium("name", "0xAABBCC"));
-    List<NAI> nais = Lists.newArrayList(new NAI("name", Encoding.UTF_8));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    List<NAI> nais = Lists.newArrayList(new NAI("name", Encoding.UTF_8, eaps));
 
     NewServiceProvider newSP = new NewServiceProvider("name1", "descr1", networks, list, consortiums, nais);
     Object spID = providerRepository.create(newSP);

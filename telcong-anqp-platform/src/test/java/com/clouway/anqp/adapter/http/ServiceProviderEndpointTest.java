@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.EAP.Method.EAP_SIM;
 import static com.clouway.anqp.Encoding.RFC_4282;
 import static com.clouway.anqp.Encoding.UTF_8;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
@@ -42,8 +43,11 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
-    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "UTF_8"));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM"));
+
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8, eaps));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "UTF_8", eapDTOs));
 
     NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs, namesDTO, listDTO, naiDTOList);
     final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks, names, list, naiList);
@@ -70,8 +74,11 @@ public class ServiceProviderEndpointTest {
     final List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", RFC_4282));
-    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "RFC_4282"));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM"));
+
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", RFC_4282, eaps));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "RFC_4282", eapDTOs));
 
     final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks, names, list, naiList);
     final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs, namesDTO, listDTO, naiDTOList);
@@ -113,8 +120,11 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", RFC_4282));
-    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "RFC_4282"));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM"));
+
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", RFC_4282, eaps));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "RFC_4282", eapDTOs));
 
     ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks, names, list, naiList);
     ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs, namesDTO, listDTO, naiDTOList);
@@ -144,9 +154,11 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
-    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "UTF_8"));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM"));
 
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8, eaps));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "UTF_8", eapDTOs));
 
     ServiceProviderDTO dto = new ServiceProviderDTO("1234", "name", "description", networkDTOs, namesDTO, listDTO, naiDTOList);
     final ServiceProvider provider = new ServiceProvider(new ID("id"), dto.name, dto.description, networks, names, list, naiList);

@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.EAP.Method;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
 import com.clouway.anqp.api.datastore.UpdateStatement;
@@ -242,17 +243,27 @@ class PersistentOperatorRepository implements OperatorRepository {
   private List<NAI> adaptToNAIs(List<NaiEntity> entities) {
     List<NAI> nais = Lists.newArrayList();
 
-    for(NaiEntity entity : entities) {
-      nais.add(new NAI(entity.name, Encoding.valueOf(entity.encoding)));
+    for (NaiEntity entity : entities) {
+      nais.add(new NAI(entity.name, Encoding.valueOf(entity.encoding), adaptToEAPs(entity.eaps)));
     }
 
     return nais;
   }
 
+  private List<EAP> adaptToEAPs(List<EapEntity> entities) {
+    List<EAP> eaps = Lists.newArrayList();
+
+    for (EapEntity entity : entities) {
+      eaps.add(new EAP(Method.valueOf(entity.method)));
+    }
+
+    return eaps;
+  }
+
   private List<RoamingConsortium> adaptToConsortiums(List<RoamingConsortiumEntity> entities) {
     List<RoamingConsortium> consortiums = Lists.newArrayList();
 
-    for(RoamingConsortiumEntity entity : entities) {
+    for (RoamingConsortiumEntity entity : entities) {
       consortiums.add(new RoamingConsortium(entity.name, entity.organizationID));
     }
 
@@ -262,7 +273,7 @@ class PersistentOperatorRepository implements OperatorRepository {
   private List<Network3GPP> adaptToNetwork3GPPs(List<Network3GPPEntity> entities) {
     List<Network3GPP> networks = Lists.newArrayList();
 
-    for(Network3GPPEntity entity : entities) {
+    for (Network3GPPEntity entity : entities) {
       networks.add(new Network3GPP(entity.name, entity.mobileCountryCode, entity.mobileNetworkCode));
     }
 
@@ -290,7 +301,7 @@ class PersistentOperatorRepository implements OperatorRepository {
   private List<Object> getIDValues(List<ID> ids) {
     List<Object> values = Lists.newArrayList();
 
-    for(ID id : ids) {
+    for (ID id : ids) {
       values.add(id.value);
     }
 

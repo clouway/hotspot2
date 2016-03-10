@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.memory;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.EAP.Method;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -153,5 +154,11 @@ public class MemoryModule extends AbstractModule {
   @Singleton
   public EncodingCatalog getEncodingCatalog() {
     return new InMemoryEncodingCatalog(Encoding.values());
+  }
+
+  @Provides
+  @Singleton
+  public EapMethodCatalog getEapMethodCatalog() {
+    return new InMemoryEapMethodCatalog(Method.values());
   }
 }

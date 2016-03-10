@@ -12,6 +12,9 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.EAP.Method.CRYPTO_CARD;
+import static com.clouway.anqp.EAP.Method.EAP_AKA;
+import static com.clouway.anqp.EAP.Method.EAP_SIM;
 import static com.clouway.anqp.Encoding.RFC_4282;
 import static com.clouway.anqp.Encoding.UTF_8;
 import static com.clouway.anqp.NewServiceProviderBuilder.newServiceProvider;
@@ -55,7 +58,8 @@ public class ServiceProviderRepositoryTest {
     DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xFFFFFF"));
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8, eaps));
 
     NewServiceProvider newProvider1 = new NewServiceProvider("name1", "descr1", networks, names, list, naiList);
     NewServiceProvider newProvider2 = new NewServiceProvider("name2", "descr2", networks, names, list, naiList);
@@ -78,14 +82,16 @@ public class ServiceProviderRepositoryTest {
     DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8, eaps));
 
     Object id = repository.create(new NewServiceProvider("name", "descr", networks, names, list, naiList));
 
     List<Network3GPP> newNetworks = Lists.newArrayList(new Network3GPP("newName", "321", "555"));
     DomainNameList newNames = new DomainNameList(Lists.newArrayList("newDomainName"));
     List<RoamingConsortium> newList = Lists.newArrayList(new RoamingConsortium("newName", "0xAAAAAA"));
-    List<NAI> newNAIList = Lists.newArrayList(new NAI("EAP-SIM", RFC_4282));
+    List<EAP> newEaps = Lists.newArrayList(new EAP(CRYPTO_CARD), new EAP(EAP_AKA));
+    List<NAI> newNAIList = Lists.newArrayList(new NAI("EAP-SIM", RFC_4282, newEaps));
 
     ServiceProvider newService = new ServiceProvider(new ID(id), "name", "newDescr", newNetworks, newNames, newList, newNAIList);
 
@@ -100,7 +106,8 @@ public class ServiceProviderRepositoryTest {
     DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
-    List<NAI> naiList = Lists.newArrayList(new NAI("EAP-SIM", UTF_8));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    List<NAI> naiList = Lists.newArrayList(new NAI("EAP-SIM", UTF_8, eaps));
 
     Object id = repository.create(new NewServiceProvider("name", "descr", networks, names, list, naiList));
 

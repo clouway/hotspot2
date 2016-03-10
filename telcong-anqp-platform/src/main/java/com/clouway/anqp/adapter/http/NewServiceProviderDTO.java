@@ -5,6 +5,7 @@ import org.apache.bval.constraints.NotEmpty;
 import org.jetbrains.annotations.NotNull;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ class NewServiceProviderDTO {
   @Valid
   final List<RoamingConsortiumDTO> consortiums;
   @Valid
+  @Size(max = 2)
   final List<NaiDTO> naiRealms;
 
   public NewServiceProviderDTO(String name, String description, List<Network3GPPDTO> networks, List<String> domainNames, List<RoamingConsortiumDTO> consortiums, List<NaiDTO> naiRealms) {

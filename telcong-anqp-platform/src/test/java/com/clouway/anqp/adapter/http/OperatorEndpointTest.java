@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.EAP.Method.EAP_SIM;
 import static com.clouway.anqp.IpType.PUBLIC;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
@@ -162,7 +163,7 @@ public class OperatorEndpointTest {
     final ID operID = new ID("operID");
 
     context.checking(new Expectations() {{
-      oneOf(repository).assignServiceProviders(with(matching(operID)) , with(matching(spIDs)));
+      oneOf(repository).assignServiceProviders(with(matching(operID)), with(matching(spIDs)));
     }});
 
     Request request = makeRequestThatContains(dto);
@@ -178,7 +179,7 @@ public class OperatorEndpointTest {
     final ID operID = new ID("operID");
 
     context.checking(new Expectations() {{
-      oneOf(repository).removeServiceProviders(with(matching(operID)) , with(matching(spIDs)));
+      oneOf(repository).removeServiceProviders(with(matching(operID)), with(matching(spIDs)));
     }});
 
     Request request = makeRequestThatContains(dto);
@@ -192,14 +193,16 @@ public class OperatorEndpointTest {
     final List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "33"));
     final DomainNameList list = new DomainNameList(Lists.newArrayList("dName"));
     final List<RoamingConsortium> consortiums = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFBB"));
-    final List<NAI> nais = Lists.newArrayList(new NAI("name", Encoding.UTF_8));
+    List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM));
+    final List<NAI> nais = Lists.newArrayList(new NAI("name", Encoding.UTF_8, eaps));
     final ServiceProvider sp = new ServiceProvider(new ID("id"), "name", "descr", networks, list, consortiums, nais);
     final List<ServiceProvider> sps = Lists.newArrayList(sp);
 
     final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "123", "33"));
     final List<String> listDTO = Lists.newArrayList("dName");
     final List<RoamingConsortiumDTO> consortiumDTOs = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFBB"));
-    final List<NaiDTO> naiDTOs = Lists.newArrayList(new NaiDTO("name", Encoding.UTF_8.name()));
+    List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM"));
+    final List<NaiDTO> naiDTOs = Lists.newArrayList(new NaiDTO("name", Encoding.UTF_8.name(), eapDTOs));
     final ServiceProviderDTO spDTO = new ServiceProviderDTO(new ID("id"), "name", "descr", networkDTOs, listDTO, consortiumDTOs, naiDTOs);
     final List<ServiceProviderDTO> spDTOs = Lists.newArrayList(spDTO);
 

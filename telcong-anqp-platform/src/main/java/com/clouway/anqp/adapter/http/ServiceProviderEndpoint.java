@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.EAP.Method;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -118,7 +119,7 @@ public class ServiceProviderEndpoint {
     List<NaiDTO> dtos = Lists.newArrayList();
 
     for (NAI nai : nais) {
-      dtos.add(new NaiDTO(nai.name, nai.encoding.name()));
+      dtos.add(new NaiDTO(nai.name, nai.encoding.name(), addaptToEapDTOs(nai.eaps)));
     }
     return dtos;
   }
@@ -158,9 +159,29 @@ public class ServiceProviderEndpoint {
     List<NAI> list = Lists.newArrayList();
 
     for (NaiDTO dto : dtos) {
-      list.add(new NAI(dto.name, Encoding.valueOf(dto.encoding)));
+      list.add(new NAI(dto.name, Encoding.valueOf(dto.encoding), adaptToEAPs(dto.eaps)));
     }
 
     return list;
+  }
+
+  private List<EAP> adaptToEAPs(List<EapDTO> dtos) {
+    List<EAP> eaps = Lists.newArrayList();
+
+    for (EapDTO dto : dtos) {
+      eaps.add(new EAP(Method.valueOf(dto.method)));
+    }
+
+    return eaps;
+  }
+
+  private List<EapDTO> addaptToEapDTOs(List<EAP> eaps) {
+    List<EapDTO> dtos = Lists.newArrayList();
+
+    for (EAP eap : eaps) {
+      dtos.add(new EapDTO(eap.method.name()));
+    }
+
+    return dtos;
   }
 }

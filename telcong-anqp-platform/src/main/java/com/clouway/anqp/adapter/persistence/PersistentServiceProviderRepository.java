@@ -1,6 +1,7 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.*;
+import com.clouway.anqp.EAP.Method;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
 import com.google.common.base.Optional;
@@ -135,7 +136,17 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
     List<NaiEntity> entities = Lists.newArrayList();
 
     for (NAI nai : naiRealms) {
-      entities.add(new NaiEntity(nai.name, nai.encoding.name()));
+      entities.add(new NaiEntity(nai.name, nai.encoding.name(), adaptToEapEntities(nai.eaps)));
+    }
+
+    return entities;
+  }
+
+  private List<EapEntity> adaptToEapEntities(List<EAP> eaps) {
+    List<EapEntity> entities = Lists.newArrayList();
+
+    for (EAP eap : eaps) {
+      entities.add(new EapEntity(eap.method.name()));
     }
 
     return entities;
@@ -145,9 +156,19 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
     List<NAI> naiList = Lists.newArrayList();
 
     for (NaiEntity entity : entities) {
-      naiList.add(new NAI(entity.name, Encoding.valueOf(entity.encoding)));
+      naiList.add(new NAI(entity.name, Encoding.valueOf(entity.encoding), adaptToEAPs(entity.eaps)));
     }
 
     return naiList;
+  }
+
+  private List<EAP> adaptToEAPs(List<EapEntity> entities) {
+    List<EAP> eaps = Lists.newArrayList();
+
+    for (EapEntity entity : entities) {
+      eaps.add(new EAP(Method.valueOf(entity.method)));
+    }
+
+    return eaps;
   }
 }
