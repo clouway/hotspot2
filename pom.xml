@@ -9,5 +9,6 @@
   <modules>
     <module>telcong-anqp-platform</module>
     <module>telcong-anqp-acceptance-tests</module>
+    <module>telcong-anqp-client</module>
   </modules>
 </project>
