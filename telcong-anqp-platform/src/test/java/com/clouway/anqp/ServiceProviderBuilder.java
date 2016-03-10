@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
+import static com.clouway.anqp.Encoding.UTF_8;
+
 /**
  */
 public class ServiceProviderBuilder {
@@ -14,7 +16,7 @@ public class ServiceProviderBuilder {
   private List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
   private DomainNameList domainNames = new DomainNameList(Lists.<String>newArrayList());
   private List<RoamingConsortium> consortiums = Lists.newArrayList();
-  private List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
+  private List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
 
   public static ServiceProviderBuilder newProvider() {
     return new ServiceProviderBuilder();

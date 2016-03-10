@@ -1,13 +1,6 @@
 package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.*;
-import com.clouway.anqp.DomainNameList;
-import com.clouway.anqp.ID;
-import com.clouway.anqp.NAI;
-import com.clouway.anqp.Network3GPP;
-import com.clouway.anqp.NewServiceProvider;
-import com.clouway.anqp.ServiceProvider;
-import com.clouway.anqp.ServiceProviderException;
 import com.clouway.anqp.api.datastore.DatastoreCleaner;
 import com.clouway.anqp.api.datastore.DatastoreRule;
 import com.clouway.anqp.api.datastore.FakeDatastore;
@@ -19,6 +12,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.Encoding.RFC_4282;
+import static com.clouway.anqp.Encoding.UTF_8;
 import static com.clouway.anqp.NewServiceProviderBuilder.newServiceProvider;
 import static com.clouway.anqp.ServiceProviderBuilder.newProvider;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
@@ -59,8 +54,8 @@ public class ServiceProviderRepositoryTest {
   public void findAll() throws Exception {
     DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
-    List<RoamingConsortium> list =  Lists.newArrayList(new RoamingConsortium("name", "0xFFFFFF"));
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
+    List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xFFFFFF"));
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
 
     NewServiceProvider newProvider1 = new NewServiceProvider("name1", "descr1", networks, names, list, naiList);
     NewServiceProvider newProvider2 = new NewServiceProvider("name2", "descr2", networks, names, list, naiList);
@@ -82,16 +77,16 @@ public class ServiceProviderRepositoryTest {
   public void update() throws Exception {
     DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
-    List<RoamingConsortium> list =  Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
-   
+    List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
+
     Object id = repository.create(new NewServiceProvider("name", "descr", networks, names, list, naiList));
 
     List<Network3GPP> newNetworks = Lists.newArrayList(new Network3GPP("newName", "321", "555"));
     DomainNameList newNames = new DomainNameList(Lists.newArrayList("newDomainName"));
-    List<RoamingConsortium> newList =  Lists.newArrayList(new RoamingConsortium("newName", "0xAAAAAA"));
-    List<NAI> newNAIList = Lists.newArrayList(new NAI("EAP-SIM"));
-   
+    List<RoamingConsortium> newList = Lists.newArrayList(new RoamingConsortium("newName", "0xAAAAAA"));
+    List<NAI> newNAIList = Lists.newArrayList(new NAI("EAP-SIM", RFC_4282));
+
     ServiceProvider newService = new ServiceProvider(new ID(id), "name", "newDescr", newNetworks, newNames, newList, newNAIList);
 
     repository.update(newService);
@@ -104,8 +99,8 @@ public class ServiceProviderRepositoryTest {
   public void updateProviderName() throws Exception {
     DomainNameList names = new DomainNameList(Lists.newArrayList("dName"));
     List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "123", "445"));
-    List<RoamingConsortium> list =  Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
-    List<NAI> naiList = Lists.newArrayList(new NAI("EAP-SIM"));
+    List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
+    List<NAI> naiList = Lists.newArrayList(new NAI("EAP-SIM", UTF_8));
 
     Object id = repository.create(new NewServiceProvider("name", "descr", networks, names, list, naiList));
 

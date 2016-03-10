@@ -1,13 +1,5 @@
 package com.clouway.anqp.adapter.persistence;
 
-import com.clouway.anqp.DomainNameList;
-import com.clouway.anqp.Network3GPP;
-import com.clouway.anqp.RoamingConsortium;
-import com.clouway.anqp.ID;
-import com.clouway.anqp.NewServiceProvider;
-import com.clouway.anqp.ServiceProvider;
-import com.clouway.anqp.ServiceProviderException;
-import com.clouway.anqp.ServiceProviderRepository;
 import com.clouway.anqp.*;
 import com.clouway.anqp.api.datastore.Datastore;
 import com.clouway.anqp.api.datastore.Filter;
@@ -112,7 +104,7 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
   private List<RoamingConsortium> adaptToConsortiums(List<RoamingConsortiumEntity> entities) {
     List<RoamingConsortium> consortiumList = Lists.newArrayList();
 
-    for(RoamingConsortiumEntity entity : entities) {
+    for (RoamingConsortiumEntity entity : entities) {
       consortiumList.add(new RoamingConsortium(entity.name, entity.organizationID));
     }
 
@@ -143,7 +135,7 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
     List<NaiEntity> entities = Lists.newArrayList();
 
     for (NAI nai : naiRealms) {
-      entities.add(new NaiEntity(nai.name));
+      entities.add(new NaiEntity(nai.name, nai.encoding.name()));
     }
 
     return entities;
@@ -153,7 +145,7 @@ class PersistentServiceProviderRepository implements ServiceProviderRepository {
     List<NAI> naiList = Lists.newArrayList();
 
     for (NaiEntity entity : entities) {
-      naiList.add(new NAI(entity.name));
+      naiList.add(new NAI(entity.name, Encoding.valueOf(entity.encoding)));
     }
 
     return naiList;

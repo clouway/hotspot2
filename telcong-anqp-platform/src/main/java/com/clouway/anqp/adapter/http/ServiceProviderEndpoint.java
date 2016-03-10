@@ -1,13 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.DomainNameList;
-import com.clouway.anqp.Network3GPP;
-import com.clouway.anqp.RoamingConsortium;
-import com.clouway.anqp.ID;
-import com.clouway.anqp.NAI;
-import com.clouway.anqp.NewServiceProvider;
-import com.clouway.anqp.ServiceProvider;
-import com.clouway.anqp.ServiceProviderRepository;
+import com.clouway.anqp.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -125,7 +118,7 @@ public class ServiceProviderEndpoint {
     List<NaiDTO> dtos = Lists.newArrayList();
 
     for (NAI nai : nais) {
-      dtos.add(new NaiDTO(nai.name));
+      dtos.add(new NaiDTO(nai.name, nai.encoding.name()));
     }
     return dtos;
   }
@@ -165,7 +158,7 @@ public class ServiceProviderEndpoint {
     List<NAI> list = Lists.newArrayList();
 
     for (NaiDTO dto : dtos) {
-      list.add(new NAI(dto.name));
+      list.add(new NAI(dto.name, Encoding.valueOf(dto.encoding)));
     }
 
     return list;

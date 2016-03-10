@@ -19,7 +19,6 @@ import static com.clouway.anqp.IpType.UNKNOWN;
 public class MemoryModule extends AbstractModule {
   @Override
   protected void configure() {
-
   }
 
   @Provides
@@ -148,5 +147,11 @@ public class MemoryModule extends AbstractModule {
       put(267, new Capability(267, "AP Location Public Identifier URI"));
       put(268, new Capability(268, "Domain Name list"));
     }});
+  }
+
+  @Provides
+  @Singleton
+  public EncodingCatalog getEncodingCatalog() {
+    return new InMemoryEncodingCatalog(Encoding.values());
   }
 }

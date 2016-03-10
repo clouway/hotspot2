@@ -1,13 +1,6 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.DomainNameList;
-import com.clouway.anqp.NAI;
-import com.clouway.anqp.Network3GPP;
-import com.clouway.anqp.RoamingConsortium;
-import com.clouway.anqp.ID;
-import com.clouway.anqp.NewServiceProvider;
-import com.clouway.anqp.ServiceProvider;
-import com.clouway.anqp.ServiceProviderRepository;
+import com.clouway.anqp.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -19,6 +12,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.Encoding.RFC_4282;
+import static com.clouway.anqp.Encoding.UTF_8;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isOk;
@@ -46,8 +41,9 @@ public class ServiceProviderEndpointTest {
 
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
-    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A"));
+
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "UTF_8"));
 
     NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs, namesDTO, listDTO, naiDTOList);
     final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks, names, list, naiList);
@@ -74,12 +70,12 @@ public class ServiceProviderEndpointTest {
     final List<Network3GPP> networks = Lists.newArrayList(new Network3GPP("name", "359", "44"));
     final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
-    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A"));
-    
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", RFC_4282));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "RFC_4282"));
+
     final ServiceProvider provider = new ServiceProvider(id, "Mtel", "descr", networks, names, list, naiList);
     final ServiceProviderDTO dto = new ServiceProviderDTO(id.value, "Mtel", "descr", networkDTOs, namesDTO, listDTO, naiDTOList);
-   
+
 
     context.checking(new Expectations() {{
       oneOf(repository).findById(with(matching(id)));
@@ -117,8 +113,8 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
-    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A"));
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", RFC_4282));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "RFC_4282"));
 
     ServiceProvider provider = new ServiceProvider(new ID("id1"), "name", "desc", networks, names, list, naiList);
     ServiceProviderDTO dto = new ServiceProviderDTO("id1", "name", "desc", networkDTOs, namesDTO, listDTO, naiDTOList);
@@ -148,8 +144,8 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortium> list = Lists.newArrayList(new RoamingConsortium("name", "0xAAFFAA"));
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
-    List<NAI> naiList = Lists.newArrayList(new NAI("N/A"));
-    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A"));
+    List<NAI> naiList = Lists.newArrayList(new NAI("N/A", UTF_8));
+    List<NaiDTO> naiDTOList = Lists.newArrayList(new NaiDTO("N/A", "UTF_8"));
 
 
     ServiceProviderDTO dto = new ServiceProviderDTO("1234", "name", "description", networkDTOs, namesDTO, listDTO, naiDTOList);

@@ -10,8 +10,10 @@ class NaiDTO {
   @NotEmpty
   @NotNull
   final String name;
+  final String encoding;
 
-  NaiDTO(String name) {
+  NaiDTO(String name, String encoding) {
     this.name = name;
+    this.encoding = encoding;
   }
 }

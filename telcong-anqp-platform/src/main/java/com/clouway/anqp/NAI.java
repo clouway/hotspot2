@@ -7,8 +7,10 @@ package com.clouway.anqp;
  */
 public class NAI {
   public final String name;
+  public final Encoding encoding;
 
-  public NAI(String name) {
+  public NAI(String name, Encoding encoding) {
     this.name = name;
+    this.encoding = encoding;
   }
 }
