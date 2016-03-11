@@ -51,8 +51,8 @@ public class HttpModule extends AbstractModule {
         at("/r/auth-types").serve(AuthTypeEndpoint.class);
         at("/r/service-providers").serve(ServiceProviderEndpoint.class);
         at("/r/capabilities").serve(CapabilityEndpoint.class);
-
         at("/r/nai-realms").serve(NaiRealmEndpoint.class);
+        at("/r/emergency-alerts").serve(EmergencyAlertEndpoint.class);
       }
     });
 

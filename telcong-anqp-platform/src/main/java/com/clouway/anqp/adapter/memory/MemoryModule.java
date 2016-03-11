@@ -2,6 +2,7 @@ package com.clouway.anqp.adapter.memory;
 
 import com.clouway.anqp.*;
 import com.clouway.anqp.EAP.Method;
+import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -160,5 +161,17 @@ public class MemoryModule extends AbstractModule {
   @Singleton
   public EapMethodCatalog getEapMethodCatalog() {
     return new InMemoryEapMethodCatalog(Method.values());
+  }
+
+  @Provides
+  @Singleton
+  public EmergencyAlertRepository getEmergencyAlertCatalog() {
+    return new InMemoryEmergencyAlertRepository(new CapMessage(
+            new ID(1),
+            new CapAlert(Lists.newArrayList(new CapInfo(
+                    Lists.newArrayList(new CapResource("error_resource1")),
+                    Lists.newArrayList(new CapArea("error_area1"))
+            ))))
+    );
   }
 }

@@ -83,6 +83,22 @@ public class AccessPointEndpoint {
     return Reply.with(dtos).as(Json.class).ok();
   }
 
+  @Get
+  @At("/:id/emergency-uri")
+  public Reply<?> fetchEmergencyAlertURI(@Named("id") String id, Request request) {
+    Optional<AccessPoint> ap = repository.findById(id);
+
+    if (!ap.isPresent()) {
+      return Reply.with("Not found AP with id " + id).notFound();
+    }
+
+    String host = request.header("Host");
+
+    String emergencyURI = host + "/r/emergency-alerts";
+
+    return Reply.with(emergencyURI).ok();
+  }
+
   @Put
   @At("/:id")
   public Reply<?> update(@Named("id") Object id, Request request) {

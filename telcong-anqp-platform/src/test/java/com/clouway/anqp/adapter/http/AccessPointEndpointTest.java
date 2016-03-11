@@ -2,7 +2,6 @@ package com.clouway.anqp.adapter.http;
 
 import com.clouway.anqp.*;
 import com.clouway.anqp.Capability;
-import com.clouway.anqp.core.NotFoundException;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.sitebricks.headless.Reply;
@@ -14,6 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isOk;
@@ -29,13 +29,14 @@ public class AccessPointEndpointTest {
 
   private final AccessPointRepository repository = context.mock(AccessPointRepository.class);
   private final CapabilityCatalog catalog = context.mock(CapabilityCatalog.class);
+  private final Request request = context.mock(Request.class);
 
   private AccessPointEndpoint service = new AccessPointEndpoint(repository, catalog);
 
   @Test
   public void create() throws Exception {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
-    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
 
     CivicLocation civic = new CivicLocation("country", "city", "street", "number", "postCode");
     CivicLocationDTO civicDTO = new CivicLocationDTO("country", "city", "street", "number", "postCode");
@@ -43,7 +44,7 @@ public class AccessPointEndpointTest {
     GeoLocation geo = new GeoLocation(65.65656565, 75.75757575);
     GeoLocationDTO geoDTO = new GeoLocationDTO(65.65656565, 75.75757575);
 
-    final NewAccessPoint ap = new NewAccessPoint(new ID("operatorID"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, geo, civic,new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"), new Capability(257, "ANQP Capability list"))));
+    final NewAccessPoint ap = new NewAccessPoint(new ID("operatorID"), "ip", new MacAddress("aa:bb"), "sn", "model", venue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"), new Capability(257, "ANQP Capability list"))));
     final NewAccessPointDTO apDTO = new NewAccessPointDTO("operatorID", "ip", "aa:bb", "sn", "model", venueDTO, geoDTO, civicDTO, Lists.newArrayList(256, 257));
 
     context.checking(new Expectations() {{
@@ -62,7 +63,7 @@ public class AccessPointEndpointTest {
   @Test
   public void findAll() throws Exception {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
-    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
 
     CivicLocation civic = new CivicLocation("country", "city", "street", "number", "postCode");
     CivicLocationDTO civicDTO = new CivicLocationDTO("country", "city", "street", "number", "postCode");
@@ -90,7 +91,7 @@ public class AccessPointEndpointTest {
   @Test
   public void findById() throws Exception {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
-    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
 
     CivicLocation civic = new CivicLocation("country", "city", "street", "number", "postCode");
     CivicLocationDTO civicDTO = new CivicLocationDTO("country", "city", "street", "number", "postCode");
@@ -161,9 +162,38 @@ public class AccessPointEndpointTest {
   }
 
   @Test
+  public void fetchEmergencyURI() throws Exception {
+    final NewAccessPoint ap = newAP().build();
+
+    context.checking(new Expectations() {{
+      oneOf(request).header("Host");
+      will(returnValue("localhost:8080"));
+
+      oneOf(repository).findById("id1");
+      will(returnValue(Optional.of(ap)));
+    }});
+
+    Reply<?> reply = service.fetchEmergencyAlertURI("id1", request);
+
+    assertThat(reply, containsValue("localhost:8080/r/emergency-alerts"));
+  }
+
+  @Test
+  public void fetchEmergencyURIForMissingAP() throws Exception {
+    context.checking(new Expectations() {{
+      oneOf(repository).findById("id1");
+      will(returnValue(Optional.absent()));
+    }});
+
+    Reply<?> reply = service.fetchEmergencyAlertURI("id1", request);
+
+    assertThat(reply, isNotFound());
+  }
+
+  @Test
   public void update() throws Exception {
     Venue venue = new Venue(new VenueGroup("group"), new VenueType("type"), Lists.newArrayList(new VenueName("info", new Language("en"))));
-    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info","en")));
+    VenueDTO venueDTO = new VenueDTO("group", "type", Lists.newArrayList(new VenueNameDTO("info", "en")));
 
     CivicLocation civic = new CivicLocation("country", "city", "street", "number", "postCode");
     CivicLocationDTO civicDTO = new CivicLocationDTO("country", "city", "street", "number", "postCode");
@@ -180,7 +210,7 @@ public class AccessPointEndpointTest {
       oneOf(repository).update(with(matching(accessPointRequest)));
     }});
 
-    final AccessPointRequestDTO dto = new AccessPointRequestDTO(1, "ip", "aa:bb", "sn", "model", venueDTO, geoDTO,civicDTO, Lists.newArrayList(256));
+    final AccessPointRequestDTO dto = new AccessPointRequestDTO(1, "ip", "aa:bb", "sn", "model", venueDTO, geoDTO, civicDTO, Lists.newArrayList(256));
 
     Request request = makeRequestThatContains(dto);
     Reply<?> reply = service.update(1, request);
