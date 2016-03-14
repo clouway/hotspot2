@@ -3,8 +3,8 @@ package com.clouway.anqp.adapter.http;
 /**
  */
 class AuthenticationTypeDTO {
-  Integer value;
-  String meaning;
+  final Integer value;
+  final String meaning;
 
   AuthenticationTypeDTO(Integer value, String meaning) {
     this.value = value;
