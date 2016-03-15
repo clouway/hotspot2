@@ -1,8 +1,5 @@
 package com.clouway.anqp.adapter.http;
 
-import com.clouway.anqp.CivicLocation;
-import com.clouway.anqp.GeoLocation;
-
 import com.google.common.collect.ImmutableList;
 
 import javax.validation.Valid;
