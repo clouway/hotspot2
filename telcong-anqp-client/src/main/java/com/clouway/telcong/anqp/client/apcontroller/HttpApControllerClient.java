@@ -52,7 +52,7 @@ class HttpApControllerClient implements ApControllerClient {
   }
 
   public void delete(Object id) {
-    Request request = new Request.Builder().url(host + "/r/controllers/id").delete().build();
+    Request request = new Request.Builder().url(host + "/r/controllers/" +id).delete().build();
 
     client.newCall(request);
   }
