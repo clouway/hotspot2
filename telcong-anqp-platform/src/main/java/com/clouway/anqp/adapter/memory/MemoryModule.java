@@ -182,8 +182,8 @@ public class MemoryModule extends AbstractModule {
     return new InMemoryEmergencyAlertRepository(new CapMessage(
             new ID(1),
             new CapAlert(Lists.newArrayList(new CapInfo(
-                    Lists.newArrayList(new CapResource("error_resource1")),
-                    Lists.newArrayList(new CapArea("error_area1"))
+                    Lists.newArrayList(new CapResource("resource1")),
+                    Lists.newArrayList(new CapArea("area1"))
             ))))
     );
   }
