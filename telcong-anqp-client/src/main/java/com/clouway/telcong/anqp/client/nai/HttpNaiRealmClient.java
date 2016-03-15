@@ -34,4 +34,12 @@ class HttpNaiRealmClient implements NaiRealmClient {
 
     return json.fromJson(response.body().byteStream(), new TypeToken<List<String>>(){}.getType());
   }
+
+  @Override
+  public List<AuthEntry> fetchEapAuthentications() {
+    Request request = new Request.Builder().url(host + "/r/nai-realms/auths").build();
+    Response response = client.newCall(request);
+
+    return json.fromJson(response.body().byteStream(), new TypeToken<List<AuthEntry>>(){}.getType());
+  }
 }

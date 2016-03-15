@@ -19,4 +19,11 @@ public interface NaiRealmClient {
    */
   List<String> fetchEapMethods();
 
+  /**
+   * Retrieve all EAP authentications
+   *
+   * @return list of {@link com.clouway.telcong.anqp.client.nai.AuthEntry}
+   */
+  List<AuthEntry> fetchEapAuthentications();
+
 }
