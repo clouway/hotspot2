@@ -99,6 +99,39 @@ public class AccessPointEndpoint {
     return Reply.with(emergencyURI).ok();
   }
 
+  @Get
+  @At("/:id/location-uri")
+  public Reply<?> fetchLocationURI(@Named("id") String id, Request request) {
+    Optional<AccessPoint> ap = repository.findById(id);
+
+    if (!ap.isPresent()) {
+      return Reply.with("Not found AP with id " + id).notFound();
+    }
+
+    String host = request.header("Host");
+
+    String locationURI = host + "/r/aps/" + id + "/location";
+
+    return Reply.with(locationURI).ok();
+  }
+
+  @Get
+  @At("/:id/location")
+  public Reply<?> fetchLocation(@Named("id") String id) {
+    Optional<AccessPoint> ap = repository.findById(id);
+
+    if (!ap.isPresent()) {
+      return Reply.with("Not found AP with id " + id).notFound();
+    }
+
+    CivicLocation civicLocation = ap.get().civicLocation;
+    GeoLocation geoLocation = ap.get().geoLocation;
+
+    ApLocationDTO dto = new ApLocationDTO(adapt(civicLocation), adapt(geoLocation));
+
+    return Reply.with(dto).as(Json.class).ok();
+  }
+
   @Put
   @At("/:id")
   public Reply<?> update(@Named("id") Object id, Request request) {

@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.clouway.anqp.NewAccessPointBuilder.newAP;
+import static com.clouway.anqp.AccessPointBuilder.newAp;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isOk;
@@ -163,7 +163,7 @@ public class AccessPointEndpointTest {
 
   @Test
   public void fetchEmergencyURI() throws Exception {
-    final NewAccessPoint ap = newAP().build();
+    final AccessPoint ap = newAp().build();
 
     context.checking(new Expectations() {{
       oneOf(request).header("Host");
@@ -186,6 +186,74 @@ public class AccessPointEndpointTest {
     }});
 
     Reply<?> reply = service.fetchEmergencyAlertURI("id1", request);
+
+    assertThat(reply, isNotFound());
+  }
+
+  @Test
+  public void fetchLocationUri() throws Exception {
+    final AccessPoint ap = newAp().build();
+
+    context.checking(new Expectations() {{
+      oneOf(repository).findById("id1");
+      will(returnValue(Optional.of(ap)));
+
+      oneOf(request).header("Host");
+      will(returnValue("localhost:8080"));
+    }});
+
+    Reply<?> reply = service.fetchLocationURI("id1", request);
+
+    String locationURI = "localhost:8080/r/aps/id1/location";
+
+    assertThat(reply, containsValue(locationURI));
+    assertThat(reply, isOk());
+  }
+
+  @Test
+  public void fetchLocationUriForMissingAP() throws Exception {
+    context.checking(new Expectations() {{
+      oneOf(repository).findById("id1");
+      will(returnValue(Optional.absent()));
+
+      never(request).header("Host");
+    }});
+
+    Reply<?> reply = service.fetchLocationURI("id1", request);
+
+    assertThat(reply, isNotFound());
+  }
+
+  @Test
+  public void fetchLocation() throws Exception {
+    CivicLocationDTO civicDTO = new CivicLocationDTO("country", "city", "street", "number", "postCode");
+    GeoLocationDTO geoDTO = new GeoLocationDTO(10.0, 20.0);
+
+    CivicLocation civicLocation = new CivicLocation("country", "city", "street", "number", "postCode");
+    GeoLocation geoLocation = new GeoLocation(10.0, 20.0);
+
+    final AccessPoint ap = newAp().civicLocation(civicLocation).geoLocation(geoLocation).build();
+
+    context.checking(new Expectations() {{
+      oneOf(repository).findById("id1");
+      will(returnValue(Optional.of(ap)));
+    }});
+
+    ApLocationDTO dto = new ApLocationDTO(civicDTO, geoDTO);
+
+    Reply<?> reply = service.fetchLocation("id1");
+
+    assertThat(reply, containsValue(dto));
+  }
+
+  @Test
+  public void fetchLocationForMissingAp() throws Exception {
+    context.checking(new Expectations() {{
+      oneOf(repository).findById("id1");
+      will(returnValue(Optional.absent()));
+    }});
+
+    Reply<?> reply = service.fetchLocation("id1");
 
     assertThat(reply, isNotFound());
   }
