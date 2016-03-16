@@ -18,6 +18,7 @@ import java.util.List;
 import static com.clouway.anqp.IPv4.Availability.PUBLIC;
 import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.NewOperatorBuilder.newOperator;
+import static com.clouway.anqp.OperatorState.INACTIVE;
 import static com.clouway.anqp.VenueBuilder.newVenueBuilder;
 import static com.clouway.anqp.VenueName.defaultName;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
@@ -62,6 +63,15 @@ public class AccessPointRepositoryTest {
     AccessPoint want = new AccessPoint(new ID(id), "ip", new MacAddress("aa:bb:cc:dd:ee:ff"), "sn", "model", wantedVenue, geo, civic, new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"))));
 
     assertThat(got, deepEquals(want));
+  }
+
+  @Test(expected = OperatorException.class)
+  public void createApForInactiveOperator() throws Exception {
+    NewOperator operator = newOperator().state(INACTIVE).build();
+    Object operID = operatorRepository.create(operator);
+
+    NewAccessPoint ap = newAP().operatorId(new ID(operID)).build();
+    repository.create(ap);
   }
 
   @Test

@@ -11,6 +11,7 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
+import static com.clouway.anqp.OperatorState.ACTIVE;
 import static com.clouway.anqp.VenueName.defaultName;
 
 /**
@@ -27,10 +28,16 @@ class PersistentAccessPointRepository implements AccessPointRepository {
 
   @Override
   public Object create(NewAccessPoint ap) {
-    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("_id").is(ap.operatorId.value));
+    OperatorEntity operator = datastore.findOne(OperatorEntity.class, Filter.where("_id").is(ap.operatorId.value));
 
-    if (count == 0) {
+    if (operator == null) {
       throw new NotFoundException("AP creation failed due to non-existing operator");
+    }
+
+    boolean isActive = operator.state.equals(ACTIVE.name());
+    
+    if (!isActive) {
+      throw new OperatorException("AP creation failed due to Inactive operator");
     }
 
     return datastore.save(adapt(ap));
