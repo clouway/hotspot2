@@ -34,6 +34,15 @@ public class RoamingGroupRepositoryTest {
   private OperatorRepository operatorRepository = new PersistentOperatorRepository(datastore);
   private RoamingGroupRepository roamingRepository = new PersistentRoamingGroupRepository(datastore);
 
+  @Test(expected = RoamingGroupException.class)
+  public void createRoamingGroupWithExistingName() throws Exception {
+    NewRoamingGroup group1 = new NewRoamingGroup("same", "descr1", RoamingGroupType.NATIONAL);
+    roamingRepository.create(group1);
+
+    NewRoamingGroup group2 = new NewRoamingGroup("same", "descr2", RoamingGroupType.REGIONAL);
+    roamingRepository.create(group2);
+  }
+
   @Test
   public void findByUnknownId() throws Exception {
     Optional<RoamingGroup> found = roamingRepository.findById(new ID("id"));

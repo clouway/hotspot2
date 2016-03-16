@@ -23,6 +23,12 @@ class PersistentRoamingGroupRepository implements RoamingGroupRepository {
 
   @Override
   public Object create(NewRoamingGroup group) {
+    Long count = datastore.entityCount(RoamingGroupEntity.class, Filter.where("name").is(group.name));
+
+    if (count != 0) {
+      throw new RoamingGroupException("Roaming group with name: " + group.name + " already exists.");
+    }
+
     return datastore.save(adapt(group));
   }
 
