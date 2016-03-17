@@ -55,12 +55,12 @@ public class AccessPointEndpoint {
     Optional<AccessPoint> ap = repository.findById(id);
 
     if (!ap.isPresent()) {
-      return Reply.saying().notFound();
+      return Reply.with("Not found AP with id " + id).notFound();
     }
 
     AccessPointDTO dto = adapt(ap.get());
 
-    return Reply.with(dto).as(Json.class);
+    return Reply.with(dto).as(Json.class).ok();
   }
 
   @Get

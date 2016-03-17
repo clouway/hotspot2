@@ -180,6 +180,18 @@ class PersistentOperatorRepository implements OperatorRepository {
 
   @Override
   public void delete(ID id) {
+    Long groupCount = datastore.entityCount(RoamingGroupEntity.class, Filter.where("operatorIDs").is(id.value));
+
+    if (groupCount > 0) {
+      throw new OperatorException("Operator is assigned to roaming group.");
+    }
+
+    Long apCount = datastore.entityCount(AccessPointEntity.class, Filter.where("operatorId").is(id.value));
+
+    if (apCount > 0) {
+      throw new OperatorException("Operator has assigned access points.");
+    }
+
     datastore.deleteById(OperatorEntity.class, id.value);
   }
 

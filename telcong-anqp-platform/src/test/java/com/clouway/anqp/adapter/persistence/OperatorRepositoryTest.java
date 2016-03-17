@@ -21,7 +21,7 @@ import static com.clouway.anqp.EAP.Method.EAP_SIM;
 import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.NewOperatorBuilder.newOperator;
 import static com.clouway.anqp.NewServiceProviderBuilder.newServiceProvider;
-import static com.clouway.anqp.VenueBuilder.newVenueBuilder;
+import static com.clouway.anqp.OperatorState.ACTIVE;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -61,10 +61,10 @@ public class OperatorRepositoryTest {
   public void findById() throws Exception {
     IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
     IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
-    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", iPv4, iPv6));
+    Object id = operRepository.create(new NewOperator("name", ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", iPv4, iPv6));
 
     Operator got = operRepository.findById(new ID(id)).get();
-    Operator want = new Operator(new ID(id), "name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", iPv4, iPv6);
+    Operator want = new Operator(new ID(id), "name", ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", iPv4, iPv6);
 
     assertThat(got, deepEquals(want));
   }
@@ -80,12 +80,12 @@ public class OperatorRepositoryTest {
   public void findAll() throws Exception {
     IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
     IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
-    Object id1 = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", iPv4, iPv6));
+    Object id1 = operRepository.create(new NewOperator("name1", ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", iPv4, iPv6));
     Object id2 = operRepository.create(new NewOperator("name2", OperatorState.INACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber2", iPv4, iPv6));
 
     List<Operator> got = operRepository.findAll();
     List<Operator> want = Lists.newArrayList(
-            new Operator(new ID(id1), "name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", iPv4, iPv6),
+            new Operator(new ID(id1), "name1", ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", iPv4, iPv6),
             new Operator(new ID(id2), "name2", OperatorState.INACTIVE, "description2", "domainName2", "friendlyName2", "emergencyNumber2", iPv4, iPv6)
     );
 
@@ -96,7 +96,7 @@ public class OperatorRepositoryTest {
   public void update() throws Exception {
     IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
     IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
-    Object id = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", iPv4, iPv6));
+    Object id = operRepository.create(new NewOperator("name1", ACTIVE, "description1", "domainName1", "friendlyName1", "emergencyNumber1", iPv4, iPv6));
 
     IPv4 newV4 = new IPv4(Availability.PUBLIC);
     IPv6 newV6 = new IPv6(IPv6.Availability.NOT_AVAILABLE);
@@ -116,12 +116,12 @@ public class OperatorRepositoryTest {
 
     Object id = operRepository.create(newOperator().build());
 
-    Operator operator = new Operator(new ID(id), "newName", OperatorState.ACTIVE, "description", "dName", "fName", "911", iPv4, iPv6);
+    Operator operator = new Operator(new ID(id), "newName", ACTIVE, "description", "dName", "fName", "911", iPv4, iPv6);
 
     operRepository.update(operator);
 
     Operator got = operRepository.findById(new ID(id)).get();
-    Operator want = new Operator(new ID(id), "newName", OperatorState.ACTIVE, "description", "dName", "fName", "911", iPv4, iPv6);
+    Operator want = new Operator(new ID(id), "newName", ACTIVE, "description", "dName", "fName", "911", iPv4, iPv6);
 
     assertThat(got, deepEquals(want));
   }
@@ -134,7 +134,7 @@ public class OperatorRepositoryTest {
     Object someID = operRepository.create(newOperator().name("Stamat").build());
     operRepository.create(newOperator().name("Ivan").build());
 
-    Operator operator = new Operator(new ID(someID), "Ivan", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "123", iPv4, iPv6);
+    Operator operator = new Operator(new ID(someID), "Ivan", ACTIVE, "description", "domainName", "friendlyName", "123", iPv4, iPv6);
 
     operRepository.update(operator);
   }
@@ -152,7 +152,7 @@ public class OperatorRepositoryTest {
     List<Operator> got = operRepository.findAll();
     List<Operator> want = Lists.newArrayList(
             new Operator(new ID(anotherID), "name2", OperatorState.INACTIVE, "description2", "dName2", "fName2", "911", iPv4, iPv6),
-            new Operator(new ID(someID), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "112", iPv4, iPv6)
+            new Operator(new ID(someID), "name1", ACTIVE, "description1", "dName1", "fName1", "112", iPv4, iPv6)
     );
 
     assertThat(got, deepEquals(want));
@@ -168,14 +168,14 @@ public class OperatorRepositoryTest {
     IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
     IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
 
-    Object someID = operRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "112", iPv4, iPv6));
-    Object anotherID = operRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "911", iPv4, iPv6));
+    Object someID = operRepository.create(new NewOperator("name1", ACTIVE, "description1", "dName1", "fName1", "112", iPv4, iPv6));
+    Object anotherID = operRepository.create(new NewOperator("name2", ACTIVE, "description2", "dName2", "fName2", "911", iPv4, iPv6));
 
     operRepository.deactivate(new ID(someID));
 
     List<Operator> got = operRepository.findAll();
     List<Operator> want = Lists.newArrayList(
-            new Operator(new ID(anotherID), "name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "911", iPv4, iPv6),
+            new Operator(new ID(anotherID), "name2", ACTIVE, "description2", "dName2", "fName2", "911", iPv4, iPv6),
             new Operator(new ID(someID), "name1", OperatorState.INACTIVE, "description1", "dName1", "fName1", "112", iPv4, iPv6)
     );
 
@@ -187,7 +187,7 @@ public class OperatorRepositoryTest {
     IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
     IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
 
-    Object operID = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "description", "dName", "fName", "112", iPv4, iPv6));
+    Object operID = operRepository.create(new NewOperator("name", ACTIVE, "description", "dName", "fName", "112", iPv4, iPv6));
     Object groupID = groupRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.NATIONAL));
 
     groupRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID)));
@@ -377,6 +377,29 @@ public class OperatorRepositoryTest {
     List<Operator> found = operRepository.findAll();
 
     assertThat(found.size(), is(1));
+  }
+
+  @Test(expected = OperatorException.class)
+  public void deleteOperatorWithAssignedAP() throws Exception {
+    NewOperator operator = newOperator().state(ACTIVE).build();
+    Object operID = operRepository.create(operator);
+    ID operatorID = new ID(operID);
+
+    NewAccessPoint ap = newAP().operatorId(operatorID).build();
+
+    accessPointRepository.create(ap);
+
+    operRepository.delete(operatorID);
+  }
+
+  @Test(expected = OperatorException.class)
+  public void deleteOperatorAssignedToRoamingGroup() throws Exception {
+    Object operID = operRepository.create(newOperator().build());
+    Object groupID = groupRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.NATIONAL));
+
+    groupRepository.assignOperators(new ID(groupID), Lists.newArrayList(new ID(operID)));
+    
+    operRepository.delete(new ID(operID));
   }
 }
 
