@@ -90,7 +90,7 @@ public class OperatorEndpoint {
     List<AccessPoint> aps = repository.findAccessPoints(new ID(id));
     List<AccessPointDTO> dtos = adaptToAPs(aps);
 
-    return Reply.with(dtos).ok();
+    return Reply.with(dtos).as(Json.class).ok();
   }
 
   @Post
@@ -121,7 +121,7 @@ public class OperatorEndpoint {
     List<ServiceProvider> sps = repository.findServiceProviders(new ID(id));
     List<ServiceProviderDTO> dtos = adaptToServiceProviderDTOs(sps);
 
-    return Reply.with(dtos).ok();
+    return Reply.with(dtos).as(Json.class).ok();
   }
 
   @Post
