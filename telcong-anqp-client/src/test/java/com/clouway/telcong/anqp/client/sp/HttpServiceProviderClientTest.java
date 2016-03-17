@@ -1,4 +1,4 @@
-package com.clouway.telcong.anqp.client.serviceprovider;
+package com.clouway.telcong.anqp.client.sp;
 
 import com.github.restdriver.clientdriver.ClientDriverRequest;
 import com.github.restdriver.clientdriver.ClientDriverResponse;
@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.clouway.telcong.anqp.client.serviceprovider.NewServiceProviderBuilder.newProvider;
-import static com.clouway.telcong.anqp.client.serviceprovider.ServiceProviderBuilder.newServiceProvider;
+import static com.clouway.telcong.anqp.client.sp.NewServiceProviderBuilder.newProvider;
+import static com.clouway.telcong.anqp.client.sp.ServiceProviderBuilder.newServiceProvider;
 import static com.clouway.telcong.anqp.client.util.matchers.EqualityMatchers.deepEquals;
 import static com.github.restdriver.clientdriver.ClientDriverRequest.Method.DELETE;
 import static com.github.restdriver.clientdriver.ClientDriverRequest.Method.GET;

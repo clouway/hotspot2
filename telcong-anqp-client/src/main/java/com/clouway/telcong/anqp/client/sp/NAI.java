@@ -1,4 +1,4 @@
-package com.clouway.telcong.anqp.client.serviceprovider;
+package com.clouway.telcong.anqp.client.sp;
 
 import com.google.common.collect.ImmutableList;
 

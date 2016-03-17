@@ -3,7 +3,7 @@ package com.clouway.telcong.anqp.client.operator;
 import com.clouway.telcong.anqp.client.HttpClient;
 import com.clouway.telcong.anqp.client.Json;
 import com.clouway.telcong.anqp.client.ap.AccessPoint;
-import com.clouway.telcong.anqp.client.serviceprovider.ServiceProvider;
+import com.clouway.telcong.anqp.client.sp.ServiceProvider;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;

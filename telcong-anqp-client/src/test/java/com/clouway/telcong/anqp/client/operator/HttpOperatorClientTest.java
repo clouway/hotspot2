@@ -1,8 +1,7 @@
 package com.clouway.telcong.anqp.client.operator;
 
 import com.clouway.telcong.anqp.client.ap.AccessPoint;
-import com.clouway.telcong.anqp.client.serviceprovider.ServiceProvider;
-import com.clouway.telcong.anqp.client.serviceprovider.ServiceProviderBuilder;
+import com.clouway.telcong.anqp.client.sp.ServiceProvider;
 import com.github.restdriver.clientdriver.ClientDriverRequest;
 import com.github.restdriver.clientdriver.ClientDriverResponse;
 import com.github.restdriver.clientdriver.ClientDriverRule;
@@ -16,7 +15,7 @@ import java.util.List;
 import static com.clouway.telcong.anqp.client.ap.AccessPointBuilder.accessPoint;
 import static com.clouway.telcong.anqp.client.operator.NewOperatorBuilder.newOperator;
 import static com.clouway.telcong.anqp.client.operator.OperatorBuilder.operator;
-import static com.clouway.telcong.anqp.client.serviceprovider.ServiceProviderBuilder.newServiceProvider;
+import static com.clouway.telcong.anqp.client.sp.ServiceProviderBuilder.newServiceProvider;
 import static com.clouway.telcong.anqp.client.util.matchers.EqualityMatchers.deepEquals;
 import static com.github.restdriver.clientdriver.ClientDriverRequest.Method.DELETE;
 import static com.github.restdriver.clientdriver.ClientDriverRequest.Method.GET;

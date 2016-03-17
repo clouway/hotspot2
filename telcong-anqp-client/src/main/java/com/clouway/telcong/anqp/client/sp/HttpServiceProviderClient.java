@@ -1,4 +1,4 @@
-package com.clouway.telcong.anqp.client.serviceprovider;
+package com.clouway.telcong.anqp.client.sp;
 
 import com.clouway.telcong.anqp.client.HttpClient;
 import com.clouway.telcong.anqp.client.Json;

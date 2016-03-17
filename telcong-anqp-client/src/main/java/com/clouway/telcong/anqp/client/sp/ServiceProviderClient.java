@@ -1,4 +1,4 @@
-package com.clouway.telcong.anqp.client.serviceprovider;
+package com.clouway.telcong.anqp.client.sp;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ public interface ServiceProviderClient {
   /**
    * Create new service provider
    *
-   * @param provider {@link com.clouway.telcong.anqp.client.serviceprovider.NewServiceProvider} which we will created
+   * @param provider {@link com.clouway.telcong.anqp.client.sp.NewServiceProvider} which we will created
    */
   void create(NewServiceProvider provider);
 

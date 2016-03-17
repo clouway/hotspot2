@@ -1,7 +1,7 @@
 package com.clouway.telcong.anqp.client.operator;
 
 import com.clouway.telcong.anqp.client.ap.AccessPoint;
-import com.clouway.telcong.anqp.client.serviceprovider.ServiceProvider;
+import com.clouway.telcong.anqp.client.sp.ServiceProvider;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ public interface OperatorClient {
    * Find all service providers assigned to operator
    *
    * @param id of the operator for which we will find service providers
-   * @return list of {@link com.clouway.telcong.anqp.client.serviceprovider.ServiceProvider}
+   * @return list of {@link com.clouway.telcong.anqp.client.sp.ServiceProvider}
    */
   List<ServiceProvider> findServiceProviders(Object id);
 
