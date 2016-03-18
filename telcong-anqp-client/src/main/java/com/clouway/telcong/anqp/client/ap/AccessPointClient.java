@@ -1,5 +1,6 @@
 package com.clouway.telcong.anqp.client.ap;
 
+import com.clouway.telcong.anqp.client.ID;
 import com.clouway.telcong.anqp.client.capability.Capability;
 
 import java.util.List;
@@ -12,8 +13,9 @@ public interface AccessPointClient {
    * Create new AP
    *
    * @param ap which we will create
+   * @return id of the created access point
    */
-  void create(NewAccessPoint ap);
+  ID create(NewAccessPoint ap);
 
   /**
    * Find all APs
@@ -26,7 +28,6 @@ public interface AccessPointClient {
    * Find AP by its identifier
    *
    * @param id of AP which we will retrieve
-   *
    * @return {@link com.clouway.telcong.anqp.client.ap.AccessPoint}
    */
   AccessPoint findByID(Object id);
@@ -35,7 +36,6 @@ public interface AccessPointClient {
    * Retrieve query list for AP
    *
    * @param id of the AP
-   *
    * @return {@link com.clouway.telcong.anqp.client.ap.QueryList}
    */
   QueryList findQueryList(Object id);
@@ -44,7 +44,6 @@ public interface AccessPointClient {
    * Retrieve capability list of AP
    *
    * @param id of the AP
-   *
    * @return list of {@link com.clouway.telcong.anqp.client.capability.Capability}
    */
   List<Capability> findCapabilityList(Object id);
@@ -53,7 +52,6 @@ public interface AccessPointClient {
    * Retrieve emergency alert URI for AP
    *
    * @param id of the AP
-   *
    * @return emergency URI
    */
   String fetchEmergencyAlertURI(Object id);
@@ -62,7 +60,6 @@ public interface AccessPointClient {
    * Retrieve location URI for AP
    *
    * @param id of the AP
-   *
    * @return location URI
    */
   String fetchLocationURI(Object id);
@@ -71,7 +68,6 @@ public interface AccessPointClient {
    * Retrieve location of AP
    *
    * @param id of the AP
-   *
    * @return {@link com.clouway.telcong.anqp.client.ap.ApLocation}
    */
   ApLocation fetchLocation(Object id);
@@ -80,7 +76,6 @@ public interface AccessPointClient {
    * Update AP
    *
    * @param id of the AP which we will update
-   *
    * @param ap contains data which we will use to update AP
    */
   void update(Object id, AccessPointRequest ap);

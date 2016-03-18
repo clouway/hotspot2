@@ -52,11 +52,13 @@ public class AccessPointEndpointTest {
       will(returnValue(new CapabilityList(Lists.newArrayList(new Capability(256, "ANQP Query List"), new Capability(257, "ANQP Capability list")))));
 
       oneOf(repository).create(with(matching(ap)));
+      will(returnValue("123"));
     }});
 
     Request request = makeRequestThatContains(apDTO);
     Reply<?> reply = service.create(request);
 
+    assertThat(reply,containsValue(new IdDTO("123")));
     assertThat(reply, isOk());
   }
 

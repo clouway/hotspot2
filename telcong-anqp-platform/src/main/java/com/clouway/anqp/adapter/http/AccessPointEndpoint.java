@@ -36,9 +36,11 @@ public class AccessPointEndpoint {
     NewAccessPointDTO dto = request.read(NewAccessPointDTO.class).as(Json.class);
     NewAccessPoint ap = adapt(dto);
 
-    repository.create(ap);
+    Object id = repository.create(ap);
 
-    return Reply.with("Successfully created AP").ok();
+    IdDTO idDTO = new IdDTO(id);
+
+    return Reply.with(idDTO).as(Json.class).ok();
   }
 
   @Get

@@ -1,5 +1,6 @@
 package com.clouway.telcong.anqp.client.operator;
 
+import com.clouway.telcong.anqp.client.ID;
 import com.clouway.telcong.anqp.client.ap.AccessPoint;
 import com.clouway.telcong.anqp.client.sp.ServiceProvider;
 
@@ -8,12 +9,14 @@ import java.util.List;
 /**
  */
 public interface OperatorClient {
+
   /**
    * Create new operator
    *
    * @param operator {@link com.clouway.telcong.anqp.client.operator.NewOperator}
+   * @return id of the created operator
    */
-  void create(NewOperator operator);
+  ID create(NewOperator operator);
 
   /**
    * Find all available operators

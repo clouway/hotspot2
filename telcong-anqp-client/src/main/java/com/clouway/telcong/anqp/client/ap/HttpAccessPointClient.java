@@ -1,6 +1,7 @@
 package com.clouway.telcong.anqp.client.ap;
 
 import com.clouway.telcong.anqp.client.HttpClient;
+import com.clouway.telcong.anqp.client.ID;
 import com.clouway.telcong.anqp.client.Json;
 import com.clouway.telcong.anqp.client.capability.Capability;
 import com.google.gson.reflect.TypeToken;
@@ -25,11 +26,13 @@ class HttpAccessPointClient implements AccessPointClient {
   }
 
   @Override
-  public void create(NewAccessPoint ap) {
+  public ID create(NewAccessPoint ap) {
     RequestBody body = RequestBody.create(JSON, json.toJson(ap));
     Request request = new Request.Builder().url(host + "/r/aps").post(body).build();
 
-    client.newCall(request);
+    Response response = client.newCall(request);
+
+    return json.fromJson(response.body().byteStream(), ID.class);
   }
 
   @Override

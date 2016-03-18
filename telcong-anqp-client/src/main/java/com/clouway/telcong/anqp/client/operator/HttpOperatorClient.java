@@ -1,6 +1,7 @@
 package com.clouway.telcong.anqp.client.operator;
 
 import com.clouway.telcong.anqp.client.HttpClient;
+import com.clouway.telcong.anqp.client.ID;
 import com.clouway.telcong.anqp.client.Json;
 import com.clouway.telcong.anqp.client.ap.AccessPoint;
 import com.clouway.telcong.anqp.client.sp.ServiceProvider;
@@ -26,11 +27,13 @@ public class HttpOperatorClient implements OperatorClient {
   }
 
   @Override
-  public void create(NewOperator operator) {
+  public ID create(NewOperator operator) {
     RequestBody body = RequestBody.create(JSON, json.toJson(operator));
     Request request = new Request.Builder().url(host + "/r/operators").post(body).build();
 
-    client.newCall(request);
+    Response response = client.newCall(request);
+
+    return json.fromJson(response.body().byteStream(), ID.class);
   }
 
   @Override

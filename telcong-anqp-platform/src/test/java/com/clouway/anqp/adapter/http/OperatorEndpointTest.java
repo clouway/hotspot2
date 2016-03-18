@@ -43,11 +43,13 @@ public class OperatorEndpointTest {
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(operator)));
+      will(returnValue("123"));
     }});
 
     Request request = makeRequestThatContains(dto);
     Reply<?> reply = service.create(request);
 
+    assertThat(reply,containsValue(new IdDTO("123")));
     assertThat(reply, isOk());
   }
 

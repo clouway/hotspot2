@@ -34,9 +34,11 @@ public class OperatorEndpoint {
     NewOperatorDTO dto = request.read(NewOperatorDTO.class).as(Json.class);
     NewOperator operator = adapt(dto);
 
-    repository.create(operator);
+    Object id = repository.create(operator);
 
-    return Reply.with("Successfully created operator").ok();
+    IdDTO idDTO = new IdDTO(id);
+
+    return Reply.with(idDTO).as(Json.class).ok();
   }
 
   @Get
