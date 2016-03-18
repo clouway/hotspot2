@@ -166,7 +166,7 @@ public class OperatorEndpoint {
   }
 
   private Operator adapt(Object id, OperatorDTO dto) {
-    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, new IPv4(IPv4.Availability.valueOf(dto.ipV4)), new IPv6(IPv6.Availability.valueOf(dto.ipv6)));
+    return new Operator(new ID(id), dto.name, OperatorState.valueOf(dto.state), dto.description, dto.domainName, dto.friendlyName, dto.emergencyNumber, new IPv4(IPv4.Availability.valueOf(dto.ipV4)), new IPv6(IPv6.Availability.valueOf(dto.ipV6)));
   }
 
   private List<OperatorDTO> adapt(List<Operator> operators) {
@@ -233,7 +233,7 @@ public class OperatorEndpoint {
     List<ServiceProviderDTO> dtos = Lists.newArrayList();
 
     for (ServiceProvider sp : sps) {
-      dtos.add(new ServiceProviderDTO(sp.id, sp.name, sp.description, adaptToNetwork3GPPDTOs(sp.networks), sp.domainNames.values, adaptToConsortiumDTOs(sp.consortiums), adaptToNaiDTOs(sp.naiRealms)));
+      dtos.add(new ServiceProviderDTO(sp.id.value, sp.name, sp.description, adaptToNetwork3GPPDTOs(sp.networks), sp.domainNames.values, adaptToConsortiumDTOs(sp.consortiums), adaptToNaiDTOs(sp.naiRealms)));
     }
 
     return dtos;

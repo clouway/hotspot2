@@ -16,9 +16,9 @@ class OperatorDTO {
   @ValidIPv4
   final String ipV4;
   @ValidIPv6
-  final String ipv6;
+  final String ipV6;
 
-  OperatorDTO(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipV4, String ipv6) {
+  OperatorDTO(Object id, String name, String state, String description, String domainName, String friendlyName, String emergencyNumber, String ipV4, String ipV6) {
     this.id = id;
     this.name = name;
     this.state = state;
@@ -27,6 +27,6 @@ class OperatorDTO {
     this.friendlyName = friendlyName;
     this.emergencyNumber = emergencyNumber;
     this.ipV4 = ipV4;
-    this.ipv6 = ipv6;
+    this.ipV6 = ipV6;
   }
 }

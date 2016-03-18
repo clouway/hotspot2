@@ -100,7 +100,6 @@ public class HttpOperatorClient implements OperatorClient {
     return json.fromJson(response.body().byteStream(), new TypeToken<List<ServiceProvider>>() {}.getType());
   }
 
-
   @Override
   public void activate(Object id) {
     RequestBody emptyBody = RequestBody.create(null, new byte[0]);

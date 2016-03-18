@@ -1,5 +1,6 @@
 package com.clouway.telcong.anqp.client.operator;
 
+import com.clouway.telcong.anqp.client.ID;
 import com.clouway.telcong.anqp.client.ap.AccessPoint;
 import com.clouway.telcong.anqp.client.sp.ServiceProvider;
 import com.github.restdriver.clientdriver.ClientDriverRequest;
@@ -37,11 +38,13 @@ public class HttpOperatorClientTest {
   @Test
   public void create() throws Exception {
     NewOperator oper = newOperator().build();
-    ClientDriverRequest request = onRequestTo("/r/operators").withMethod(POST).withBody(json(oper), "application/json");
+    ID want = new ID("id");
 
-    driver.addExpectation(request, giveEmptyResponse().withStatus(200));
+    driver.addExpectation(onRequestTo("/r/operators").withMethod(POST), returnResponse(want));
 
-    client.create(oper);
+    ID got = client.create(oper);
+
+    assertThat(got, deepEquals(want));
   }
 
   @Test

@@ -101,8 +101,8 @@ public class RoamingGroupRepositoryTest {
   public void assignOperators() throws Exception {
     IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
     IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
-    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", iPv4, iPv6));
-    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency", iPv4, iPv6));
+    Object operID1 = operatorRepository.create(new NewOperator("name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency1", iPv4, iPv6));
+    Object operID2 = operatorRepository.create(new NewOperator("name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency2", iPv4, iPv6));
 
     Object groupID = roamingRepository.create(new NewRoamingGroup("name", "description", RoamingGroupType.INTERNATIONAL));
 
@@ -112,8 +112,8 @@ public class RoamingGroupRepositoryTest {
     RoamingGroup got = roamingRepository.findById(new ID(groupID)).get();
 
     List<Operator> operators = Lists.newArrayList(
-            new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency", iPv4, iPv6),
-            new Operator(new ID(operID2), "name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency", iPv4, iPv6)
+            new Operator(new ID(operID1), "name1", OperatorState.ACTIVE, "description1", "dName1", "fName1", "emergency1", iPv4, iPv6),
+            new Operator(new ID(operID2), "name2", OperatorState.ACTIVE, "description2", "dName2", "fName2", "emergency2", iPv4, iPv6)
     );
 
     RoamingGroup want = new RoamingGroup(new ID(groupID), "name", "description", RoamingGroupType.INTERNATIONAL, operators);
@@ -142,8 +142,8 @@ public class RoamingGroupRepositoryTest {
 
   @Test(expected = NotFoundException.class)
   public void assignOperatorsToUnknownRoamingGroup() throws Exception {
-    Object operID1 = operatorRepository.create(newOperator().name("name1").build());
-    Object operID2 = operatorRepository.create(newOperator().name("name2").build());
+    Object operID1 = operatorRepository.create(newOperator().name("name1").emergencyNumber("112").build());
+    Object operID2 = operatorRepository.create(newOperator().name("name2").emergencyNumber("911").build());
 
     roamingRepository.assignOperators(new ID("groupID"), Lists.newArrayList(new ID(operID1), new ID(operID2)));
   }

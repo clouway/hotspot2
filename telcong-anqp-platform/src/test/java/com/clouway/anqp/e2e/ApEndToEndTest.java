@@ -23,7 +23,7 @@ import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class ApE2eTest {
+public class ApEndToEndTest {
 
   @ClassRule
   public static PersistentDatastoreRule datastoreRule = new PersistentDatastoreRule();

@@ -40,16 +40,17 @@ public class OperatorEndpointTest {
     IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
     final NewOperator operator = new NewOperator("name", OperatorState.ACTIVE, "description", "domainName", "friendlyName", "emergencyNumber", iPv4, iPv6);
     final NewOperatorDTO dto = new NewOperatorDTO("name", "ACTIVE", "description", "domainName", "friendlyName", "emergencyNumber", "UNKNOWN", "UNKNOWN");
+    IdDTO idDTO = new IdDTO("id");
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(operator)));
-      will(returnValue("123"));
+      will(returnValue("id"));
     }});
 
     Request request = makeRequestThatContains(dto);
     Reply<?> reply = service.create(request);
 
-    assertThat(reply,containsValue(new IdDTO("123")));
+    assertThat(reply, containsValue(idDTO));
     assertThat(reply, isOk());
   }
 
@@ -218,7 +219,7 @@ public class OperatorEndpointTest {
     final List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE", "EXPANDED_EAP_METHOD_SUBFIELD"));
     final List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM", authDTOs));
     final List<NaiDTO> naiDTOs = Lists.newArrayList(new NaiDTO("name", Encoding.UTF_8.name(), eapDTOs));
-    final ServiceProviderDTO spDTO = new ServiceProviderDTO(new ID("id"), "name", "descr", networkDTOs, listDTO, consortiumDTOs, naiDTOs);
+    final ServiceProviderDTO spDTO = new ServiceProviderDTO("id", "name", "descr", networkDTOs, listDTO, consortiumDTOs, naiDTOs);
     final List<ServiceProviderDTO> spDTOs = Lists.newArrayList(spDTO);
 
     final ID operID = new ID("id");

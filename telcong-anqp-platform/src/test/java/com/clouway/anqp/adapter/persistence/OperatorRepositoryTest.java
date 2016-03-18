@@ -22,6 +22,7 @@ import static com.clouway.anqp.NewAccessPointBuilder.newAP;
 import static com.clouway.anqp.NewOperatorBuilder.newOperator;
 import static com.clouway.anqp.NewServiceProviderBuilder.newServiceProvider;
 import static com.clouway.anqp.OperatorState.ACTIVE;
+import static com.clouway.anqp.adapter.persistence.OperatorBuilder.operator;
 import static com.clouway.anqp.util.matchers.EqualityMatchers.deepEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -54,6 +55,15 @@ public class OperatorRepositoryTest {
     operRepository.create(operator1);
 
     NewOperator operator2 = newOperator().name("Ivan").build();
+    operRepository.create(operator2);
+  }
+
+  @Test(expected = EmergencyNumberException.class)
+  public void createOperatorWithExistingEmergencyNumber() throws Exception {
+    NewOperator operator1 = newOperator().name("Emil").emergencyNumber("112").build();
+    operRepository.create(operator1);
+
+    NewOperator operator2 = newOperator().name("Ivan").emergencyNumber("112").build();
     operRepository.create(operator2);
   }
 
@@ -114,27 +124,34 @@ public class OperatorRepositoryTest {
     IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
     IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
 
-    Object id = operRepository.create(newOperator().build());
+    Object id = operRepository.create(new NewOperator("name", OperatorState.ACTIVE, "descr", "dName", "fname", "112", iPv4, iPv6));
 
-    Operator operator = new Operator(new ID(id), "newName", ACTIVE, "description", "dName", "fName", "911", iPv4, iPv6);
+    Operator operator = new Operator(new ID(id), "newName", ACTIVE, "descr", "dName", "fName", "112", iPv4, iPv6);
 
     operRepository.update(operator);
 
     Operator got = operRepository.findById(new ID(id)).get();
-    Operator want = new Operator(new ID(id), "newName", ACTIVE, "description", "dName", "fName", "911", iPv4, iPv6);
+    Operator want = new Operator(new ID(id), "newName", ACTIVE, "descr", "dName", "fName", "112", iPv4, iPv6);
 
     assertThat(got, deepEquals(want));
   }
 
   @Test(expected = OperatorException.class)
   public void updateOperatorWithReservedName() throws Exception {
-    IPv4 iPv4 = new IPv4(Availability.UNKNOWN);
-    IPv6 iPv6 = new IPv6(IPv6.Availability.UNKNOWN);
+    Object id = operRepository.create(newOperator().name("name1").emergencyNumber("112").build());
+    operRepository.create(newOperator().name("name2").emergencyNumber("911").build());
 
-    Object someID = operRepository.create(newOperator().name("Stamat").build());
-    operRepository.create(newOperator().name("Ivan").build());
+    Operator operator = operator().id(id).name("name2").build();
 
-    Operator operator = new Operator(new ID(someID), "Ivan", ACTIVE, "description", "domainName", "friendlyName", "123", iPv4, iPv6);
+    operRepository.update(operator);
+  }
+
+  @Test(expected = EmergencyNumberException.class)
+  public void updateOperatorWithReservedEmergency() throws Exception {
+    Object id = operRepository.create(newOperator().name("name1").emergencyNumber("112").build());
+    operRepository.create(newOperator().name("name2").emergencyNumber("911").build());
+
+    Operator operator = operator().id(id).emergency("911").build();
 
     operRepository.update(operator);
   }

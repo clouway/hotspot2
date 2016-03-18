@@ -28,10 +28,16 @@ class PersistentOperatorRepository implements OperatorRepository {
 
   @Override
   public Object create(NewOperator operator) {
-    Long count = datastore.entityCount(NewOperatorEntity.class, Filter.where("name").is(operator.name));
+    Long operCount = datastore.entityCount(OperatorEntity.class, Filter.where("name").is(operator.name));
 
-    if (count != 0) {
+    if (operCount != 0) {
       throw new OperatorException("Operator with name: " + operator.name + " already exists.");
+    }
+
+    Long countEmergency = datastore.entityCount(OperatorEntity.class, Filter.where("emergencyNumber").is(operator.emergencyNumber));
+
+    if (countEmergency != 0) {
+      throw new EmergencyNumberException("Emergency call number: " + operator.emergencyNumber + " is already used from another operator.");
     }
 
     return datastore.save(adapt(operator));
@@ -158,10 +164,16 @@ class PersistentOperatorRepository implements OperatorRepository {
 
   @Override
   public void update(Operator operator) {
-    Long count = datastore.entityCount(OperatorEntity.class, Filter.where("name").is(operator.name).and("_id").isNot(operator.id.value));
+    Long operCount = datastore.entityCount(OperatorEntity.class, Filter.where("name").is(operator.name).and("_id").isNot(operator.id.value));
 
-    if (count != 0) {
+    if (operCount != 0) {
       throw new OperatorException("Operator with name: " + operator.name + " already exists.");
+    }
+
+    Long countEmergency = datastore.entityCount(OperatorEntity.class, Filter.where("emergencyNumber").is(operator.emergencyNumber).and("_id").isNot(operator.id.value));
+
+    if (countEmergency != 0) {
+      throw new EmergencyNumberException("Emergency call number: " + operator.emergencyNumber + " is already used from another operator.");
     }
 
     datastore.save(adapt(operator));
