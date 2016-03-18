@@ -1,5 +1,7 @@
 package com.clouway.telcong.anqp.client.sp;
 
+import com.clouway.telcong.anqp.client.ID;
+
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ public interface ServiceProviderClient {
    *
    * @param provider {@link com.clouway.telcong.anqp.client.sp.NewServiceProvider} which we will created
    */
-  void create(NewServiceProvider provider);
+  ID create(NewServiceProvider provider);
 
   /**
    * Find all available service providers

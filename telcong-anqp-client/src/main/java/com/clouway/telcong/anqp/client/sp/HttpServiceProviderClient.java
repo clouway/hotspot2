@@ -1,6 +1,7 @@
 package com.clouway.telcong.anqp.client.sp;
 
 import com.clouway.telcong.anqp.client.HttpClient;
+import com.clouway.telcong.anqp.client.ID;
 import com.clouway.telcong.anqp.client.Json;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.MediaType;
@@ -24,11 +25,12 @@ class HttpServiceProviderClient implements ServiceProviderClient {
   }
 
   @Override
-  public void create(NewServiceProvider provider) {
+  public ID create(NewServiceProvider provider) {
     RequestBody body = RequestBody.create(JSON, json.toJson(provider));
     Request request = new Request.Builder().url(host + "/r/service-providers").post(body).build();
 
-    client.newCall(request);
+    Response response = client.newCall(request);
+    return json.fromJson(response.body().byteStream(), ID.class);
   }
 
   @Override
@@ -36,7 +38,8 @@ class HttpServiceProviderClient implements ServiceProviderClient {
     Request request = new Request.Builder().url(host + "/r/service-providers").build();
     Response response = client.newCall(request);
 
-    return json.fromJson(response.body().byteStream(), new TypeToken<List<ServiceProvider>>(){}.getType());
+    return json.fromJson(response.body().byteStream(), new TypeToken<List<ServiceProvider>>() {
+    }.getType());
   }
 
   @Override

@@ -2,8 +2,8 @@ package com.clouway.anqp.adapter.persistence;
 
 import com.clouway.anqp.AccessPointRepository;
 import com.clouway.anqp.ApControllerRepository;
-import com.clouway.anqp.RoamingGroupRepository;
 import com.clouway.anqp.OperatorRepository;
+import com.clouway.anqp.RoamingGroupRepository;
 import com.clouway.anqp.ServiceProviderRepository;
 import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;

@@ -36,9 +36,9 @@ public class ServiceProviderEndpoint {
     NewServiceProviderDTO dto = request.read(NewServiceProviderDTO.class).as(Json.class);
     NewServiceProvider provider = adapt(dto);
 
-    repository.create(provider);
+    Object id = repository.create(provider);
 
-    return Reply.saying().ok();
+    return Reply.with(new IdDTO(id)).as(Json.class).ok();
   }
 
   @Get

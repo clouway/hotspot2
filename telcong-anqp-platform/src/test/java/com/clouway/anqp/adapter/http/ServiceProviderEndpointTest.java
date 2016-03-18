@@ -17,6 +17,7 @@ import static com.clouway.anqp.Auth.Type.USIM_2;
 import static com.clouway.anqp.EAP.Method.EAP_SIM;
 import static com.clouway.anqp.Encoding.RFC_4282;
 import static com.clouway.anqp.Encoding.UTF_8;
+import static com.clouway.anqp.adapter.http.ReplyMatchers.contains;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.containsValue;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isNotFound;
 import static com.clouway.anqp.adapter.http.ReplyMatchers.isOk;
@@ -46,7 +47,7 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
     List<Auth> auths = Lists.newArrayList(new Auth(CREDENTIAL_TYPE, USIM_2));
-    List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE","USIM_2"));
+    List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE", "USIM_2"));
 
     List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM, auths));
     List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM", authDTOs));
@@ -57,13 +58,17 @@ public class ServiceProviderEndpointTest {
     NewServiceProviderDTO dto = new NewServiceProviderDTO("name", "description", networkDTOs, namesDTO, listDTO, naiDTOList);
     final NewServiceProvider provider = new NewServiceProvider(dto.name, dto.description, networks, names, list, naiList);
 
+    IdDTO idDTO = new IdDTO("a123");
+
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(provider)));
+      will(returnValue("a123"));
     }});
 
     Request request = makeRequestThatContains(dto);
     Reply<?> reply = service.create(request);
 
+    assertThat(reply, contains(idDTO));
     assertThat(reply, isOk());
   }
 
@@ -80,7 +85,7 @@ public class ServiceProviderEndpointTest {
     final List<Network3GPPDTO> networkDTOs = Lists.newArrayList(new Network3GPPDTO("name", "359", "44"));
 
     List<Auth> auths = Lists.newArrayList(new Auth(CREDENTIAL_TYPE, USIM_2));
-    List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE","USIM_2"));
+    List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE", "USIM_2"));
 
     List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM, auths));
     List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM", authDTOs));
@@ -129,7 +134,7 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
     List<Auth> auths = Lists.newArrayList(new Auth(CREDENTIAL_TYPE, USIM_2));
-    List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE","USIM_2"));
+    List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE", "USIM_2"));
 
     List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM, auths));
     List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM", authDTOs));
@@ -166,7 +171,7 @@ public class ServiceProviderEndpointTest {
     List<RoamingConsortiumDTO> listDTO = Lists.newArrayList(new RoamingConsortiumDTO("name", "0xAAFFAA"));
 
     List<Auth> auths = Lists.newArrayList(new Auth(CREDENTIAL_TYPE, USIM_2));
-    List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE","USIM_2"));
+    List<AuthDTO> authDTOs = Lists.newArrayList(new AuthDTO("CREDENTIAL_TYPE", "USIM_2"));
 
     List<EAP> eaps = Lists.newArrayList(new EAP(EAP_SIM, auths));
     List<EapDTO> eapDTOs = Lists.newArrayList(new EapDTO("EAP_SIM", authDTOs));

@@ -1,5 +1,6 @@
 package com.clouway.telcong.anqp.client.sp;
 
+import com.clouway.telcong.anqp.client.ID;
 import com.github.restdriver.clientdriver.ClientDriverRequest;
 import com.github.restdriver.clientdriver.ClientDriverResponse;
 import com.github.restdriver.clientdriver.ClientDriverRule;
@@ -35,9 +36,13 @@ public class HttpServiceProviderClientTest {
     NewServiceProvider sp = newProvider().build();
     ClientDriverRequest request = onRequestTo("/r/service-providers").withMethod(POST).withBody(json(sp), "application/json");
 
-    driver.addExpectation(request, giveEmptyResponse().withStatus(200));
+    ID want = new ID("id");
 
-    client.create(sp);
+    driver.addExpectation(request, returnResponse(want).withStatus(200));
+
+    ID got = client.create(sp);
+
+    assertThat(got, deepEquals(want));
   }
 
   @Test
