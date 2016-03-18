@@ -19,6 +19,12 @@ import java.util.List;
 /**
  */
 public class PersistentModule extends AbstractModule {
+  private final String host;
+
+  public PersistentModule(String host) {
+    this.host = host;
+  }
+
   @Override
   protected void configure() {
     bind(ApControllerRepository.class).to(PersistentApControllerRepository.class).in(Singleton.class);
@@ -31,7 +37,7 @@ public class PersistentModule extends AbstractModule {
   @Provides
   @Singleton
   public MongoClient getDatabase() {
-    List<ServerAddress> seeds = Lists.newArrayList(new ServerAddress("dev.telcong.com"));
+    List<ServerAddress> seeds = Lists.newArrayList(new ServerAddress(host));
 
     MongoClientOptions options = MongoClientOptions.builder().connectionsPerHost(64).build();
 

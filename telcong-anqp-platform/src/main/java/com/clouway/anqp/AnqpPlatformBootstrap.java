@@ -19,30 +19,27 @@ import java.util.concurrent.TimeoutException;
  */
 public class AnqpPlatformBootstrap {
   private static final Logger logger = LoggerFactory.getLogger(AnqpPlatformBootstrap.class);
+  private static ServiceManager serviceManager;
+
+  private final Integer snmpPort;
+  private final Integer httpPort;
+  private final String dbHost;
+
+  public AnqpPlatformBootstrap(Integer snmpPort, Integer httpPort, String dbHost) {
+    this.snmpPort = snmpPort;
+    this.httpPort = httpPort;
+    this.dbHost = dbHost;
+  }
 
   public static void main(String[] args) {
-    Thread.currentThread().setName("ANQP");
+    final AnqpPlatformBootstrap app = new AnqpPlatformBootstrap(162, 8080, "dev.telcong.com");
 
-    logger.debug("Platform was started successfully.");
-
-    Injector injector = Guice.createInjector(
-            new CoreModule(),
-            new SnmpModule(162),
-            new HttpModule(8080),
-            new PersistentModule(),
-            new MemoryModule(),
-            new ValidationModule()
-    );
-
-    final ServiceManager serviceManager = injector.getInstance(ServiceManager.class);
-    serviceManager.startAsync().awaitHealthy();
+    app.start();
 
     Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
       public void run() {
-        Thread.currentThread().setName("ANQP");
-
         try {
-          serviceManager.stopAsync().awaitStopped(3, TimeUnit.SECONDS);
+          app.stop();
         } catch (TimeoutException e) {
           logger.debug("Deadline duruing stopping of the services", e);
         }
@@ -50,5 +47,32 @@ public class AnqpPlatformBootstrap {
         logger.debug("Platform was terminated successfully.");
       }
     }));
+  }
+
+  public void start() {
+    Thread.currentThread().setName("ANQP");
+
+    logger.debug("Platform was started successfully.");
+
+    Injector injector = Guice.createInjector(
+            new CoreModule(),
+            new SnmpModule(snmpPort),
+            new HttpModule(httpPort),
+            new PersistentModule(dbHost),
+            new MemoryModule(),
+            new ValidationModule()
+    );
+
+    serviceManager = injector.getInstance(ServiceManager.class);
+    serviceManager.startAsync().awaitHealthy();
+  }
+
+  public void stop() throws TimeoutException {
+    if (serviceManager != null) {
+      serviceManager.stopAsync().awaitStopped(3, TimeUnit.SECONDS);
+      return;
+    }
+
+    logger.debug("Platform is already stopped.");
   }
 }
