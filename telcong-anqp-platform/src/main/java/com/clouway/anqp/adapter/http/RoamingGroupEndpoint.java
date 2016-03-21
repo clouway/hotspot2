@@ -34,9 +34,9 @@ public class RoamingGroupEndpoint {
     NewRoamingGroupDTO dto = request.read(NewRoamingGroupDTO.class).as(Json.class);
     NewRoamingGroup group = adapt(dto);
 
-    repository.create(group);
+    Object id = repository.create(group);
 
-    return Reply.saying().ok();
+    return Reply.with(new IdDTO(id)).as(Json.class).ok();
   }
 
   @Get

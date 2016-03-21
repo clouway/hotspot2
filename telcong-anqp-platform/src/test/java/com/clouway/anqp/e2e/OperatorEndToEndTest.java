@@ -46,7 +46,7 @@ public class OperatorEndToEndTest {
   @Rule
   public DatastoreCleaner cleaner = new DatastoreCleaner(datastoreRule.db());
 
-  private static AnqpPlatformBootstrap bootstrap = new AnqpPlatformBootstrap(1620, 1212, "localhost:12345");
+  private static AnqpPlatformBootstrap bootstrap = new AnqpPlatformBootstrap(1620, 1212, datastoreRule.getConnectionURL());
   private OperatorClient operClient = OperatorClientFactory.create("http://localhost:1212");
   private AccessPointClient apClient = AccessPointClientFactory.create("http://localhost:1212");
   private ServiceProviderClient spClient = ServiceProviderClientFactory.create("http://localhost:1212");

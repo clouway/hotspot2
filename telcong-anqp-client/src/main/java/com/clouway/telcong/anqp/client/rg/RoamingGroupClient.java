@@ -1,5 +1,7 @@
 package com.clouway.telcong.anqp.client.rg;
 
+import com.clouway.telcong.anqp.client.ID;
+
 import java.util.List;
 
 /**
@@ -9,8 +11,9 @@ public interface RoamingGroupClient {
    * Create new roaming group
    *
    * @param group new roaming group which will be created
+   * @return id of roaming group
    */
-  void create(NewRoamingGroup group);
+  ID create(NewRoamingGroup group);
 
   /**
    * Find all available roaming group

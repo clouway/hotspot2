@@ -1,6 +1,7 @@
 package com.clouway.telcong.anqp.client.rg;
 
 import com.clouway.telcong.anqp.client.HttpClient;
+import com.clouway.telcong.anqp.client.ID;
 import com.clouway.telcong.anqp.client.Json;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.MediaType;
@@ -24,11 +25,13 @@ public class HttpRoamingGroupClient implements RoamingGroupClient {
   }
 
   @Override
-  public void create(NewRoamingGroup group) {
+  public ID create(NewRoamingGroup group) {
     RequestBody body = RequestBody.create(JSON, json.toJson(group));
     Request request = new Request.Builder().url(host + "/r/roaming-groups").post(body).build();
 
-    client.newCall(request);
+    Response response = client.newCall(request);
+
+    return json.fromJson(response.body().byteStream(), ID.class);
   }
 
   @Override

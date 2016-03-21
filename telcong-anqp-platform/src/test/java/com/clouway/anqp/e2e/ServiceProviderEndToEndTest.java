@@ -27,7 +27,7 @@ public class ServiceProviderEndToEndTest {
   @Rule
   public DatastoreCleaner cleaner = new DatastoreCleaner(datastoreRule.db());
 
-  private static final AnqpPlatformBootstrap bootstrap = new AnqpPlatformBootstrap(1620, 7896, "localhost:12345");
+  private static final AnqpPlatformBootstrap bootstrap = new AnqpPlatformBootstrap(1620, 7896, datastoreRule.getConnectionURL());
   private final ServiceProviderClient client = ServiceProviderClientFactory.create("http://localhost:7896");
 
   @BeforeClass

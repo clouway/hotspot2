@@ -1,5 +1,6 @@
 package com.clouway.telcong.anqp.client.rg;
 
+import com.clouway.telcong.anqp.client.ID;
 import com.github.restdriver.clientdriver.ClientDriverRequest;
 import com.github.restdriver.clientdriver.ClientDriverResponse;
 import com.github.restdriver.clientdriver.ClientDriverRule;
@@ -34,11 +35,14 @@ public class HttpRoamingGroupClientTest {
   @Test
   public void create() throws Exception {
     NewRoamingGroup rg = NewRoamingGroupBuilder.newRG().build();
+    ID want = new ID("id");
     ClientDriverRequest request = onRequestTo("/r/roaming-groups").withMethod(POST).withBody(json(rg), "application/json");
 
-    driver.addExpectation(request, giveEmptyResponse().withStatus(200));
+    driver.addExpectation(request, returnResponse(want).withStatus(200));
 
-    client.create(rg);
+    ID got = client.create(rg);
+
+    assertThat(got, deepEquals(want));
   }
 
   @Test

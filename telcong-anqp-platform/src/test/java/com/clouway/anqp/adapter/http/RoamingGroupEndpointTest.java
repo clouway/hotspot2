@@ -36,14 +36,17 @@ public class RoamingGroupEndpointTest {
   public void create() throws Exception {
     final NewRoamingGroup rg = new NewRoamingGroup("name", "description", INTERNATIONAL);
     final NewRoamingGroupDTO dto = new NewRoamingGroupDTO("name", "description", "INTERNATIONAL");
+    final IdDTO idDTO = new IdDTO("id");
 
     context.checking(new Expectations() {{
       oneOf(repository).create(with(matching(rg)));
+      will(returnValue("id"));
     }});
 
     Request request = makeRequestThatContains(dto);
     Reply<?> reply = service.create(request);
 
+    assertThat(reply, containsValue(idDTO));
     assertThat(reply, isOk());
   }
 
