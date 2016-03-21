@@ -32,7 +32,7 @@ public class AnqpPlatformBootstrap {
   }
 
   public static void main(String[] args) {
-    final AnqpPlatformBootstrap app = new AnqpPlatformBootstrap(162, 8080, "dev.telcong.com");
+    final AnqpPlatformBootstrap app = new AnqpPlatformBootstrap(162, 6158, "dev.telcong.com");
 
     app.start();
 
