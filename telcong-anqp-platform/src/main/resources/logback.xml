@@ -1,13 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>telcong-anqp.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>log/%d{yyyy-MM-dd}-telcong-anqp.log</fileNamePattern>
+
+      <!-- keep 30 days' worth of history -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+
     <encoder>
-      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
+      <pattern>%d{HH:mm:ss.SSS,Europe/Sofia} [%thread] %-5level %logger{35} - %msg%n</pattern>
     </encoder>
   </appender>
 
+  <appender name="logstore" class="com.clouway.logging.appender.RequestLogAppender">
+    <loggingEndpoint>http://localhost:8083</loggingEndpoint>
+    <logPath>log/tmp</logPath>
+    <domain>telcong-anqp</domain>
+  </appender>
+
+  <logger name="HttpRequestLogger" level="ALL">
+    <appender-ref ref="logstore"/>
+  </logger>
+
   <logger name="com.clouway" level="DEBUG">
-    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="logstore"/>
   </logger>
 
 </configuration>
